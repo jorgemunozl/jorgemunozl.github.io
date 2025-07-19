@@ -1,56 +1,42 @@
-import { Github, Linkedin, Mail, Heart } from "lucide-react";
+
+import React from 'react';
+import { BookOpen, Github, Twitter, Mail } from 'lucide-react';
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className="bg-primary/5 border-t border-border/50 py-12">
-      <div className="container mx-auto px-6">
-        <div className="grid md:grid-cols-3 gap-8 items-center">
-          <div>
-            <h3 className="text-xl font-bold text-primary mb-2">John Doe</h3>
-            <p className="text-muted-foreground">
-              Full-Stack Developer & UI/UX Designer passionate about creating beautiful digital experiences.
+    <footer className="bg-gray-900 border-t border-gray-800 text-white py-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="col-span-1 md:col-span-2">
+            <div className="flex items-center space-x-2 mb-4">
+              <BookOpen className="w-7 h-7 text-blue-500" />
+              <span className="text-xl font-bold">Learning Notes</span>
+            </div>
+            <p className="text-gray-400 max-w-md">
+              A personal blog dedicated to documenting my journey through mathematics, 
+              physics, and computer science. Sharing knowledge, one note at a time.
             </p>
           </div>
           
-          <div className="text-center">
-            <div className="flex justify-center space-x-6 mb-4">
-              <a 
-                href="https://github.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors duration-300 hover:scale-110 transform"
-              >
-                <Github size={24} />
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Connect</h3>
+            <div className="flex space-x-4">
+              <a href="#" className="text-gray-400 hover:text-blue-500 transition-colors">
+                <Github className="w-5 h-5" />
               </a>
-              <a 
-                href="https://linkedin.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors duration-300 hover:scale-110 transform"
-              >
-                <Linkedin size={24} />
+              <a href="#" className="text-gray-400 hover:text-blue-500 transition-colors">
+                <Twitter className="w-5 h-5" />
               </a>
-              <a 
-                href="mailto:john@example.com"
-                className="text-muted-foreground hover:text-primary transition-colors duration-300 hover:scale-110 transform"
-              >
-                <Mail size={24} />
+              <a href="#" className="text-gray-400 hover:text-blue-500 transition-colors">
+                <Mail className="w-5 h-5" />
               </a>
             </div>
           </div>
-          
-          <div className="text-center md:text-right">
-            <p className="text-muted-foreground flex items-center justify-center md:justify-end gap-1">
-              Made with <Heart size={16} className="text-red-500" /> © {currentYear}
-            </p>
-          </div>
         </div>
         
-        <div className="border-t border-border/30 mt-8 pt-8 text-center">
-          <p className="text-sm text-muted-foreground">
-            Built with React, TypeScript, and Tailwind CSS
+        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
+          <p className="text-gray-400">
+            © 2025 Learning Notes Blog. Made with passion for knowledge sharing.
           </p>
         </div>
       </div>
