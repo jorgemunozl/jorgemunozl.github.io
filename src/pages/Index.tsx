@@ -1,21 +1,15 @@
-import Navigation from "@/components/Navigation";
-import Hero from "@/components/Hero";
-import About from "@/components/About";
-import Projects from "@/components/Projects";
-import Contact from "@/components/Contact";
-import Footer from "@/components/Footer";
+
+import React from 'react';
+import Hero from '@/components/Hero';
+import BlogPreview from '@/components/BlogPreview';
+import PageHeader from '@/components/PageHeader';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <div id="home">
-        <Navigation />
-        <Hero />
-      </div>
-      <About />
-      <Projects />
-      <Contact />
-      <Footer />
+    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-gray-900 to-black">
+      <PageHeader title="Learning Notes" showHomeButton={false} />
+      <Hero />
+      <BlogPreview />
     </div>
   );
 };

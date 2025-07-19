@@ -1,75 +1,77 @@
-import { Button } from "@/components/ui/button";
-import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import { BookOpen, Mail, Linkedin, Twitter } from 'lucide-react';
 
 const Hero = () => {
-  const scrollToSection = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  const navigate = useNavigate();
+
+  const handleViewNotes = () => {
+    navigate('/notes');
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-hero relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
-      </div>
-      
-      <div className="container mx-auto px-6 text-center relative z-10">
-        <div className="animate-fade-in">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            John Doe
+    <section className="relative py-16 overflow-hidden">
+      <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="mb-12">
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+            Learning
+            <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent"> Notes</span>
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-4">
-            Full-Stack Developer & UI/UX Designer
+          <p className="text-xl text-gray-300 max-w-xl mx-auto mb-8">
+            Mathematics, physics, and computer science discoveries.
           </p>
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Passionate about creating beautiful, functional web applications that solve real-world problems. 
-            Let's build something amazing together.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <Button 
-              variant="gradient" 
-              size="lg"
-              onClick={() => scrollToSection('contact')}
-              className="text-lg px-8"
-            >
-              Get In Touch
-            </Button>
-            <Button 
-              variant="hero" 
-              size="lg"
-              onClick={() => scrollToSection('projects')}
-              className="text-lg px-8"
-            >
-              View My Work
-            </Button>
-          </div>
-          
-          <div className="flex justify-center space-x-6 mb-12">
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" 
-               className="text-muted-foreground hover:text-primary transition-colors duration-300 hover:scale-110 transform">
-              <Github size={24} />
-            </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
-               className="text-muted-foreground hover:text-primary transition-colors duration-300 hover:scale-110 transform">
-              <Linkedin size={24} />
-            </a>
-            <a href="mailto:john@example.com"
-               className="text-muted-foreground hover:text-primary transition-colors duration-300 hover:scale-110 transform">
-              <Mail size={24} />
-            </a>
-          </div>
         </div>
         
-        <Button 
-          variant="ghost" 
-          size="icon"
-          onClick={() => scrollToSection('about')}
-          className="animate-bounce mt-8"
-        >
-          <ArrowDown size={24} />
-        </Button>
+        <div className="mb-12">
+          <Button 
+            className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white border-0 text-lg px-10 py-4"
+            onClick={handleViewNotes}
+          >
+            <BookOpen className="w-5 h-5 mr-2" />
+            Read Notes
+          </Button>
+        </div>
+
+        {/* Contact Links */}
+        <div className="flex justify-center space-x-8 text-gray-400">
+          <a 
+            href="mailto:your.email@gmail.com" 
+            className="hover:text-blue-400 transition-colors p-2"
+            title="Email"
+          >
+            <Mail className="w-6 h-6" />
+          </a>
+          <a 
+            href="https://linkedin.com/in/yourprofile" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="hover:text-blue-400 transition-colors p-2"
+            title="LinkedIn"
+          >
+            <Linkedin className="w-6 h-6" />
+          </a>
+          <a 
+            href="https://x.com/yourusername" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="hover:text-blue-400 transition-colors p-2"
+            title="X (Twitter)"
+          >
+            <Twitter className="w-6 h-6" />
+          </a>
+          <a 
+            href="https://huggingface.co/yourusername" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="hover:text-blue-400 transition-colors p-2"
+            title="Hugging Face"
+          >
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2.5c-5.5 0-10 4.5-10 10s4.5 10 10 10 10-4.5 10-10-4.5-10-10-10zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm-2-13c-.6 0-1 .4-1 1s.4 1 1 1 1-.4 1-1-.4-1-1-1zm4 0c-.6 0-1 .4-1 1s.4 1 1 1 1-.4 1-1-.4-1-1-1zm-2 6c-1.3 0-2.5.9-2.9 2.1-.1.4.1.8.5.9.4.1.8-.1.9-.5.2-.7.8-1.2 1.5-1.2s1.3.5 1.5 1.2c.1.4.5.6.9.5.4-.1.6-.5.5-.9-.4-1.2-1.6-2.1-2.9-2.1z"/>
+            </svg>
+          </a>
+        </div>
       </div>
     </section>
   );
