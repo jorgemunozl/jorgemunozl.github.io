@@ -28,7 +28,7 @@ export default defineConfig(({ mode }) => ({
     }
   },
   base: mode === 'production'
-    ? '/jorgemunoz.github.io/'  // needed for GitHub Pages build
+    ? '/jorgemunozl.github.io/'  // needed for GitHub Pages build
     : '/',
   plugins: [
     react(),
