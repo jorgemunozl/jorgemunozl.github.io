@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated on: 2025-07-19T23:04:54.248Z
+// Generated on: 2025-07-20T00:33:45.335Z
 
 export interface BlogPost {
   id: string;
@@ -20,15 +20,6 @@ export const blogPosts: BlogPost[] = [
     "uploadDate": "2025-02-05 17:06",
     "readTime": "1 min read",
     "fileName": "FFN Structure.md"
-  },
-  {
-    "id": "2",
-    "title": "My Social Networks",
-    "excerpt": "No excerpt available",
-    "content": "\n\n[[LinkedIn]]\n[[Github-Git]]\n[[Curriculum Vitae]]\n[[twitter account]]",
-    "uploadDate": "2025-07-19",
-    "readTime": "1 min read",
-    "fileName": "my social networks.md"
   }
 ];
 
