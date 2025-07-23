@@ -28,7 +28,7 @@ export default defineConfig(({ mode }) => ({
     }
   },
   base: mode === 'production'
-    ? '/jorgemunozl.github.io/'  // needed for GitHub Pages build
+    ? '/'  // For <username>.github.io repositories, deploy to root
     : '/',
   plugins: [
     react(),
