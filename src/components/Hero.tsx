@@ -1,74 +1,70 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
-import { BookOpen, Mail, Linkedin, Twitter } from 'lucide-react';
+import { Mail, Linkedin, Twitter, Github } from 'lucide-react';
 
 const Hero = () => {
-  const navigate = useNavigate();
-
-  const handleViewNotes = () => {
-    navigate('/notes');
-  };
-
   return (
     <section className="relative py-16 overflow-hidden">
       <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="mb-12">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-            Learning
-            <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent"> Notes</span>
-          </h1>
+          <div className="flex items-center justify-center mb-6">
+            <h1 className="text-5xl md:text-6xl font-bold text-white">
+              👋 welcome to mun
+              <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">Blog</span>
+            </h1>
+          </div>
           <p className="text-xl text-gray-300 max-w-xl mx-auto mb-8">
-            Mathematics, physics, and computer science discoveries.
+            Hi there, this is jorge munoz. I'm documenting my learning notes in this blog since 2020. Based on the number of grammar mistakes in my posts, you can tell how much ChatGPT is involved 😉.
           </p>
-        </div>
-        
-        <div className="mb-12">
-          <Button 
-            className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white border-0 text-lg px-10 py-4"
-            onClick={handleViewNotes}
-          >
-            <BookOpen className="w-5 h-5 mr-2" />
-            Read Notes
-          </Button>
         </div>
 
         {/* Contact Links */}
         <div className="flex justify-center space-x-8 text-gray-400">
           <a 
-            href="mailto:your.email@gmail.com" 
-            className="hover:text-blue-400 transition-colors p-2"
+            href="mailto:alvaro18ml@gmail.com" 
+            className="hover:text-purple-400 transition-colors p-2"
             title="Email"
           >
             <Mail className="w-6 h-6" />
           </a>
           <a 
-            href="https://linkedin.com/in/yourprofile" 
+            href="https://www.linkedin.com/in/jorgemunozlar/"
             target="_blank" 
             rel="noopener noreferrer"
-            className="hover:text-blue-400 transition-colors p-2"
+            className="hover:text-purple-400 transition-colors p-2"
             title="LinkedIn"
           >
             <Linkedin className="w-6 h-6" />
           </a>
           <a 
-            href="https://x.com/yourusername" 
+            href="https://x.com/jorgemunozla" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="hover:text-blue-400 transition-colors p-2"
+            className="hover:text-purple-400 transition-colors p-2"
             title="X (Twitter)"
           >
             <Twitter className="w-6 h-6" />
           </a>
           <a 
-            href="https://huggingface.co/yourusername" 
+            href="https://github.com/jorgemunozl" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="hover:text-blue-400 transition-colors p-2"
+            className="hover:text-purple-400 transition-colors p-2"
+            title="GitHub"
+          >
+            <Github className="w-6 h-6" />
+          </a>
+          <a 
+            href="https://huggingface.co/jorgemunozl"
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="hover:text-purple-400 transition-colors p-2"
             title="Hugging Face"
           >
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2.5c-5.5 0-10 4.5-10 10s4.5 10 10 10 10-4.5 10-10-4.5-10-10-10zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm-2-13c-.6 0-1 .4-1 1s.4 1 1 1 1-.4 1-1-.4-1-1-1zm4 0c-.6 0-1 .4-1 1s.4 1 1 1 1-.4 1-1-.4-1-1-1zm-2 6c-1.3 0-2.5.9-2.9 2.1-.1.4.1.8.5.9.4.1.8-.1.9-.5.2-.7.8-1.2 1.5-1.2s1.3.5 1.5 1.2c.1.4.5.6.9.5.4-.1.6-.5.5-.9-.4-1.2-1.6-2.1-2.9-2.1z"/>
+              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/>
+              <circle cx="8.5" cy="9" r="1.5"/>
+              <circle cx="15.5" cy="9" r="1.5"/>
+              <path d="M12 17c-2.5 0-4.5-1.5-4.5-3.5 0-0.5 0.4-1 1-1s1 0.5 1 1c0 1 1.1 1.5 2.5 1.5s2.5-0.5 2.5-1.5c0-0.5 0.4-1 1-1s1 0.5 1 1c0 2-2 3.5-4.5 3.5z"/>
             </svg>
           </a>
         </div>

@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Wiki Link Styles */
+.wiki-link {
+  @apply text-blue-400 underline cursor-pointer transition-colors;
+}
+
+.wiki-link:hover {
+  @apply text-blue-300;
+}
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
 
 @layer base {
