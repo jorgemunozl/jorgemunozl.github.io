@@ -7,18 +7,18 @@ const Hero = () => {
       <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="mb-12">
           <div className="flex items-center justify-center mb-6">
-            <h1 className="text-5xl md:text-6xl font-bold text-white">
+            <h1 className="text-5xl md:text-6xl font-bold text-foreground">
               👋 welcome to mun
               <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">Blog</span>
             </h1>
           </div>
-          <p className="text-xl text-gray-300 max-w-xl mx-auto mb-8">
+          <p className="text-xl text-muted-foreground max-w-xl mx-auto mb-8">
             Hi there, this is jorge munoz. I'm documenting my learning notes in this blog since 2020. Based on the number of grammar mistakes in my posts, you can tell how much ChatGPT is involved 😉.
           </p>
         </div>
 
         {/* Contact Links */}
-        <div className="flex justify-center space-x-8 text-gray-400">
+        <div className="flex justify-center space-x-8 text-muted-foreground">
           <a 
             href="mailto:alvaro18ml@gmail.com" 
             className="hover:text-purple-400 transition-colors p-2"

@@ -30,6 +30,8 @@ const Notes = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [showGraphView, setShowGraphView] = useState(false); // Default to hidden
   const [selectedNodeInGraph, setSelectedNodeInGraph] = useState<string | undefined>();
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 7;
   const params = useParams();
   const navigate = useNavigate();
   const noteId = params.id;
@@ -66,27 +68,33 @@ const Notes = () => {
     return matchesSearch;
   });
 
+  // Sort posts by date (newest first)
+  const sortedPosts = filteredPosts.sort((a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime());
+
+  // Calculate pagination
+  const totalPages = Math.ceil(sortedPosts.length / postsPerPage);
+  const startIndex = (currentPage - 1) * postsPerPage;
+  const endIndex = startIndex + postsPerPage;
+  const currentPosts = sortedPosts.slice(startIndex, endIndex);
+
+  // Reset to first page when search term changes
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
   // If we have a noteId, find and display that specific note
   if (noteId) {
     const selectedPost = posts.find(post => post.id === noteId);
     
     if (!selectedPost) {
       return (
-        <div className="min-h-screen relative overflow-hidden" style={{background: 'linear-gradient(to bottom right, #000000, #161027, #270000)'}}>
-          {/* Lightbulb glow effect - fixed to viewport bottom */}
-          {/* <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-0">
-            <div className="w-96 h-96 bg-gradient-radial from-purple-400/20 via-pink-500/15 to-transparent rounded-full blur-3xl"></div>
-          </div>
-          <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-0">
-            <div className="w-48 h-48 bg-gradient-radial from-purple-400/40 via-pink-500/25 to-purple-600/15 rounded-full blur-2xl"></div>
-          </div> */}
-          
+        <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
           <div className="relative z-10">
             <PageHeader title="Thoughts!" />
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="text-center">
-              <h1 className="text-2xl font-bold text-white mb-4">Note Not Found</h1>
-              <p className="text-gray-300 mb-8">The note you are looking for does not exist.</p>
+              <h1 className="text-2xl font-bold text-foreground mb-4">Note Not Found</h1>
+              <p className="text-muted-foreground mb-8">The note you are looking for does not exist.</p>
               <Button onClick={() => navigate('/notes')} className="bg-purple-600 hover:bg-purple-700">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Notes
@@ -99,14 +107,14 @@ const Notes = () => {
     }
 
     return (
-      <div className="min-h-screen relative overflow-hidden" style={{background: 'linear-gradient(to bottom right, #000000, #161027, #270000)'}}>
+      <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
         <PageHeader title="Thoughts!" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="mb-8">
             <Button 
               onClick={() => navigate('/notes')} 
               variant="ghost" 
-              className="text-white hover:text-gray-300 mb-4"
+              className="text-foreground hover:text-muted-foreground mb-4"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Notes
@@ -114,8 +122,8 @@ const Notes = () => {
             
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h1 className="text-2xl font-bold text-white mb-2">{selectedPost.title}</h1>
-                <div className="flex items-center text-sm text-gray-400 space-x-4">
+                <h1 className="text-2xl font-bold text-foreground mb-2">{selectedPost.title}</h1>
+                <div className="flex items-center text-sm text-muted-foreground space-x-4">
                   <span className="flex items-center">
                     <Calendar className="w-4 h-4 mr-1" />
                     {new Date(selectedPost.uploadDate).toLocaleString('en-US', { 
@@ -137,7 +145,7 @@ const Notes = () => {
               <Button 
                 onClick={toggleGraphView}
                 variant="outline" 
-                className="text-white border-white hover:bg-white/10 hover:text-white"
+                className="text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400"
               >
                 <Network className="w-4 h-4 mr-2" />
                 {showGraphView ? 'Hide Graph' : 'Show Graph'}
@@ -145,9 +153,9 @@ const Notes = () => {
             </div>
           </div>
 
-          <Card className="bg-gray-800/30 border-gray-600/50 backdrop-blur-sm">
+          <Card className="bg-card/30 border-border/50 backdrop-blur-sm">
             <CardContent className="pt-6">
-              <div className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-gray-300 prose-strong:text-white prose-code:text-purple-300 prose-pre:bg-gray-900 prose-pre:border prose-pre:border-gray-700">
+              <div className="prose dark:prose-invert max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-code:text-purple-500 prose-pre:bg-card prose-pre:border prose-pre:border-border">
                 <WikiMarkdown 
                   content={removeFrontmatter(selectedPost.content)}
                   posts={posts}
@@ -162,9 +170,9 @@ const Notes = () => {
           {(() => {
             const relatedNotes = findRelatedNotes(selectedPost.title, posts);
             return relatedNotes.length > 0 ? (
-              <Card className="bg-gray-800/30 border-gray-600/50 backdrop-blur-sm mt-6">
+              <Card className="bg-card/30 border-border/50 backdrop-blur-sm mt-6">
                 <CardHeader>
-                  <h3 className="text-lg font-semibold text-white">Related Notes</h3>
+                  <h3 className="text-lg font-semibold text-foreground">Related Notes</h3>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
@@ -175,7 +183,7 @@ const Notes = () => {
                           key={relatedPost.id}
                           variant="outline"
                           size="sm"
-                          className="text-white border-white hover:bg-white/10 hover:text-white"
+                          className="text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400"
                           onClick={() => navigate(`/notes/${relatedPost.id}`)}
                         >
                           {noteTitle}
@@ -201,15 +209,7 @@ const Notes = () => {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{background: 'linear-gradient(to bottom right, #000000, #161027, #270000)'}}>
-      {/* Lightbulb glow effect - fixed to viewport bottom */}
-      {/* <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-0">
-        <div className="w-96 h-96 bg-gradient-radial from-purple-400/20 via-pink-500/15 to-transparent rounded-full blur-3xl"></div>
-      </div>
-      <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-0">
-        <div className="w-48 h-48 bg-gradient-radial from-purple-400/40 via-pink-500/25 to-purple-600/15 rounded-full blur-2xl"></div>
-      </div> */}
-      
+    <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
       <div className="relative z-10">
         <PageHeader title="Thoughts!" showHomeButton={false} />
 
@@ -220,13 +220,13 @@ const Notes = () => {
             <Button 
               onClick={toggleGraphView}
               variant="outline" 
-              className="text-white border-white hover:bg-white/10 hover:text-white"
+              className="text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400"
             >
               <Network className="w-4 h-4 mr-2" />
               {showGraphView ? 'Hide Graph' : 'Show Graph'}
             </Button>
           </div>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             A collection of my thoughts, discoveries, and learnings in mathematics, physics, and computer science.
           </p>
         </div>
@@ -234,37 +234,37 @@ const Notes = () => {
         {/* Search and Filter */}
         <div className="mb-8 space-y-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-500 w-5 h-5" />
             <Input
               type="text"
               placeholder="Search notes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 py-3 text-lg bg-gray-800/30 border-gray-600/50 backdrop-blur-sm text-white placeholder-gray-400 focus:border-purple-400"
+              className="pl-10 py-3 text-lg bg-card/30 border-border/50 backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:border-purple-500"
             />
           </div>
         </div>
 
         {/* Blog Posts List */}
         <div className="space-y-8">
-          {filteredPosts.length === 0 ? (
+          {currentPosts.length === 0 ? (
             <div className="text-center py-12">
-              <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-400 mb-2">No notes found</h3>
-              <p className="text-gray-500">Try adjusting your search or upload a new note.</p>
+              <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-muted-foreground mb-2">No notes found</h3>
+              <p className="text-muted-foreground">Try adjusting your search or upload a new note.</p>
             </div>
           ) : (
-            filteredPosts.map((post) => (
+            currentPosts.map((post) => (
               <Card 
                 key={post.id} 
-                className="bg-gray-800/30 border-gray-600/50 backdrop-blur-sm hover:shadow-lg hover:shadow-gray-900/20 transition-shadow duration-300"
+                className="bg-card/30 border-border/50 backdrop-blur-sm hover:shadow-lg hover:shadow-gray-900/20 transition-shadow duration-300"
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <Link 
                         to={`/notes/${post.id}`}
-                        className="text-xl font-semibold text-white hover:text-purple-400 transition-colors block"
+                        className="text-xl font-semibold text-foreground hover:text-purple-400 transition-colors block"
                       >
                         {post.title}
                       </Link>
@@ -272,11 +272,11 @@ const Notes = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0 flex flex-col h-full">
-                  <p className="text-gray-300 text-sm mb-4 leading-relaxed flex-grow">
+                  <p className="text-muted-foreground text-sm mb-4 leading-relaxed flex-grow">
                     {post.excerpt}
                   </p>
                   {/* Date and Read Time at Bottom */}
-                  <div className="flex items-center justify-between text-xs text-gray-500 mt-auto border-t border-gray-700 pt-3">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto border-t border-border pt-3">
                     <div className="flex items-center">
                       <Calendar className="w-3 h-3 mr-1" />
                       {new Date(post.uploadDate).toLocaleString('en-US', { 
@@ -298,6 +298,53 @@ const Notes = () => {
             ))
           )}
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center space-x-4 mt-12">
+            <Button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              variant="outline"
+              className="text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previous
+            </Button>
+            
+            <div className="flex items-center space-x-2">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <Button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  variant={currentPage === page ? "default" : "outline"}
+                  className={currentPage === page 
+                    ? "bg-transparent text-purple-400 border-purple-400 hover:bg-transparent hover:text-purple-300" 
+                    : "text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400"
+                  }
+                  size="sm"
+                >
+                  {page}
+                </Button>
+              ))}
+            </div>
+            
+            <Button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              variant="outline"
+              className="text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next
+            </Button>
+          </div>
+        )}
+
+        {/* Page Info */}
+        {sortedPosts.length > 0 && (
+          <div className="text-center mt-6 text-sm text-muted-foreground">
+            Showing {startIndex + 1}-{Math.min(endIndex, sortedPosts.length)} of {sortedPosts.length} notes
+          </div>
+        )}
         
         {/* Global Graph View Component for Notes Overview */}
         <GlobalGraphView

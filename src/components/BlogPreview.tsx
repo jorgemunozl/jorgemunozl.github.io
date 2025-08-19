@@ -8,8 +8,11 @@ import { blogPosts, BlogPost } from '@/data/notes';
 const BlogPreview = () => {
   const navigate = useNavigate();
 
-  // Use the imported blog posts data (show up to 6 recent posts)
-  const recentPosts = blogPosts.slice(0, 6).reverse(); // Reverse to show newest first
+  // Only featured posts, sorted by date (newest first) and show up to 6 recent posts
+  const recentPosts = blogPosts
+    .filter((p: BlogPost) => (p as any).featured === true)
+    .sort((a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime())
+    .slice(0, 6);
 
   const handleViewAllNotes = () => {
     navigate('/notes');
@@ -20,28 +23,31 @@ const BlogPreview = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="space-y-6 mb-8">
           {recentPosts.map((post) => (
-            <Card key={post.id} className="bg-gray-800/30 border-gray-600/50 backdrop-blur-sm hover:shadow-lg hover:shadow-gray-900/20 transition-shadow duration-300">
+            <Card key={post.id} className="bg-card/30 border-border/50 backdrop-blur-sm hover:shadow-lg hover:shadow-gray-900/20 transition-shadow duration-300">
               <CardHeader className="pb-3">
                 <CardTitle 
-                  className="text-xl text-white hover:text-purple-400 transition-colors cursor-pointer"
+                  className="text-xl text-foreground hover:text-purple-400 transition-colors cursor-pointer"
                   onClick={() => navigate(`/notes/${post.id}`)}
                 >
                   {post.title}
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0 flex flex-col h-full">
-                <p className="text-gray-300 text-sm mb-4 leading-relaxed flex-grow">
+                <p className="text-muted-foreground text-sm mb-4 leading-relaxed flex-grow">
                   {post.excerpt}
                 </p>
                 
                 {/* Date and Read Time at Bottom */}
-                <div className="flex items-center justify-between text-xs text-gray-500 mt-auto border-t border-gray-700 pt-3">
+                <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto border-t border-border pt-3">
                   <div className="flex items-center">
                     <Calendar className="w-3 h-3 mr-1" />
-                    {new Date(post.uploadDate).toLocaleDateString('en-US', { 
+                    {new Date(post.uploadDate).toLocaleString('en-US', { 
                       year: 'numeric', 
                       month: 'short', 
-                      day: 'numeric' 
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: false
                     })}
                   </div>
                   <div className="flex items-center">
@@ -55,7 +61,7 @@ const BlogPreview = () => {
         </div>
 
         <div className="text-center">
-                    <Button 
+          <Button 
             onClick={() => navigate('/notes')}
             className="bg-gradient-to-r from-purple-500 to-purple-500 hover:from-purple-600 hover:to-purple-600 text-white"
           >

@@ -11,6 +11,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "generate-notes": "node scripts/generate-notes.js",
+    "analyze-notes": "node scripts/analyze-notes.js",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "dev:notes": "npm run generate-notes && npm run dev"

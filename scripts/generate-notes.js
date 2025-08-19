@@ -8,8 +8,11 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Directory containing the markdown files
-const NOTES_DIR = path.join(__dirname, '..', 'src', 'components', 'Notes');
+// Directories containing the markdown files
+const DIRECTORIES = [
+  { dir: path.join(__dirname, '..', 'src', 'components', 'Featured Notes'), featured: true },
+  { dir: path.join(__dirname, '..', 'src', 'components', 'Notes'), featured: false },
+];
 const OUTPUT_FILE = path.join(__dirname, '..', 'src', 'data', 'notes.ts');
 
 // Function to parse frontmatter from markdown content
@@ -64,12 +67,98 @@ function generateExcerpt(content, maxLength = 150) {
   return excerpt.length < firstParagraph.length ? excerpt + '...' : excerpt;
 }
 
-// Function to estimate read time
+// Function to estimate read time based on content analysis
 function estimateReadTime(content) {
-  const wordsPerMinute = 200;
-  const wordCount = content.split(/\s+/).length;
-  const minutes = Math.ceil(wordCount / wordsPerMinute);
-  return `${minutes} min read`;
+  const wordsPerMinute = 200; // Average reading speed
+  
+  // Remove markdown syntax and frontmatter for accurate word count
+  const cleanContent = content
+    // Remove YAML frontmatter
+    .replace(/^---\s*\n[\s\S]*?\n---\s*\n/, '')
+    // Remove markdown headers
+    .replace(/^#{1,6}\s+/gm, '')
+    // Remove markdown links but keep text
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    // Remove wiki-style links but keep text
+    .replace(/\[\[([^\]]+)\]\]/g, '$1')
+    // Remove markdown bold/italic
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/__([^_]+)__/g, '$1')
+    .replace(/_([^_]+)_/g, '$1')
+    // Remove code blocks
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/`([^`]+)`/g, '$1')
+    // Remove LaTeX math expressions (they take longer to read)
+    .replace(/\$\$[\s\S]*?\$\$/g, '[math equation]')
+    .replace(/\$([^$]+)\$/g, '[math]')
+    // Remove HTML tags
+    .replace(/<[^>]+>/g, '')
+    // Remove extra whitespace
+    .replace(/\s+/g, ' ')
+    .trim();
+  
+  // Count words
+  const wordCount = cleanContent.split(/\s+/).filter(word => word.length > 0).length;
+  
+  // Calculate base reading time
+  let readingTimeMinutes = wordCount / wordsPerMinute;
+  
+  // Adjust for content complexity
+  const mathEquationCount = (content.match(/\$\$[\s\S]*?\$\$|\$[^$]+\$/g) || []).length;
+  const codeBlockCount = (content.match(/```[\s\S]*?```/g) || []).length;
+  const linkCount = (content.match(/\[\[([^\]]+)\]\]|\[([^\]]+)\]\([^)]+\)/g) || []).length;
+  
+  // Add extra time for complex content
+  readingTimeMinutes += mathEquationCount * 0.5; // Math equations take longer
+  readingTimeMinutes += codeBlockCount * 1; // Code blocks take longer
+  readingTimeMinutes += linkCount * 0.1; // Links add minimal time
+  
+  // Round to nearest minute, minimum 1 minute
+  const minutes = Math.max(1, Math.round(readingTimeMinutes));
+  
+  // Return formatted string
+  if (minutes === 1) {
+    return "1 min read";
+  } else {
+    return `${minutes} min read`;
+  }
+}
+
+// Function to analyze content and provide detailed statistics
+function analyzeContent(content, title) {
+  const cleanContent = content
+    .replace(/^---\s*\n[\s\S]*?\n---\s*\n/, '')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/\[\[([^\]]+)\]\]/g, '$1')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/```[\s\S]*?```/g, '[code block]')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\$\$[\s\S]*?\$\$/g, '[math equation]')
+    .replace(/\$([^$]+)\$/g, '[math]')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const wordCount = cleanContent.split(/\s+/).filter(word => word.length > 0).length;
+  const charCount = cleanContent.length;
+  const mathCount = (content.match(/\$\$[\s\S]*?\$\$|\$[^$]+\$/g) || []).length;
+  const codeBlockCount = (content.match(/```[\s\S]*?```/g) || []).length;
+  const linkCount = (content.match(/\[\[([^\]]+)\]\]|\[([^\]]+)\]\([^)]+\)/g) || []).length;
+  const headerCount = (content.match(/^#{1,6}\s+/gm) || []).length;
+
+  return {
+    title,
+    wordCount,
+    charCount,
+    mathCount,
+    codeBlockCount,
+    linkCount,
+    headerCount,
+    estimatedReadTime: estimateReadTime(content)
+  };
 }
 
 // Function to create title from filename
@@ -83,51 +172,55 @@ function createTitle(filename) {
 // Main function to generate notes data
 function generateNotesData() {
   try {
-    // Check if Notes directory exists
-    if (!fs.existsSync(NOTES_DIR)) {
-      console.error(`Notes directory does not exist: ${NOTES_DIR}`);
-      process.exit(1);
+    // Collect markdown files from configured directories
+    const collected = [];
+
+    for (const { dir, featured } of DIRECTORIES) {
+      if (!fs.existsSync(dir)) {
+        // Skip silently if a directory is missing
+        continue;
+      }
+
+      const files = fs.readdirSync(dir).filter(file => file.endsWith('.md'));
+      files.forEach(file => {
+        const filePath = path.join(dir, file);
+        const fileContent = fs.readFileSync(filePath, 'utf-8');
+        const { frontmatter, content } = parseFrontmatter(fileContent);
+
+        const title = frontmatter.title || createTitle(file);
+        const excerpt = generateExcerpt(content);
+        const readTime = estimateReadTime(content);
+        const uploadDate = frontmatter.date || new Date().toISOString().split('T')[0];
+
+        // Escape content for JavaScript string
+        const escapedContent = fileContent
+          .replace(/\\/g, '\\\\')
+          .replace(/`/g, '\\`')
+          .replace(/\${/g, '\\${');
+
+        collected.push({
+          title,
+          excerpt,
+          content: escapedContent,
+          uploadDate,
+          readTime,
+          fileName: file,
+          featured,
+        });
+      });
     }
 
-    // Read all markdown files from Notes directory
-    const files = fs.readdirSync(NOTES_DIR).filter(file => file.endsWith('.md'));
-    
-    if (files.length === 0) {
-      console.log('No markdown files found in Notes directory');
-      return;
+    if (collected.length === 0) {
+      console.log('No markdown files found in configured directories');
     }
 
-    console.log(`Found ${files.length} markdown file(s):`);
-    files.forEach(file => console.log(`  - ${file}`));
+    // Sort by uploadDate desc for stable id assignment
+    collected.sort((a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime());
 
-    // Process each markdown file
-    const blogPosts = files.map((filename, index) => {
-      const filePath = path.join(NOTES_DIR, filename);
-      const fileContent = fs.readFileSync(filePath, 'utf-8');
-      const { frontmatter, content } = parseFrontmatter(fileContent);
-      
-      // Generate data for the blog post
-      const title = frontmatter.title || createTitle(filename);
-      const excerpt = generateExcerpt(content);
-      const readTime = estimateReadTime(content);
-      const uploadDate = frontmatter.date || new Date().toISOString().split('T')[0];
-      
-      // Escape content for JavaScript string
-      const escapedContent = fileContent
-        .replace(/\\/g, '\\\\')
-        .replace(/`/g, '\\`')
-        .replace(/\${/g, '\\${');
-
-      return {
-        id: (index + 1).toString(),
-        title,
-        excerpt,
-        content: escapedContent,
-        uploadDate,
-        readTime,
-        fileName: filename
-      };
-    });
+    const blogPosts = collected.map((post, index) => ({
+      id: (index + 1).toString(),
+      ...post,
+    }));
 
     // Create the output directory if it doesn't exist
     const outputDir = path.dirname(OUTPUT_FILE);
@@ -147,6 +240,7 @@ export interface BlogPost {
   uploadDate: string;
   readTime: string;
   fileName: string;
+  featured: boolean;
 }
 
 export const blogPosts: BlogPost[] = ${JSON.stringify(blogPosts, null, 2)};
@@ -161,8 +255,15 @@ export default blogPosts;
     console.log(`📄 Output file: ${OUTPUT_FILE}`);
     console.log(`📊 Total notes: ${blogPosts.length}`);
     
+    // Show detailed analysis for each post
+    console.log(`\n📈 Content Analysis:`);
     blogPosts.forEach(post => {
-      console.log(`   - "${post.title}" (${post.readTime})`);
+      const analysis = analyzeContent(post.content, post.title);
+      console.log(`   📝 "${analysis.title}"`);
+      console.log(`      └─ ${analysis.wordCount} words, ${analysis.estimatedReadTime}`);
+      if (analysis.mathCount > 0) console.log(`      └─ ${analysis.mathCount} math expressions`);
+      if (analysis.codeBlockCount > 0) console.log(`      └─ ${analysis.codeBlockCount} code blocks`);
+      if (analysis.linkCount > 0) console.log(`      └─ ${analysis.linkCount} links`);
     });
 
   } catch (error) {
