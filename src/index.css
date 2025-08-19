@@ -110,3 +110,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Dark-only page gradient utility */
+.dark .gradient-bg {
+  background: linear-gradient(to bottom right, #000000, #161027, #270000);
+}

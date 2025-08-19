@@ -162,22 +162,24 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                   ctx.fillStyle = node.color || '#A855F7';
                   ctx.fill();
                   
-                  // Draw label
-                  const textWidth = ctx.measureText(label).width;
-                  const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2);
-                  
-                  ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-                  ctx.fillRect(
-                    node.x! - bckgDimensions[0] / 2,
-                    node.y! + radius + 2,
-                    bckgDimensions[0],
-                    bckgDimensions[1]
-                  );
-                  
-                  ctx.textAlign = 'center';
-                  ctx.textBaseline = 'middle';
-                  ctx.fillStyle = '#FFFFFF';
-                  ctx.fillText(label, node.x!, node.y! + radius + bckgDimensions[1] / 2 + 2);
+                  // Only draw label when zoomed in significantly (globalScale > 2)
+                  if (globalScale > 2) {
+                    const textWidth = ctx.measureText(label).width;
+                    const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2);
+                    
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+                    ctx.fillRect(
+                      node.x! - bckgDimensions[0] / 2,
+                      node.y! + radius + 2,
+                      bckgDimensions[0],
+                      bckgDimensions[1]
+                    );
+                    
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillText(label, node.x!, node.y! + radius + bckgDimensions[1] / 2 + 2);
+                  }
                 }}
                 cooldownTicks={100}
                 d3AlphaDecay={0.02}
