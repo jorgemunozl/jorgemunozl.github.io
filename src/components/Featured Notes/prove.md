@@ -5,6 +5,9 @@
 This note explores the fundamental concepts of mathematical proofs and their applications in computer science and artificial intelligence.
 
 ## Types of Proofs
+[[Activation function]]
+[[AI agent]]
+[[Anaconda]]
 
 ### Direct Proof
 A direct proof establishes the truth of a statement by logical reasoning from known facts and axioms.

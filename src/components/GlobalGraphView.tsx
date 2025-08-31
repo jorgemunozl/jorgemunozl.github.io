@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { X, Maximize2, Minimize2, RefreshCw, Globe } from 'lucide-react';
+import { X, Maximize2, Minimize2, RefreshCw, Globe, Network } from 'lucide-react';
 import { buildGraphFromPosts, GraphData, GraphNode, GraphLink } from '@/utils/wikiLinks';
 import { blogPosts } from '@/data/notes';
 
@@ -88,54 +88,31 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
 
   return (
     <div className={containerClasses}>
-      <Card className={`bg-gray-900 border-gray-700 ${isFullscreen ? 'w-full h-full max-w-none' : 'w-[480px] h-[470px]'}`}>
-        <CardHeader className="pb-2">
+      <Card className={`bg-gray-900/95 border-gray-700/50 shadow-lg backdrop-blur-sm ${isFullscreen ? 'w-full h-full max-w-none' : 'w-[400px] h-[350px]'}`}>
+        <CardHeader className="pb-2 px-3 py-2">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-white text-sm flex items-center">
-              <Globe className="w-4 h-4 mr-2" />
-              Global Graph
-              <span className="ml-2 text-xs text-gray-400">
-                All Notes
-              </span>
+            <CardTitle className="text-gray-300 text-xs font-normal">
+              Graph
             </CardTitle>
-            <div className="flex space-x-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={refreshGraph}
-                className="text-gray-400 hover:text-white p-1 h-6 w-6"
-                disabled={isLoading}
-              >
-                <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={toggleFullscreen}
-                className="text-gray-400 hover:text-white p-1 h-6 w-6"
-              >
-                {isFullscreen ? <Minimize2 className="w-3 h-3" /> : <Maximize2 className="w-3 h-3" />}
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onClose}
-                className="text-gray-400 hover:text-white p-1 h-6 w-6"
-              >
-                <X className="w-3 h-3" />
-              </Button>
-            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-300 p-0 h-4 w-4"
+            >
+              <X className="w-3 h-3" />
+            </Button>
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <div className={`relative overflow-hidden ${isFullscreen ? 'h-full' : 'h-96'}`}>
+          <div className={`relative overflow-hidden ${isFullscreen ? 'h-full' : 'h-80'} bg-gray-900`}>
             {isLoading ? (
-              <div className="flex items-center justify-center h-full bg-gray-800">
-                <div className="text-gray-400 text-sm">Loading knowledge graph...</div>
+              <div className="flex items-center justify-center h-full bg-gray-900">
+                <div className="text-gray-500 text-xs">Loading...</div>
               </div>
             ) : graphData.nodes.length === 0 ? (
-              <div className="flex items-center justify-center h-full bg-gray-800">
-                <div className="text-gray-400 text-sm">No notes found</div>
+              <div className="flex items-center justify-center h-full bg-gray-900">
+                <div className="text-gray-500 text-xs">No notes</div>
               </div>
             ) : (
               <ForceGraph2D
@@ -144,57 +121,25 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 width={dimensions.width}
                 height={dimensions.height}
                 backgroundColor="#1f2937"
-                nodeColor={(node: GraphNode) => node.color || '#A855F7'}
-                nodeVal={(node: GraphNode) => node.size || 10}
+                nodeColor={(node: GraphNode) => node.color || '#6366f1'}
+                nodeVal={(node: GraphNode) => node.size || 8}
                 nodeLabel={(node: GraphNode) => node.title}
-                linkColor={() => '#4B5563'}
-                linkWidth={(link: GraphLink) => Math.sqrt(link.value) * 2}
+                linkColor={() => '#4b5563'}
+                linkWidth={() => 1}
                 onNodeClick={handleNodeClick}
-                nodeCanvasObject={(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
-                  const label = node.title;
-                  const fontSize = 10 / globalScale;
-                  ctx.font = `${fontSize}px Inter, system-ui, sans-serif`;
-                  
-                  // Draw node circle
-                  ctx.beginPath();
-                  const radius = (node.size || 10) / 2;
-                  ctx.arc(node.x!, node.y!, radius, 0, 2 * Math.PI);
-                  ctx.fillStyle = node.color || '#A855F7';
-                  ctx.fill();
-                  
-                  // Only draw label when zoomed in significantly (globalScale > 2)
-                  if (globalScale > 2) {
-                    const textWidth = ctx.measureText(label).width;
-                    const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2);
-                    
-                    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-                    ctx.fillRect(
-                      node.x! - bckgDimensions[0] / 2,
-                      node.y! + radius + 2,
-                      bckgDimensions[0],
-                      bckgDimensions[1]
-                    );
-                    
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillText(label, node.x!, node.y! + radius + bckgDimensions[1] / 2 + 2);
-                  }
-                }}
-                cooldownTicks={100}
-                d3AlphaDecay={0.02}
+                cooldownTicks={50}
+                d3AlphaDecay={0.05}
                 d3VelocityDecay={0.3}
+                enablePanInteraction={true}
+                enableZoomInteraction={true}
               />
             )}
           </div>
           
-          {/* Graph Stats */}
-          {!isLoading && (
-            <div className="p-2 bg-gray-800 text-xs text-gray-400 border-t border-gray-700">
-              <div className="flex justify-between">
-                <span>{graphData.nodes.length} notes</span>
-                <span>{graphData.links.length} connections</span>
-              </div>
+          {/* Simple Stats */}
+          {!isLoading && graphData.nodes.length > 0 && (
+            <div className="px-3 py-1 bg-gray-800 text-xs text-gray-500 border-t border-gray-700">
+              {graphData.nodes.length} notes
             </div>
           )}
         </CardContent>
