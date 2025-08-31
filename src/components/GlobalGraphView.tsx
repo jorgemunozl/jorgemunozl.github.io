@@ -260,7 +260,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
           </div>
         )}
         <CardContent className="p-0">
-          <div className={`relative overflow-hidden ${isFullscreen ? 'h-full' : showControls ? 'h-80' : 'h-80'} bg-gray-900`}>
+          <div className={`relative overflow-hidden ${isFullscreen ? 'h-full' : showControls ? 'h-80' : 'h-80'}`}>
             {isLoading ? (
               <div className="flex items-center justify-center h-full bg-gray-900/50">
                 <div className="text-gray-500 text-xs">Loading...</div>
@@ -275,7 +275,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 graphData={graphData}
                 width={dimensions.width}
                 height={dimensions.height}
-                backgroundColor="#1f2937"
+                backgroundColor="transparent"
                 nodeColor={(node: GraphNode) => node.color || '#6366f1'}
                 nodeVal={(node: GraphNode) => (node.size || nodeSize)}
                 nodeLabel={(node: GraphNode) => node.title}

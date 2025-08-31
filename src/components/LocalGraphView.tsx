@@ -311,7 +311,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                 graphData={graphData}
                 width={dimensions.width}
                 height={dimensions.height}
-                backgroundColor="#1f2937"
+                backgroundColor="transparent"
                 nodeColor={(node: GraphNode) => node.id === currentNote ? '#ef4444' : '#6366f1'}
                 nodeVal={(node: GraphNode) => node.id === currentNote ? nodeSize * 1.5 : nodeSize}
                 nodeLabel={(node: GraphNode) => node.title}
