@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { BookOpen, Calendar, Search, Clock, ArrowLeft, ExternalLink, Network } from 'lucide-react';
+import { BookOpen, Calendar, Search, Clock, ArrowLeft, ExternalLink, Network, Download } from 'lucide-react';
 import WikiMarkdown from '@/components/WikiMarkdown';
 import GlobalGraphView from '@/components/GlobalGraphView';
 import LocalGraphView from '@/components/LocalGraphView';
@@ -23,6 +23,22 @@ const removeFrontmatter = (content: string): string => {
   }
   
   return content.trim();
+};
+
+// Function to extract headings from markdown content
+const extractHeadings = (content: string) => {
+  const headingRegex = /^(#{1,6})\s+(.+)$/gm;
+  const headings: Array<{ level: number; text: string; id: string }> = [];
+  let match;
+
+  while ((match = headingRegex.exec(content)) !== null) {
+    const level = match[1].length;
+    const text = match[2];
+    const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    headings.push({ level, text, id });
+  }
+
+  return headings;
 };
 
 const Notes = () => {
@@ -142,16 +158,70 @@ const Notes = () => {
                 </div>
               </div>
               
-              <Button 
-                onClick={toggleGraphView}
-                variant="outline" 
-                className="text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400"
-              >
-                <Network className="w-4 h-4 mr-2" />
-                {showGraphView ? 'Hide Graph' : 'Show Graph'}
-              </Button>
+              <div className="flex items-center space-x-3">
+                <Button 
+                  onClick={() => {
+                    const link = document.createElement('a');
+                    link.href = '/report.pdf';
+                    link.download = 'report.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  }}
+                  variant="outline" 
+                  className="text-red-500 border-red-500 bg-transparent hover:bg-transparent hover:text-red-400"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download PDF
+                </Button>
+                
+                <Button 
+                  onClick={toggleGraphView}
+                  variant="outline" 
+                  className="text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400"
+                >
+                  <Network className="w-4 h-4 mr-2" />
+                  {showGraphView ? 'Hide Graph' : 'Show Graph'}
+                </Button>
+              </div>
             </div>
           </div>
+
+          {/* Table of Contents */}
+          {(() => {
+            const headings = extractHeadings(selectedPost.content);
+            return headings.length > 0 ? (
+              <Card className="bg-card/30 border-border/50 backdrop-blur-sm mb-6">
+                <CardHeader>
+                  <h3 className="text-lg font-semibold text-foreground">Contents</h3>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <nav className="space-y-1">
+                    {headings.map((heading, index) => (
+                      <a
+                        key={index}
+                        href={`#${heading.id}`}
+                        className={`block text-sm transition-colors hover:text-purple-400 ${
+                          heading.level === 1 ? 'font-semibold text-foreground' :
+                          heading.level === 2 ? 'pl-4 text-muted-foreground' :
+                          'pl-8 text-muted-foreground/80'
+                        }`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const element = document.getElementById(heading.id);
+                          if (element) {
+                            element.scrollIntoView({ behavior: 'smooth' });
+                          }
+                        }}
+                      >
+                        {heading.text}
+                      </a>
+                    ))}
+                  </nav>
+                </CardContent>
+              </Card>
+            ) : null;
+          })()}
 
           <Card className="bg-card/30 border-border/50 backdrop-blur-sm">
             <CardContent className="pt-6">
