@@ -350,13 +350,6 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
               />
             )}
           </div>
-          
-          {/* Simple Stats */}
-          {!isLoading && graphData.nodes.length > 0 && (
-            <div className="px-3 py-1 bg-gray-800/50 text-xs text-gray-500 border-t border-gray-700">
-              {graphData.nodes.length} nodes
-            </div>
-          )}
         </CardContent>
       </Card>
     </div>
