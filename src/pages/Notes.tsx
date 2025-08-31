@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { BookOpen, Calendar, Search, Clock, ArrowLeft, ExternalLink, Network, Download } from 'lucide-react';
+import { BookOpen, Calendar, Search, Clock, ArrowLeft, ExternalLink, Network, Download, List, X, Maximize2, Minimize2 } from 'lucide-react';
 import WikiMarkdown from '@/components/WikiMarkdown';
 import GlobalGraphView from '@/components/GlobalGraphView';
 import LocalGraphView from '@/components/LocalGraphView';
@@ -47,6 +47,11 @@ const Notes = () => {
   const [showGraphView, setShowGraphView] = useState(false); // Default to hidden
   const [selectedNodeInGraph, setSelectedNodeInGraph] = useState<string | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
+  const [showTOC, setShowTOC] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [tocPosition, setTocPosition] = useState({ x: 20, y: 100 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const postsPerPage = 7;
   const params = useParams();
   const navigate = useNavigate();
@@ -97,6 +102,32 @@ const Notes = () => {
   React.useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
+
+  // Handle dragging
+  React.useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDragging) {
+        setTocPosition({
+          x: e.clientX - dragOffset.x,
+          y: e.clientY - dragOffset.y
+        });
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, dragOffset]);
 
   // If we have a noteId, find and display that specific note
   if (noteId) {
@@ -160,6 +191,15 @@ const Notes = () => {
               
               <div className="flex items-center space-x-3">
                 <Button 
+                  onClick={() => setShowTOC(!showTOC)}
+                  variant="outline" 
+                  className="text-blue-500 border-blue-500 bg-transparent hover:bg-transparent hover:text-blue-400"
+                >
+                  <List className="w-4 h-4 mr-2" />
+                  {showTOC ? 'Hide TOC' : 'Show TOC'}
+                </Button>
+                
+                <Button 
                   onClick={() => {
                     const link = document.createElement('a');
                     link.href = '/report.pdf';
@@ -186,42 +226,6 @@ const Notes = () => {
               </div>
             </div>
           </div>
-
-          {/* Table of Contents */}
-          {(() => {
-            const headings = extractHeadings(selectedPost.content);
-            return headings.length > 0 ? (
-              <Card className="bg-card/30 border-border/50 backdrop-blur-sm mb-6">
-                <CardHeader>
-                  <h3 className="text-lg font-semibold text-foreground">Contents</h3>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <nav className="space-y-1">
-                    {headings.map((heading, index) => (
-                      <a
-                        key={index}
-                        href={`#${heading.id}`}
-                        className={`block text-sm transition-colors hover:text-purple-400 ${
-                          heading.level === 1 ? 'font-semibold text-foreground' :
-                          heading.level === 2 ? 'pl-4 text-muted-foreground' :
-                          'pl-8 text-muted-foreground/80'
-                        }`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          const element = document.getElementById(heading.id);
-                          if (element) {
-                            element.scrollIntoView({ behavior: 'smooth' });
-                          }
-                        }}
-                      >
-                        {heading.text}
-                      </a>
-                    ))}
-                  </nav>
-                </CardContent>
-              </Card>
-            ) : null;
-          })()}
 
           <Card className="bg-card/30 border-border/50 backdrop-blur-sm">
             <CardContent className="pt-6">
@@ -264,6 +268,84 @@ const Notes = () => {
                 </CardContent>
               </Card>
             ) : null;
+          })()}
+          
+          {/* Detachable Table of Contents */}
+          {(() => {
+            const headings = extractHeadings(selectedPost.content);
+            if (!showTOC || headings.length === 0) return null;
+
+            return (
+              <div
+                className="fixed z-50 bg-card/95 border border-border rounded-lg shadow-2xl backdrop-blur-sm"
+                style={{
+                  left: tocPosition.x,
+                  top: tocPosition.y,
+                  width: isMinimized ? 'auto' : '280px',
+                  maxHeight: isMinimized ? 'auto' : '400px'
+                }}
+              >
+                {/* TOC Header - Draggable */}
+                <div
+                  className="flex items-center justify-between p-3 bg-muted/50 rounded-t-lg cursor-move border-b border-border"
+                  onMouseDown={(e) => {
+                    setIsDragging(true);
+                    setDragOffset({
+                      x: e.clientX - tocPosition.x,
+                      y: e.clientY - tocPosition.y
+                    });
+                  }}
+                >
+                  <h3 className="text-sm font-semibold text-foreground">Contents</h3>
+                  <div className="flex items-center space-x-1">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 w-6 p-0 hover:bg-muted"
+                      onClick={() => setIsMinimized(!isMinimized)}
+                    >
+                      {isMinimized ? <Maximize2 className="h-3 w-3" /> : <Minimize2 className="h-3 w-3" />}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 w-6 p-0 hover:bg-muted"
+                      onClick={() => setShowTOC(false)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* TOC Content */}
+                {!isMinimized && (
+                  <div className="p-3 max-h-80 overflow-y-auto">
+                    <nav className="space-y-1">
+                      {headings.map((heading, index) => (
+                        <a
+                          key={index}
+                          href={`#${heading.id}`}
+                          className={`block text-xs transition-colors hover:text-blue-400 cursor-pointer ${
+                            heading.level === 1 ? 'font-semibold text-foreground' :
+                            heading.level === 2 ? 'pl-3 text-muted-foreground' :
+                            'pl-6 text-muted-foreground/80'
+                          }`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            const element = document.getElementById(heading.id);
+                            if (element) {
+                              element.scrollIntoView({ behavior: 'smooth' });
+                            }
+                          }}
+                        >
+                          {heading.text}
+                        </a>
+                      ))}
+                    </nav>
+                  </div>
+                )}
+              </div>
+            );
           })()}
           
           {/* Local Graph View Component for Individual Notes */}

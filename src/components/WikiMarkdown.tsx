@@ -25,12 +25,34 @@ const WikiMarkdown: React.FC<WikiMarkdownProps> = ({
   const mathProcessedContent = convertObsidianMathSyntax(content);
   const processedContent = processWikiLinksToMarkdown(mathProcessedContent, posts);
 
+  // Function to generate ID from heading text
+  const generateId = (text: string): string => {
+    return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  };
+
+  // Custom heading components
+  const createHeadingComponent = (level: number) => {
+    const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+    return ({ children, ...props }: any) => {
+      const text = React.Children.toArray(children).join('');
+      const id = generateId(text);
+      return React.createElement(Tag, { id, ...props }, children);
+    };
+  };
+
   return (
     <div className={`${className} wiki-markdown`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[rehypeHighlight, rehypeKatex]}
         components={{
+          // Custom heading components with auto-generated IDs
+          h1: createHeadingComponent(1),
+          h2: createHeadingComponent(2),
+          h3: createHeadingComponent(3),
+          h4: createHeadingComponent(4),
+          h5: createHeadingComponent(5),
+          h6: createHeadingComponent(6),
           a: ({ href, children, ...props }) => {
             // Handle wiki links
             if (href?.startsWith('wiki:')) {
