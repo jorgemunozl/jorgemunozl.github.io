@@ -162,7 +162,7 @@ const Notes = () => {
               onClick={() => navigate('/notes')} 
               variant="ghost" 
               className="text-foreground hover:text-muted-foreground mb-4"
-            >
+            >as
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Notes
             </Button>
