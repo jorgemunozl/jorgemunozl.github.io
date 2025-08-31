@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { X, Maximize2, Minimize2, RefreshCw, Globe, Network } from 'lucide-react';
+import { Slider } from '@/components/ui/slider';
+import { X, Maximize2, Minimize2, RefreshCw, Globe, Network, Settings } from 'lucide-react';
 import { buildGraphFromPosts, GraphData, GraphNode, GraphLink } from '@/utils/wikiLinks';
 import { blogPosts } from '@/data/notes';
 
@@ -22,6 +23,18 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [dimensions, setDimensions] = useState({ width: 450, height: 400 });
+  const [showControls, setShowControls] = useState(false);
+  
+  // Graph customization options
+  const [nodeSize, setNodeSize] = useState(8);
+  const [linkThickness, setLinkThickness] = useState(1);
+  const [textThreshold, setTextThreshold] = useState(2.0);
+  
+  // Physics forces
+  const [centerForce, setCenterForce] = useState(0.3);
+  const [repelForce, setRepelForce] = useState(-120);
+  const [linkForce, setLinkForce] = useState(1);
+  const [linkDistance, setLinkDistance] = useState(30);
 
   useEffect(() => {
     if (isVisible) {
@@ -56,6 +69,21 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     return () => window.removeEventListener('resize', updateDimensions);
   }, [isFullscreen]);
 
+  // Update graph forces when parameters change
+  useEffect(() => {
+    if (graphRef.current) {
+      const fg = graphRef.current;
+      
+      // Update forces
+      fg.d3Force('center').strength(centerForce);
+      fg.d3Force('charge').strength(repelForce);
+      fg.d3Force('link').strength(linkForce).distance(linkDistance);
+      
+      // Restart simulation
+      fg.d3ReheatSimulation();
+    }
+  }, [centerForce, repelForce, linkForce, linkDistance]);
+
   const handleNodeClick = (node: GraphNode) => {
     if (onNodeClick) {
       onNodeClick(node.id);
@@ -88,30 +116,157 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
 
   return (
     <div className={containerClasses}>
-      <Card className={`bg-gray-900/95 border-gray-700/50 shadow-lg backdrop-blur-sm ${isFullscreen ? 'w-full h-full max-w-none' : 'w-[400px] h-[350px]'}`}>
+      <Card className={`bg-gray-900/50 border-gray-700/50 shadow-lg backdrop-blur-sm ${isFullscreen ? 'w-full h-full max-w-none' : 'w-[400px]'} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : 'h-[350px]')}`}>
         <CardHeader className="pb-2 px-3 py-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-gray-300 text-xs font-normal">
               Graph
             </CardTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-300 p-0 h-4 w-4"
-            >
-              <X className="w-3 h-3" />
-            </Button>
+            <div className="flex items-center space-x-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowControls(!showControls)}
+                className="text-gray-500 hover:text-gray-300 p-0 h-4 w-4"
+              >
+                <Settings className="w-3 h-3" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onClose}
+                className="text-gray-500 hover:text-gray-300 p-0 h-4 w-4"
+              >
+                <X className="w-3 h-3" />
+              </Button>
+            </div>
           </div>
         </CardHeader>
+        
+        {/* Graph Controls - Now above the graph */}
+        {showControls && (
+          <div className="mx-3 mb-2 p-2 bg-gray-800/50 rounded border border-gray-700 space-y-2">
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-gray-400">Node Size</span>
+                <span className="text-xs text-gray-500">{nodeSize}</span>
+              </div>
+              <Slider
+                value={[nodeSize]}
+                onValueChange={(value) => setNodeSize(value[0])}
+                max={20}
+                min={4}
+                step={1}
+                className="w-full"
+              />
+            </div>
+            
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-gray-400">Link Thickness</span>
+                <span className="text-xs text-gray-500">{linkThickness}</span>
+              </div>
+              <Slider
+                value={[linkThickness]}
+                onValueChange={(value) => setLinkThickness(value[0])}
+                max={5}
+                min={0.5}
+                step={0.5}
+                className="w-full"
+              />
+            </div>
+            
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-gray-400">Text Threshold</span>
+                <span className="text-xs text-gray-500">{textThreshold.toFixed(1)}</span>
+              </div>
+              <Slider
+                value={[textThreshold]}
+                onValueChange={(value) => setTextThreshold(value[0])}
+                max={5}
+                min={0.5}
+                step={0.1}
+                className="w-full"
+              />
+            </div>
+            
+            {/* Physics Forces */}
+            <div className="pt-2 border-t border-gray-700">
+              <div className="text-xs text-gray-300 mb-2">Physics Forces</div>
+              
+              <div className="space-y-2">
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-400">Center Force</span>
+                    <span className="text-xs text-gray-500">{centerForce.toFixed(2)}</span>
+                  </div>
+                  <Slider
+                    value={[centerForce]}
+                    onValueChange={(value) => setCenterForce(value[0])}
+                    max={1}
+                    min={0}
+                    step={0.05}
+                    className="w-full"
+                  />
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-400">Repel Force</span>
+                    <span className="text-xs text-gray-500">{repelForce}</span>
+                  </div>
+                  <Slider
+                    value={[repelForce]}
+                    onValueChange={(value) => setRepelForce(value[0])}
+                    max={-10}
+                    min={-300}
+                    step={10}
+                    className="w-full"
+                  />
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-400">Link Force</span>
+                    <span className="text-xs text-gray-500">{linkForce.toFixed(1)}</span>
+                  </div>
+                  <Slider
+                    value={[linkForce]}
+                    onValueChange={(value) => setLinkForce(value[0])}
+                    max={3}
+                    min={0.1}
+                    step={0.1}
+                    className="w-full"
+                  />
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-400">Link Distance</span>
+                    <span className="text-xs text-gray-500">{linkDistance}</span>
+                  </div>
+                  <Slider
+                    value={[linkDistance]}
+                    onValueChange={(value) => setLinkDistance(value[0])}
+                    max={100}
+                    min={10}
+                    step={5}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         <CardContent className="p-0">
-          <div className={`relative overflow-hidden ${isFullscreen ? 'h-full' : 'h-80'} bg-gray-900`}>
+          <div className={`relative overflow-hidden ${isFullscreen ? 'h-full' : showControls ? 'h-80' : 'h-80'} bg-gray-900`}>
             {isLoading ? (
-              <div className="flex items-center justify-center h-full bg-gray-900">
+              <div className="flex items-center justify-center h-full bg-gray-900/50">
                 <div className="text-gray-500 text-xs">Loading...</div>
               </div>
             ) : graphData.nodes.length === 0 ? (
-              <div className="flex items-center justify-center h-full bg-gray-900">
+              <div className="flex items-center justify-center h-full bg-gray-900/50">
                 <div className="text-gray-500 text-xs">No notes</div>
               </div>
             ) : (
@@ -122,11 +277,35 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 height={dimensions.height}
                 backgroundColor="#1f2937"
                 nodeColor={(node: GraphNode) => node.color || '#6366f1'}
-                nodeVal={(node: GraphNode) => node.size || 8}
+                nodeVal={(node: GraphNode) => (node.size || nodeSize)}
                 nodeLabel={(node: GraphNode) => node.title}
                 linkColor={() => '#4b5563'}
-                linkWidth={() => 1}
+                linkWidth={() => linkThickness}
                 onNodeClick={handleNodeClick}
+                nodeCanvasObject={(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
+                  const label = node.title;
+                  const fontSize = 10 / globalScale;
+                  const radius = (node.size || nodeSize) / 2;
+                  
+                  // Draw node circle
+                  ctx.beginPath();
+                  ctx.arc(node.x!, node.y!, radius, 0, 2 * Math.PI);
+                  ctx.fillStyle = node.color || '#6366f1';
+                  ctx.fill();
+                  
+                  // Draw label when zoomed in enough
+                  if (globalScale > textThreshold) {
+                    const textWidth = ctx.measureText(label).width;
+                    const padding = 4;
+                    
+                    // Text (no background - fully transparent)
+                    ctx.font = `${fontSize}px Inter, system-ui, sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = '#e5e7eb';
+                    ctx.fillText(label, node.x!, node.y! + radius + fontSize / 2 + 4);
+                  }
+                }}
                 cooldownTicks={50}
                 d3AlphaDecay={0.05}
                 d3VelocityDecay={0.3}
@@ -138,7 +317,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
           
           {/* Simple Stats */}
           {!isLoading && graphData.nodes.length > 0 && (
-            <div className="px-3 py-1 bg-gray-800 text-xs text-gray-500 border-t border-gray-700">
+            <div className="px-3 py-1 bg-gray-800/50 text-xs text-gray-500 border-t border-gray-700">
               {graphData.nodes.length} notes
             </div>
           )}
