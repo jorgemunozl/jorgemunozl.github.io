@@ -20,39 +20,28 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, showHomeButton = true })
   };
 
   return (
-    <header className="border-b border-border bg-background/20 backdrop-blur-sm">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <button 
-              onClick={() => navigate('/')}
-              className="flex items-center hover:opacity-80 transition-opacity cursor-pointer"
-              title="Go to homepage"
-            >
-              <img 
-                src="/path412.svg" 
-                alt="Home" 
-                className="w-8 h-8 mr-2 dark:invert cursor-pointer transition-transform duration-500 ease-in-out"
-                style={{ transform: `rotate(${rotation}deg)` }}
-                onClick={handleIconClick}
-              />
-              <h1 className="text-lg font-medium text-foreground">{title}</h1>
-            </button>
-          </div>
-          <div className="flex items-center gap-2">
-            {showHomeButton && (
-              <Button
-                onClick={() => navigate('/')}
-                variant="ghost"
-                size="sm"
-                className="text-purple-400 hover:text-purple-300 hover:bg-gray-800/50"
-              >
-                <Home className="w-4 h-4 mr-2" />
-                Home
-              </Button>
-            )}
-            <ThemeToggle />
-          </div>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-transparent">
+      <div className="flex items-center justify-between px-6 py-4">
+        {/* Left side - Home icon only */}
+        <div className="flex items-center">
+          <button 
+            onClick={() => navigate('/')}
+            className="hover:opacity-80 transition-opacity cursor-pointer"
+            title="Go to homepage"
+          >
+            <img 
+              src="/path412.svg" 
+              alt="" 
+              className="w-10 h-10 dark:invert cursor-pointer transition-transform duration-500 ease-in-out"
+              style={{ transform: `rotate(${rotation}deg)` }}
+              onClick={handleIconClick}
+            />
+          </button>
+        </div>
+
+        {/* Right side - Theme toggle */}
+        <div className="flex items-center">
+          <ThemeToggle />
         </div>
       </div>
     </header>

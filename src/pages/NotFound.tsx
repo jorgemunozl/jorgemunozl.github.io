@@ -1,6 +1,8 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import PageHeader from '@/components/PageHeader';
+import Footer from '@/components/Footer';
+import RelativityFieldLines from '@/components/RelativityFieldLines';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Home } from 'lucide-react';
@@ -17,21 +19,25 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-gray-900 to-black">
-      <PageHeader title="Home" showHomeButton={false} />
-      <div className="flex items-center justify-center min-h-[80vh]">
-        <div className="text-center">
-          <h1 className="text-6xl font-bold mb-4 text-white">404</h1>
-          <p className="text-xl text-gray-300 mb-8">Oops! The page you're looking for doesn't exist</p>
-          <Button 
-            onClick={() => navigate('/')}
-            className="bg-purple-600 hover:bg-purple-700 text-white"
-          >
-            <Home className="w-4 h-4 mr-2" />
-            Return to Home
-          </Button>
+    <div className="min-h-screen relative overflow-hidden bg-background gradient-bg flex flex-col">
+      <RelativityFieldLines />
+      <div className="relative z-10 flex-1">
+        <PageHeader title="Home" showHomeButton={false} />
+        <div className="flex items-center justify-center min-h-[80vh] pt-20">
+          <div className="text-center">
+            <h1 className="text-6xl font-bold mb-4 text-foreground">404</h1>
+            <p className="text-xl text-muted-foreground mb-8">Oops! The page you're looking for doesn't exist</p>
+            <Button 
+              onClick={() => navigate('/')}
+              className="bg-purple-600 hover:bg-purple-700 text-white"
+            >
+              <Home className="w-4 h-4 mr-2" />
+              Return to Home
+            </Button>
+          </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

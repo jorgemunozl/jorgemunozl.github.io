@@ -7,6 +7,8 @@ import { BookOpen, Calendar, Search, Clock, ArrowLeft, ExternalLink, Network, Do
 import WikiMarkdown from '@/components/WikiMarkdown';
 import GlobalGraphView from '@/components/GlobalGraphView';
 import LocalGraphView from '@/components/LocalGraphView';
+import RelativityFieldLines from '@/components/RelativityFieldLines';
+import Footer from '@/components/Footer';
 import 'highlight.js/styles/github-dark.css';
 import 'katex/dist/katex.min.css';
 import { blogPosts as importedBlogPosts, BlogPost } from '@/data/notes';
@@ -45,6 +47,7 @@ const Notes = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [showGraphView, setShowGraphView] = useState(false); // Default to hidden
+  const [showSearch, setShowSearch] = useState(false);
   const [selectedNodeInGraph, setSelectedNodeInGraph] = useState<string | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
   const [showTOC, setShowTOC] = useState(false);
@@ -63,6 +66,15 @@ const Notes = () => {
       setPosts(importedBlogPosts);
     }
   }, [posts.length]);
+
+  // Reset view when navigating back to notes list
+  React.useEffect(() => {
+    if (!noteId) {
+      // Clear any selected state when going back to list view
+      setSelectedNodeInGraph(undefined);
+      setShowGraphView(false);
+    }
+  }, [noteId]);
 
   // Handler for wiki link clicks
   const handleWikiLinkClick = (postId: string) => {
@@ -136,16 +148,14 @@ const Notes = () => {
     if (!selectedPost) {
       return (
         <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
+          <RelativityFieldLines />
           <div className="relative z-10">
             <PageHeader title="Home" showHomeButton={false} />
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-2 pt-2 pb-20">
             <div className="text-center">
               <h1 className="text-2xl font-bold text-foreground mb-4">Note Not Found</h1>
               <p className="text-muted-foreground mb-8">The note you are looking for does not exist.</p>
-              <Button onClick={() => navigate('/notes')} className="bg-purple-600 hover:bg-purple-700">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Notes
-              </Button>
+              {/* Removed Return to Notes button per request */}
             </div>
           </div>
           </div>
@@ -155,18 +165,10 @@ const Notes = () => {
 
     return (
       <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
+        <RelativityFieldLines />
         <PageHeader title="Home" showHomeButton={false} />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="mb-8">
-            <Button 
-              onClick={() => navigate('/notes')} 
-              variant="ghost" 
-              className="text-foreground hover:text-muted-foreground mb-4"
-            >as
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Notes
-            </Button>
-            
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pt-6 pb-20 relative z-20">
+          <div className="mb-8 relative z-30">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h1 className="text-2xl font-bold text-foreground mb-2">{selectedPost.title}</h1>
@@ -190,6 +192,14 @@ const Notes = () => {
               </div>
               
               <div className="flex items-center space-x-3">
+                <Button 
+                  onClick={() => navigate('/notes')}
+                  variant="outline" 
+                  className="text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Notes
+                </Button>
                 <Button 
                   onClick={() => setShowTOC(!showTOC)}
                   variant="outline" 
@@ -361,14 +371,16 @@ const Notes = () => {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
-      <div className="relative z-10">
+    <div className="min-h-screen relative overflow-hidden bg-background gradient-bg flex flex-col">
+      <RelativityFieldLines />
+      <div className="relative z-10 flex-1">
         <PageHeader title="Home" showHomeButton={false} />
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pt-8">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <div className="flex justify-center mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Atomic Notes</h1>
+          <div className="flex justify-center items-center gap-2 mb-4">
             <Button 
               onClick={toggleGraphView}
               variant="outline" 
@@ -377,22 +389,35 @@ const Notes = () => {
               <Network className="w-4 h-4 mr-2" />
               {showGraphView ? 'Hide Graph' : 'Show Graph'}
             </Button>
+            <Button
+              onClick={() => setShowSearch((v) => !v)}
+              variant="outline"
+              aria-label="Toggle search"
+              className="text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400 p-2 h-9 w-9 rounded-full flex items-center justify-center"
+            >
+              <Search className="w-4 h-4" />
+            </Button>
           </div>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             A collection of my thoughts, discoveries, and learnings in mathematics, physics, and computer science.
           </p>
         </div>
 
-        {/* Search and Filter */}
-        <div className="mb-8 space-y-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-500 w-5 h-5" />
+        {/* Search and Filter (animated) */}
+        <div
+          className={`mb-8 space-y-4 overflow-hidden transition-all duration-300 ease-out ${
+            showSearch ? 'opacity-100 translate-y-0 max-h-28' : 'opacity-0 -translate-y-2 max-h-0 pointer-events-none'
+          }`}
+          aria-hidden={!showSearch}
+        >
+          <div className={`relative transition-transform duration-300 ${showSearch ? 'scale-100' : 'scale-95'}`}>
             <Input
               type="text"
               placeholder="Search notes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 py-3 text-lg bg-card/30 border-border/50 backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:border-purple-500"
+              className="px-4 py-3 text-lg bg-card/30 border-purple-200 dark:border-purple-800/50 backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:border-purple-500"
+              autoFocus={showSearch}
             />
           </div>
         </div>
@@ -409,7 +434,7 @@ const Notes = () => {
             currentPosts.map((post) => (
               <Card 
                 key={post.id} 
-                className="bg-card/30 border-border/50 backdrop-blur-sm hover:shadow-lg hover:shadow-gray-900/20 transition-shadow duration-300"
+                className="bg-card/30 border-purple-200 dark:border-purple-800/50 backdrop-blur-sm hover:shadow-lg hover:shadow-purple-500/20 transition-shadow duration-300"
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
@@ -428,7 +453,7 @@ const Notes = () => {
                     {post.excerpt}
                   </p>
                   {/* Date and Read Time at Bottom */}
-                  <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto border-t border-border pt-3">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto border-t border-purple-200 dark:border-purple-800/50 pt-3">
                     <div className="flex items-center">
                       <Calendar className="w-3 h-3 mr-1" />
                       {new Date(post.uploadDate).toLocaleString('en-US', { 
@@ -506,6 +531,8 @@ const Notes = () => {
         />
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 };
