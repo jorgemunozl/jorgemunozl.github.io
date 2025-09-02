@@ -167,7 +167,7 @@ const Notes = () => {
       <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
         <RelativityFieldLines />
         <PageHeader title="Home" showHomeButton={false} />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pt-6 pb-20 relative z-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pt-24 pb-20 relative z-20">
           <div className="mb-8 relative z-30">
             <div className="flex items-center justify-between mb-6">
               <div>
@@ -376,7 +376,7 @@ const Notes = () => {
       <div className="relative z-10 flex-1">
         <PageHeader title="Home" showHomeButton={false} />
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pt-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pt-24">
         {/* Header Section */}
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Atomic Notes</h1>

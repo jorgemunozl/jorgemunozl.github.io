@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
+import * as d3 from 'd3';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -34,7 +35,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
   
   // Physics forces
   const [centerForce, setCenterForce] = useState(0);
-  const [repelForce, setRepelForce] = useState(-2);
+  const [repelForce, setRepelForce] = useState(-120);
   const [linkForce, setLinkForce] = useState(1);
   const [linkDistance, setLinkDistance] = useState(30);
   
@@ -78,12 +79,25 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
   useEffect(() => {
     if (graphRef.current) {
       const fg = graphRef.current;
-      
-      // Update forces
-      fg.d3Force('center').strength(centerForce);
-      fg.d3Force('charge').strength(repelForce);
-      fg.d3Force('link').strength(linkForce).distance(linkDistance);
-      
+
+      // Center attraction via radial force to avoid .strength on center (not supported)
+      if (centerForce > 0) {
+        fg.d3Force('radial', d3.forceRadial(0).strength(centerForce));
+      } else {
+        fg.d3Force('radial', null);
+      }
+
+      // Update charge and link forces
+      const charge = fg.d3Force('charge');
+      if (charge && typeof (charge as any).strength === 'function') {
+        (charge as any).strength(repelForce);
+      }
+
+      const link = fg.d3Force('link');
+      if (link && typeof (link as any).strength === 'function') {
+        (link as any).strength(linkForce).distance(linkDistance);
+      }
+
       // Restart simulation
       fg.d3ReheatSimulation();
     }
@@ -113,52 +127,19 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     }, 500);
   };
 
-  // Obsidian-like drag handlers
-  const handleNodeDrag = (node: any, translate: { x: number; y: number }) => {
-    // Fix node position during drag
-    node.fx = translate.x;
-    node.fy = translate.y;
-    
-    // Gently heat simulation for responsiveness without too much chaos
-    const fg: any = graphRef.current;
-    if (fg) {
-      fg.d3AlphaTarget(0.1);
-    }
-  };
-
+  // Smooth release after dragging (Obsidian-like)
   const handleNodeDragEnd = (node: any) => {
-    // Keep node fixed for a moment
     // Clear any existing rearrangement timeout
     if (rearrangeTimeoutRef.current) {
       window.clearTimeout(rearrangeTimeoutRef.current);
     }
 
-    const fg: any = graphRef.current;
-    if (fg) {
-      // Cool down simulation immediately
-      fg.d3AlphaTarget(0);
-      
-      // After 2 seconds, start smooth rearrangement like Obsidian
-      rearrangeTimeoutRef.current = window.setTimeout(() => {
-        // Release the fixed position
-        node.fx = undefined;
-        node.fy = undefined;
-        
-        // Gently reheat simulation for smooth rearrangement
-        fg.d3AlphaTarget(0.3);
-        
-        // Let it run for a bit then gradually cool down
-        setTimeout(() => {
-          fg.d3AlphaTarget(0.1);
-          setTimeout(() => {
-            fg.d3AlphaTarget(0.05);
-            setTimeout(() => {
-              fg.d3AlphaTarget(0);
-            }, 1000);
-          }, 1000);
-        }, 500);
-      }, 2000);
-    }
+    // After 2 seconds, start smooth rearrangement like Obsidian
+    rearrangeTimeoutRef.current = window.setTimeout(() => {
+      // Release the fixed position
+      node.fx = undefined;
+      node.fy = undefined;
+    }, 2000);
   };
 
   if (!isVisible) return null;
@@ -169,7 +150,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
 
   return (
     <div className={containerClasses}>
-      <Card className={`group bg-transparent border border-gray-200/30 dark:border-gray-700/30 shadow-sm backdrop-blur-none rounded-lg ${isFullscreen ? 'w-full h-full max-w-none' : 'w-[400px]'} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : 'h-[350px]')}`}>
+      <Card className={`group bg-transparent border border-gray-200/30 dark:border-gray-700/30 shadow-sm backdrop-blur-none rounded-lg ${isFullscreen ? 'w-full h-full max-w-none' : ''} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : '')}`} style={!isFullscreen ? { width: dimensions.width } : undefined}>
         
         {/* Detachable Controls Arrow - appears on hover */}
         <div className="absolute -top-2 -right-2 opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300 z-50">
@@ -312,7 +293,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
           </div>
         )}
         <CardContent className="p-0 bg-transparent">
-          <div className={`relative overflow-hidden bg-transparent ${isFullscreen ? 'h-full' : showControls ? 'h-80' : 'h-80'}`}>
+          <div className={`relative overflow-hidden bg-transparent ${isFullscreen ? 'h-full' : ''}`} style={!isFullscreen ? { height: dimensions.height } : undefined}>
             {isLoading ? (
               <div className="flex items-center justify-center h-full bg-transparent">
                 <div className="text-gray-500 text-xs">Loading...</div>
@@ -329,18 +310,21 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 height={dimensions.height}
                 backgroundColor="transparent"
                 nodeColor={(node: GraphNode) => node.color || '#6366f1'}
-                nodeVal={(node: GraphNode) => (node.size || nodeSize)}
+                // Scale intrinsic node size by the slider to ensure slider always has effect
+                nodeVal={(node: GraphNode) => {
+                  const base = node.size || 10;
+                  return base * (nodeSize / 6);
+                }}
                 nodeLabel={(node: GraphNode) => node.title}
                 linkColor={() => '#4b5563'}
                 linkWidth={() => linkThickness}
                 onNodeClick={handleNodeClick}
                 enableNodeDrag={true}
-                onNodeDrag={handleNodeDrag}
                 onNodeDragEnd={handleNodeDragEnd}
                 nodeCanvasObject={(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
                   const label = node.title;
                   const fontSize = 10 / globalScale;
-                  const radius = (node.size || nodeSize) / 2;
+                  const radius = ((node.size || 10) * (nodeSize / 6)) / 2;
                   
                   // Draw node circle
                   ctx.beginPath();
@@ -361,9 +345,9 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                     ctx.fillText(label, node.x!, node.y! + radius + fontSize / 2 + 4);
                   }
                 }}
-                cooldownTicks={120}
-                d3AlphaDecay={0.0228}
-                d3VelocityDecay={0.4}
+                cooldownTicks={50}
+                d3AlphaDecay={0.05}
+                d3VelocityDecay={0.3}
                 d3AlphaMin={0.001}
                 enablePanInteraction={true}
                 enableZoomInteraction={true}
