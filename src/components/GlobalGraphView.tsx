@@ -3,9 +3,10 @@ import ForceGraph2D from 'react-force-graph-2d';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { X, Maximize2, Minimize2, RefreshCw, Globe, Network, Settings } from 'lucide-react';
+import { X, Maximize2, Minimize2, RefreshCw, Network, Settings } from 'lucide-react';
 import { buildGraphFromPosts, GraphData, GraphNode, GraphLink } from '@/utils/wikiLinks';
 import { blogPosts } from '@/data/notes';
+import { useTheme } from 'next-themes';
 
 interface GlobalGraphViewProps {
   isVisible: boolean;
@@ -19,6 +20,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
   onNodeClick
 }) => {
   const graphRef = useRef<any>(null);
+  const { theme } = useTheme();
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -111,15 +113,15 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
   if (!isVisible) return null;
 
   const containerClasses = isFullscreen
-    ? 'fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center'
+    ? 'fixed inset-0 z-50 bg-black/90 dark:bg-black/90 flex items-center justify-center'
     : 'fixed top-4 right-4 z-40';
 
   return (
     <div className={containerClasses}>
-      <Card className={`bg-gray-900/50 border-gray-700/50 shadow-lg backdrop-blur-sm ${isFullscreen ? 'w-full h-full max-w-none' : 'w-[400px]'} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : 'h-[350px]')}`}>
+      <Card className={`bg-white/95 dark:bg-gray-900/50 border-gray-200/50 dark:border-gray-700/50 shadow-lg backdrop-blur-sm ${isFullscreen ? 'w-full h-full max-w-none' : 'w-[400px]'} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : 'h-[350px]')}`}>
         <CardHeader className="pb-2 px-3 py-2">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-gray-300 text-xs font-normal">
+            <CardTitle className="text-gray-700 dark:text-gray-300 text-xs font-normal">
               Graph
             </CardTitle>
             <div className="flex items-center space-x-1">
@@ -127,7 +129,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowControls(!showControls)}
-                className="text-gray-500 hover:text-gray-300 p-0 h-4 w-4"
+                className="text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 p-0 h-4 w-4"
               >
                 <Settings className="w-3 h-3" />
               </Button>
@@ -135,7 +137,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={onClose}
-                className="text-gray-500 hover:text-gray-300 p-0 h-4 w-4"
+                className="text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 p-0 h-4 w-4"
               >
                 <X className="w-3 h-3" />
               </Button>
@@ -145,11 +147,11 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
         
         {/* Graph Controls - Now above the graph */}
         {showControls && (
-          <div className="mx-3 mb-2 p-2 bg-gray-800/50 rounded border border-gray-700 space-y-2">
+          <div className="mx-3 mb-2 p-2 bg-gray-100/80 dark:bg-gray-800/50 rounded border border-gray-300/50 dark:border-gray-700 space-y-2">
             <div className="space-y-1">
               <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-400">Node Size</span>
-                <span className="text-xs text-gray-500">{nodeSize}</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">Node Size</span>
+                <span className="text-xs text-gray-700 dark:text-gray-500">{nodeSize}</span>
               </div>
               <Slider
                 value={[nodeSize]}
@@ -163,7 +165,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
             
             <div className="space-y-1">
               <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-400">Link Thickness</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">Link Thickness</span>
                 <span className="text-xs text-gray-500">{linkThickness}</span>
               </div>
               <Slider
@@ -178,7 +180,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
             
             <div className="space-y-1">
               <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-400">Text Threshold</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">Text Threshold</span>
                 <span className="text-xs text-gray-500">{textThreshold.toFixed(1)}</span>
               </div>
               <Slider
@@ -198,7 +200,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
               <div className="space-y-2">
                 <div className="space-y-1">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-400">Center Force</span>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Center Force</span>
                     <span className="text-xs text-gray-500">{centerForce.toFixed(2)}</span>
                   </div>
                   <Slider
@@ -213,7 +215,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 
                 <div className="space-y-1">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-400">Repel Force</span>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Repel Force</span>
                     <span className="text-xs text-gray-500">{repelForce}</span>
                   </div>
                   <Slider
@@ -228,7 +230,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 
                 <div className="space-y-1">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-400">Link Force</span>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Link Force</span>
                     <span className="text-xs text-gray-500">{linkForce.toFixed(1)}</span>
                   </div>
                   <Slider
@@ -243,7 +245,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 
                 <div className="space-y-1">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-400">Link Distance</span>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Link Distance</span>
                     <span className="text-xs text-gray-500">{linkDistance}</span>
                   </div>
                   <Slider
