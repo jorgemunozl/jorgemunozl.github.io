@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Navigation from '@/components/Navigation';
+import PageHeader from '@/components/PageHeader';
 import Footer from '@/components/Footer';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ interface PDFDocument {
   title: string;
   description: string;
   filePath: string;
+  imagePath?: string;
   uploadDate: string;
   category: string;
   thumbnailUrl?: string;
@@ -19,63 +20,34 @@ interface PDFDocument {
 const pdfDocuments: PDFDocument[] = [
   {
     id: '1',
-    title: 'Machine Learning Fundamentals',
+    title: 'Depseek',
     description: 'Comprehensive guide to machine learning concepts and algorithms',
-    filePath: '/pdfs/ml-fundamentals.pdf',
+    filePath: '/pdfs/DeepSeekV2.pdf',
+    imagePath: '/images/deep.png',
     uploadDate: '2025-08-15',
     category: 'Computer Science'
   },
   {
     id: '2',
-    title: 'Linear Algebra Reference',
+    title: 'Dirac Braket Notation',
     description: 'Essential linear algebra concepts for data science',
     filePath: '/pdfs/linear-algebra.pdf',
+    imagePath: '/images/dirac.png',
     uploadDate: '2025-08-20',
     category: 'Mathematics'
   },
   {
     id: '3',
-    title: 'Deep Learning Architecture',
-    description: 'Modern deep learning architectures and implementations',
+    title: 'El dia D',
+    description: 'estuff',
     filePath: '/pdfs/deep-learning.pdf',
+    imagePath: '/images/dia-d.png',
     uploadDate: '2025-08-25',
-    category: 'Computer Science'
-  },
-  {
-    id: '4',
-    title: 'Research Methodology',
-    description: 'Guide to academic research and paper writing',
-    filePath: '/pdfs/research-methods.pdf',
-    uploadDate: '2025-09-01',
-    category: 'Academic'
-  },
-  {
-    id: '5',
-    title: 'Statistics and Probability',
-    description: 'Statistical methods and probability theory',
-    filePath: '/pdfs/statistics.pdf',
-    uploadDate: '2025-08-10',
-    category: 'Mathematics'
-  },
-  {
-    id: '6',
-    title: 'Neural Network Optimization',
-    description: 'Advanced optimization techniques for neural networks',
-    filePath: '/pdfs/nn-optimization.pdf',
-    uploadDate: '2025-08-30',
     category: 'Computer Science'
   }
 ];
 
 const AdditionalContents = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  
-  const categories = ['All', ...Array.from(new Set(pdfDocuments.map(doc => doc.category)))];
-  
-  const filteredDocuments = selectedCategory === 'All' 
-    ? pdfDocuments 
-    : pdfDocuments.filter(doc => doc.category === selectedCategory);
-
   const handleView = (filePath: string) => {
     // Open PDF in a new tab
     window.open(filePath, '_blank');
@@ -92,114 +64,110 @@ const AdditionalContents = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Navigation />
+    <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
+      {/* Lightbulb glow effect - fixed to viewport bottom (dark mode only) */}
+      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-0 hidden dark:block">
+        <div className="w-96 h-96 rounded-full blur-3xl" style={{background: 'radial-gradient(circle, #030d630c, #47020209, transparent)'}}></div>
+      </div>
+      <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-0 hidden dark:block">
+        <div className="w-48 h-48 rounded-full blur-2xl" style={{background: 'radial-gradient(circle, #9900000c, #01039b0c, #b902a005)'}}></div>
+      </div>
       
-      <main className="flex-1 pt-16">
-        <div className="container mx-auto px-4 py-8">
-          <div className="max-w-6xl mx-auto">
-            {/* Header */}
-            <div className="text-center mb-12">
-              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent mb-4">
-                Additional Contents
-              </h1>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Explore our collection of PDF documents, research papers, and supplementary materials
-              </p>
-            </div>
-
-            {/* Category Filter */}
-            <div className="flex flex-wrap justify-center gap-2 mb-8">
-              {categories.map((category) => (
-                <Button
-                  key={category}
-                  variant={selectedCategory === category ? "default" : "outline"}
-                  onClick={() => setSelectedCategory(category)}
-                  className={
-                    selectedCategory === category
-                      ? "bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white"
-                      : "border-purple-200 text-purple-700 hover:bg-purple-50 hover:text-purple-800 hover:border-purple-300 dark:border-purple-800 dark:text-purple-300 dark:hover:bg-purple-950 dark:hover:text-purple-200 dark:hover:border-purple-700"
-                  }
-                >
-                  {category}
-                </Button>
-              ))}
-            </div>
-
-            {/* PDF Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredDocuments.map((document) => (
-                <Card 
-                  key={document.id} 
-                  className="group border-purple-200 dark:border-purple-800/50 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 bg-card/50 backdrop-blur-sm"
-                >
-                  <CardContent className="p-6">
-                    {/* Document Icon/Thumbnail */}
-                    <div className="aspect-square bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900/30 dark:to-purple-800/30 rounded-lg flex items-center justify-center mb-4 group-hover:scale-105 transition-transform duration-300">
-                      <FileText className="w-12 h-12 text-purple-600 dark:text-purple-400" />
-                    </div>
-
-                    {/* Document Info */}
-                    <div className="space-y-3">
-                      <div>
-                        <h3 className="font-semibold text-lg text-foreground group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
-                          {document.title}
-                        </h3>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {document.description}
-                        </p>
-                      </div>
-
-                      {/* Metadata */}
-                      <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-purple-200 dark:border-purple-800/50 pt-3">
-                        <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-full">
-                          {document.category}
-                        </span>
-                        <span>{document.uploadDate}</span>
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="flex gap-2 mt-4">
-                        <Button
-                          size="sm"
-                          onClick={() => handleView(document.filePath)}
-                          className="flex-1 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white"
-                        >
-                          <Eye className="w-4 h-4 mr-1" />
-                          View
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleDownload(document.filePath, document.title)}
-                          className="border-purple-200 text-purple-700 hover:bg-purple-50 hover:text-purple-800 hover:border-purple-300 dark:border-purple-800 dark:text-purple-300 dark:hover:bg-purple-950 dark:hover:text-purple-200 dark:hover:border-purple-700"
-                        >
-                          <Download className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {/* Empty State */}
-            {filteredDocuments.length === 0 && (
-              <div className="text-center py-12">
-                <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-muted-foreground mb-2">
-                  No documents found
-                </h3>
-                <p className="text-muted-foreground">
-                  No documents match the selected category.
+      <div className="relative z-10">
+        <PageHeader title="Additional Contents" showHomeButton={false} />
+        
+        <main className="flex-1">
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-6xl mx-auto">
+              {/* Header */}
+              <div className="text-center mb-12">
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  Explore our collection of PDF documents, research papers, and supplementary materials
                 </p>
               </div>
-            )}
-          </div>
-        </div>
-      </main>
 
-      <Footer />
+              {/* PDF Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {pdfDocuments.map((document) => (
+                  <Card 
+                    key={document.id} 
+                    className="group relative bg-card/20 border-0 backdrop-blur-sm hover:bg-card/40 transition-all duration-500 cursor-pointer overflow-visible"
+                    onClick={() => handleView(document.filePath)}
+                  >
+                    {/* Subtle hover glow */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
+                    
+                    <CardContent className="relative p-4">
+                      {/* Document Info */}
+                      <div className="space-y-2">
+                        <div>
+                          <h3 className="font-medium text-base text-foreground group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-300 line-clamp-2">
+                            {document.title}
+                          </h3>
+                          <p className="text-xs text-muted-foreground/80 mt-1 line-clamp-2">
+                            {document.description}
+                          </p>
+                        </div>
+
+                        {/* Minimal metadata and actions */}
+                        <div className="flex items-center justify-between pt-2">
+                          <span className="text-xs text-muted-foreground/60">{document.uploadDate}</span>
+                          
+                          {/* Minimal action icons */}
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleView(document.filePath);
+                              }}
+                              className="p-1.5 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/20 transition-colors duration-200"
+                              title="View PDF"
+                            >
+                              <Eye className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDownload(document.filePath, document.title);
+                              }}
+                              className="p-1.5 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/20 transition-colors duration-200"
+                              title="Download PDF"
+                            >
+                              <Download className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+
+                    {/* Detachable image at bottom - appears on hover */}
+                    {document.imagePath && (
+                      <div className="absolute bottom-0 left-0 right-0 transform translate-y-full opacity-0 group-hover:opacity-100 group-hover:-translate-y-2 transition-all duration-500 z-10">
+                        <div className="mx-4 mb-2 rounded-xl overflow-hidden shadow-xl bg-white dark:bg-gray-800 border border-gray-200/50 dark:border-gray-700/50">
+                          <img 
+                            src={document.imagePath} 
+                            alt={document.title}
+                            className="w-full object-cover"
+                            style={{ aspectRatio: '1.618 / 1' }}
+                            onError={(e) => {
+                              // Hide image container if it fails to load
+                              const target = e.target as HTMLImageElement;
+                              const container = target.closest('div');
+                              if (container) container.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <Footer />
+      </div>
     </div>
   );
 };
