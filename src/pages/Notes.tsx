@@ -137,7 +137,7 @@ const Notes = () => {
       return (
         <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
           <div className="relative z-10">
-            <PageHeader title="Thoughts!" />
+            <PageHeader title="Home" showHomeButton={false} />
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="text-center">
               <h1 className="text-2xl font-bold text-foreground mb-4">Note Not Found</h1>
@@ -155,7 +155,7 @@ const Notes = () => {
 
     return (
       <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
-        <PageHeader title="Thoughts!" />
+        <PageHeader title="Home" showHomeButton={false} />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="mb-8">
             <Button 
@@ -363,7 +363,7 @@ const Notes = () => {
   return (
     <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
       <div className="relative z-10">
-        <PageHeader title="Thoughts!" showHomeButton={false} />
+        <PageHeader title="Home" showHomeButton={false} />
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header Section */}

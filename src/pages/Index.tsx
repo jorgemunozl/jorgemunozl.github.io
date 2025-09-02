@@ -16,7 +16,7 @@ const Index = () => {
       </div>
       
       <div className="relative z-10">
-        <PageHeader title="Thoughts!" showHomeButton={false} />
+        <PageHeader title="Home" showHomeButton={false} />
         <Hero />
         <BlogPreview />
       </div>
