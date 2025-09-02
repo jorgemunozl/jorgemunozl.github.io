@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ThemeToggle from '@/components/ThemeToggle';
+import { useGlobalRotation } from '@/hooks/useGlobalRotation';
 
 interface PageHeaderProps {
   title: string;
@@ -11,6 +12,12 @@ interface PageHeaderProps {
 
 const PageHeader: React.FC<PageHeaderProps> = ({ title, showHomeButton = true }) => {
   const navigate = useNavigate();
+  const { rotation, rotateIcon } = useGlobalRotation();
+
+  const handleIconClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    rotateIcon();
+  };
 
   return (
     <header className="border-b border-border bg-background/20 backdrop-blur-sm">
@@ -25,7 +32,9 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, showHomeButton = true })
               <img 
                 src="/path412.svg" 
                 alt="Home" 
-                className="w-8 h-8 mr-2 dark:invert"
+                className="w-8 h-8 mr-2 dark:invert cursor-pointer transition-transform duration-500 ease-in-out"
+                style={{ transform: `rotate(${rotation}deg)` }}
+                onClick={handleIconClick}
               />
               <h1 className="text-lg font-medium text-foreground">{title}</h1>
             </button>
