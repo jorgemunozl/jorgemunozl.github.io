@@ -6,6 +6,7 @@ import { Slider } from '@/components/ui/slider';
 import { X, Maximize2, Minimize2, RefreshCw, Network, Settings } from 'lucide-react';
 import { buildGraphFromPosts, GraphData, GraphNode, GraphLink, findRelatedNotes } from '@/utils/wikiLinks';
 import { blogPosts, BlogPost } from '@/data/notes';
+import { useTheme } from 'next-themes';
 
 interface LocalGraphViewProps {
   isVisible: boolean;
@@ -21,6 +22,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
   currentNote 
 }) => {
   const graphRef = useRef<any>(null);
+  const { theme } = useTheme();
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -147,15 +149,15 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
   if (!isVisible) return null;
 
   const containerClasses = isFullscreen
-    ? 'fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center'
+    ? 'fixed inset-0 z-50 bg-black/90 dark:bg-black/90 flex items-center justify-center'
     : 'fixed bottom-4 right-4 z-40';
 
   return (
     <div className={containerClasses}>
-      <Card className={`bg-gray-900/50 border-gray-700/50 shadow-lg backdrop-blur-sm ${isFullscreen ? 'w-full h-full max-w-none' : 'w-[350px]'} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : 'h-[280px]')}`}>
+      <Card className={`bg-white/95 dark:bg-gray-900/50 border-gray-200/50 dark:border-gray-700/50 shadow-lg backdrop-blur-sm ${isFullscreen ? 'w-full h-full max-w-none' : 'w-[350px]'} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : 'h-[280px]')}`}>
         <CardHeader className="pb-2 px-3 py-2">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-gray-300 text-xs font-normal">
+            <CardTitle className="text-gray-700 dark:text-gray-300 text-xs font-normal">
               Local Graph
             </CardTitle>
             <div className="flex items-center space-x-1">
@@ -163,7 +165,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowControls(!showControls)}
-                className="text-gray-500 hover:text-gray-300 p-0 h-4 w-4"
+                className="text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 p-0 h-4 w-4"
               >
                 <Settings className="w-3 h-3" />
               </Button>
@@ -171,7 +173,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={onClose}
-                className="text-gray-500 hover:text-gray-300 p-0 h-4 w-4"
+                className="text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 p-0 h-4 w-4"
               >
                 <X className="w-3 h-3" />
               </Button>
@@ -181,11 +183,11 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
         
         {/* Graph Controls - Now above the graph */}
         {showControls && (
-          <div className="mx-3 mb-2 p-2 bg-gray-800/50 rounded border border-gray-700 space-y-2">
+          <div className="mx-3 mb-2 p-2 bg-gray-100/80 dark:bg-gray-800/50 rounded border border-gray-300/50 dark:border-gray-700 space-y-2">
             <div className="space-y-1">
               <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-400">Node Size</span>
-                <span className="text-xs text-gray-500">{nodeSize}</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">Node Size</span>
+                <span className="text-xs text-gray-700 dark:text-gray-500">{nodeSize}</span>
               </div>
               <Slider
                 value={[nodeSize]}
@@ -199,8 +201,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
             
             <div className="space-y-1">
               <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-400">Link Thickness</span>
-                <span className="text-xs text-gray-500">{linkThickness}</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">Link Thickness</span>
+                <span className="text-xs text-gray-700 dark:text-gray-500">{linkThickness}</span>
               </div>
               <Slider
                 value={[linkThickness]}
@@ -214,8 +216,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
             
             <div className="space-y-1">
               <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-400">Text Threshold</span>
-                <span className="text-xs text-gray-500">{textThreshold.toFixed(1)}</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">Text Threshold</span>
+                <span className="text-xs text-gray-700 dark:text-gray-500">{textThreshold.toFixed(1)}</span>
               </div>
               <Slider
                 value={[textThreshold]}
@@ -228,8 +230,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
             </div>
             
             {/* Physics Forces */}
-            <div className="pt-2 border-t border-gray-700">
-              <div className="text-xs text-gray-300 mb-2">Physics Forces</div>
+            <div className="pt-2 border-t border-gray-300/50 dark:border-gray-700">
+              <div className="text-xs text-gray-700 dark:text-gray-300 mb-2">Physics Forces</div>
               
               <div className="space-y-2">
                 <div className="space-y-1">
@@ -249,8 +251,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                 
                 <div className="space-y-1">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-400">Repel Force</span>
-                    <span className="text-xs text-gray-500">{repelForce}</span>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Repel Force</span>
+                    <span className="text-xs text-gray-700 dark:text-gray-500">{repelForce}</span>
                   </div>
                   <Slider
                     value={[repelForce]}
@@ -264,8 +266,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                 
                 <div className="space-y-1">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-400">Link Force</span>
-                    <span className="text-xs text-gray-500">{linkForce.toFixed(1)}</span>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Link Force</span>
+                    <span className="text-xs text-gray-700 dark:text-gray-500">{linkForce.toFixed(1)}</span>
                   </div>
                   <Slider
                     value={[linkForce]}
@@ -279,8 +281,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                 
                 <div className="space-y-1">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-400">Link Distance</span>
-                    <span className="text-xs text-gray-500">{linkDistance}</span>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Link Distance</span>
+                    <span className="text-xs text-gray-700 dark:text-gray-500">{linkDistance}</span>
                   </div>
                   <Slider
                     value={[linkDistance]}
@@ -298,12 +300,12 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
         <CardContent className="p-0">
           <div className={`relative overflow-hidden ${isFullscreen ? 'h-full' : showControls ? 'h-56' : 'h-56'}`}>
             {isLoading ? (
-              <div className="flex items-center justify-center h-full bg-gray-900/50">
-                <div className="text-gray-500 text-xs">Loading...</div>
+              <div className="flex items-center justify-center h-full bg-gray-50/50 dark:bg-gray-900/50">
+                <div className="text-gray-500 dark:text-gray-500 text-xs">Loading...</div>
               </div>
             ) : graphData.nodes.length === 0 ? (
-              <div className="flex items-center justify-center h-full bg-gray-900/50">
-                <div className="text-gray-500 text-xs">No connections</div>
+              <div className="flex items-center justify-center h-full bg-gray-50/50 dark:bg-gray-900/50">
+                <div className="text-gray-500 dark:text-gray-500 text-xs">No connections</div>
               </div>
             ) : (
               <ForceGraph2D
@@ -312,10 +314,13 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                 width={dimensions.width}
                 height={dimensions.height}
                 backgroundColor="transparent"
-                nodeColor={(node: GraphNode) => node.id === currentNote ? '#ef4444' : '#6366f1'}
+                nodeColor={(node: GraphNode) => {
+                  if (node.id === currentNote) return '#ef4444';
+                  return theme === 'dark' ? '#6366f1' : '#8b5cf6';
+                }}
                 nodeVal={(node: GraphNode) => node.id === currentNote ? nodeSize * 1.5 : nodeSize}
                 nodeLabel={(node: GraphNode) => node.title}
-                linkColor={() => '#4b5563'}
+                linkColor={() => theme === 'dark' ? '#4b5563' : '#6b7280'}
                 linkWidth={() => linkThickness}
                 onNodeClick={handleNodeClick}
                 nodeCanvasObject={(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
@@ -326,7 +331,11 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                   // Draw node circle
                   ctx.beginPath();
                   ctx.arc(node.x!, node.y!, radius, 0, 2 * Math.PI);
-                  ctx.fillStyle = node.id === currentNote ? '#ef4444' : '#6366f1';
+                  if (node.id === currentNote) {
+                    ctx.fillStyle = '#ef4444';
+                  } else {
+                    ctx.fillStyle = theme === 'dark' ? '#6366f1' : '#8b5cf6';
+                  }
                   ctx.fill();
                   
                   // Draw label when zoomed in enough
@@ -338,7 +347,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                     ctx.font = `${fontSize}px Inter, system-ui, sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillStyle = '#e5e7eb';
+                    ctx.fillStyle = theme === 'dark' ? '#e5e7eb' : '#374151';
                     ctx.fillText(label, node.x!, node.y! + radius + fontSize / 2 + 4);
                   }
                 }}
