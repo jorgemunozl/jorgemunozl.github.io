@@ -37,6 +37,9 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
   const [repelForce, setRepelForce] = useState(-120);
   const [linkForce, setLinkForce] = useState(1);
   const [linkDistance, setLinkDistance] = useState(30);
+  
+  // Drag rearrangement timer
+  const rearrangeTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (isVisible) {
@@ -110,11 +113,59 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     }, 500);
   };
 
+  // Obsidian-like drag handlers
+  const handleNodeDrag = (node: any, translate: { x: number; y: number }) => {
+    // Fix node position during drag
+    node.fx = translate.x;
+    node.fy = translate.y;
+    
+    // Gently heat simulation for responsiveness without too much chaos
+    const fg: any = graphRef.current;
+    if (fg) {
+      fg.d3AlphaTarget(0.1);
+    }
+  };
+
+  const handleNodeDragEnd = (node: any) => {
+    // Keep node fixed for a moment
+    // Clear any existing rearrangement timeout
+    if (rearrangeTimeoutRef.current) {
+      window.clearTimeout(rearrangeTimeoutRef.current);
+    }
+
+    const fg: any = graphRef.current;
+    if (fg) {
+      // Cool down simulation immediately
+      fg.d3AlphaTarget(0);
+      
+      // After 2 seconds, start smooth rearrangement like Obsidian
+      rearrangeTimeoutRef.current = window.setTimeout(() => {
+        // Release the fixed position
+        node.fx = undefined;
+        node.fy = undefined;
+        
+        // Gently reheat simulation for smooth rearrangement
+        fg.d3AlphaTarget(0.3);
+        
+        // Let it run for a bit then gradually cool down
+        setTimeout(() => {
+          fg.d3AlphaTarget(0.1);
+          setTimeout(() => {
+            fg.d3AlphaTarget(0.05);
+            setTimeout(() => {
+              fg.d3AlphaTarget(0);
+            }, 1000);
+          }, 1000);
+        }, 500);
+      }, 2000);
+    }
+  };
+
   if (!isVisible) return null;
 
   const containerClasses = isFullscreen
     ? 'fixed inset-0 z-50 bg-black/90 dark:bg-black/90 flex items-center justify-center'
-    : 'fixed top-4 right-4 z-40';
+    : 'fixed bottom-20 right-4 z-40';
 
   return (
     <div className={containerClasses}>
@@ -284,6 +335,9 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 linkColor={() => '#4b5563'}
                 linkWidth={() => linkThickness}
                 onNodeClick={handleNodeClick}
+                enableNodeDrag={true}
+                onNodeDrag={handleNodeDrag}
+                onNodeDragEnd={handleNodeDragEnd}
                 nodeCanvasObject={(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
                   const label = node.title;
                   const fontSize = 10 / globalScale;
@@ -308,9 +362,10 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                     ctx.fillText(label, node.x!, node.y! + radius + fontSize / 2 + 4);
                   }
                 }}
-                cooldownTicks={50}
-                d3AlphaDecay={0.05}
-                d3VelocityDecay={0.3}
+                cooldownTicks={120}
+                d3AlphaDecay={0.0228}
+                d3VelocityDecay={0.4}
+                d3AlphaMin={0.001}
                 enablePanInteraction={true}
                 enableZoomInteraction={true}
               />

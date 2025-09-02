@@ -3,9 +3,9 @@ import { Mail, Linkedin, Twitter, Github } from 'lucide-react';
 
 const Hero = () => {
   return (
-    <section className="relative py-16 overflow-hidden">
+    <section className="relative py-1 overflow-hidden">
       <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="mb-12">
+        <div className="mb-8">
           <div className="flex items-center justify-center mb-6">
             <h1 className="text-5xl md:text-6xl font-bold text-foreground">
               👋 welcome to mun

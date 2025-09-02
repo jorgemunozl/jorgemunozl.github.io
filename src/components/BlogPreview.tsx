@@ -19,9 +19,9 @@ const BlogPreview = () => {
   };
 
   return (
-    <section className="py-8">
+    <section className="py-5">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="space-y-6 mb-8">
+        <div className="space-y-6 mb-6">
           {recentPosts.map((post) => (
             <Card key={post.id} className="bg-card/30 border-purple-200 dark:border-purple-800/50 backdrop-blur-sm hover:shadow-lg hover:shadow-purple-500/20 transition-shadow duration-300">
               <CardHeader className="pb-3">
