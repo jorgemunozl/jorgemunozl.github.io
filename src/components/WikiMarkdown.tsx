@@ -44,7 +44,7 @@ const WikiMarkdown: React.FC<WikiMarkdownProps> = ({
     <div className={`${className} wiki-markdown`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[rehypeHighlight, rehypeKatex]}
+        rehypePlugins={[[rehypeHighlight, { detect: true, ignoreMissing: true }], rehypeKatex]}
         components={{
           // Custom heading components with auto-generated IDs
           h1: createHeadingComponent(1),

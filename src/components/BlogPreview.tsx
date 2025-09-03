@@ -72,7 +72,7 @@ const BlogPreview = () => {
             <Button 
               onClick={() => navigate('/additional-contents')}
               variant="outline"
-              className="border-purple-200 text-purple-700 hover:bg-purple-50 hover:text-purple-800 hover:border-purple-300 dark:border-purple-800 dark:text-purple-300 dark:hover:bg-purple-950 dark:hover:text-purple-200 dark:hover:border-purple-700"
+              className="border-purple-200 text-gree-700 hover:bg-gree-50 hover:text-purple-800 hover:border-purple-300 dark:border-purple-800 dark:text-purple-300 dark:hover:bg-purple-950 dark:hover:text-purple-200 dark:hover:border-purple-700"
             >
               Additional Contents
             </Button>

@@ -28,6 +28,17 @@ Mathematical proofs are essential in:
 - Neural network convergence guarantees
 - Optimization theory
 
+Inline math works too, for example $E = mc^2$, and display math:
+
+$$
+\int_0^1 x^2 \, dx = \frac{1}{3}
+$$
+
+Image 
+
+![prove.png]
+
+
 ### Algorithm Correctness
 
 ```python
@@ -60,4 +71,4 @@ Understanding proofs is crucial for developing robust algorithms and ensuring th
 
 ---
 
-*This note demonstrates the importance of mathematical reasoning in computational thinking and serves as a foundational concept for more advanced topics in artificial intelligence and machine learning.*
+*This note demonstrates the importance of mathematical reasoning in computational thinking and serves as a foundational concept for more advanced topics in artificial intelligence and machine learning.* $\frac{1}{2}$

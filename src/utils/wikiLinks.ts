@@ -28,6 +28,16 @@ export interface GraphData {
   links: GraphLink[];
 }
 
+// Normalize titles/targets for robust matching (case, spaces, hyphens)
+export function normalizeTitle(input: string): string {
+  return input
+    .trim()
+    .toLowerCase()
+    // treat hyphens and multiple spaces the same
+    .replace(/[-_]+/g, ' ')
+    .replace(/\s+/g, ' ');
+}
+
 /**
  * Extract WikiLinks [[]] from text content
  */
@@ -129,7 +139,10 @@ export function buildGraphFromPosts(posts: Array<{ id: string; title: string; co
     const wikiLinks = extractWikiLinks(post.content);
     
     wikiLinks.forEach(link => {
-      const targetTitle = link.target;
+      // Try to resolve target to an existing post title using normalization
+      const normalizedTarget = normalizeTitle(link.target);
+      const matchedPost = posts.find(p => normalizeTitle(p.title) === normalizedTarget);
+      const targetTitle = matchedPost ? matchedPost.title : link.target;
       
       // Create target node if it doesn't exist (orphaned link)
       if (!nodes.has(targetTitle)) {
@@ -188,13 +201,14 @@ export function buildGraphFromPosts(posts: Array<{ id: string; title: string; co
  */
 export function findRelatedNotes(currentTitle: string, posts: Array<{ id: string; title: string; content: string }>): string[] {
   const related = new Set<string>();
+  const normalizedCurrent = normalizeTitle(currentTitle);
   
   // Find notes that link to current note
   posts.forEach(post => {
     if (post.title === currentTitle) return;
     
     const links = extractWikiLinks(post.content);
-    if (links.some(link => link.target === currentTitle)) {
+    if (links.some(link => normalizeTitle(link.target) === normalizedCurrent)) {
       related.add(post.title);
     }
   });
@@ -204,7 +218,7 @@ export function findRelatedNotes(currentTitle: string, posts: Array<{ id: string
   if (currentPost) {
     const links = extractWikiLinks(currentPost.content);
     links.forEach(link => {
-      const targetPost = posts.find(p => p.title === link.target);
+      const targetPost = posts.find(p => normalizeTitle(p.title) === normalizeTitle(link.target));
       if (targetPost) {
         related.add(targetPost.title);
       }

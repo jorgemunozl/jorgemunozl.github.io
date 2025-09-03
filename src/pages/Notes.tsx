@@ -9,11 +9,13 @@ import GlobalGraphView from '@/components/GlobalGraphView';
 import LocalGraphView from '@/components/LocalGraphView';
 import RelativityFieldLines from '@/components/RelativityFieldLines';
 import Footer from '@/components/Footer';
-import 'highlight.js/styles/github-dark.css';
+import { useTheme } from 'next-themes';
+import hljsLight from 'highlight.js/styles/github.css?raw';
+import hljsDark from 'highlight.js/styles/github-dark.css?raw';
 import 'katex/dist/katex.min.css';
 import { blogPosts as importedBlogPosts, BlogPost } from '@/data/notes';
 import PageHeader from '@/components/PageHeader';
-import { findRelatedNotes } from '@/utils/wikiLinks';
+import { findRelatedNotes, normalizeTitle } from '@/utils/wikiLinks';
 
 // Function to remove YAML frontmatter from content
 const removeFrontmatter = (content: string): string => {
@@ -44,6 +46,7 @@ const extractHeadings = (content: string) => {
 };
 
 const Notes = () => {
+  const { theme } = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [showGraphView, setShowGraphView] = useState(false); // Default to hidden
@@ -59,6 +62,24 @@ const Notes = () => {
   const params = useParams();
   const navigate = useNavigate();
   const noteId = params.id;
+
+  // Inject appropriate highlight.js theme based on current theme
+  React.useEffect(() => {
+    const id = 'hljs-theme';
+    let styleTag = document.getElementById(id) as HTMLStyleElement | null;
+    if (!styleTag) {
+      styleTag = document.createElement('style');
+      styleTag.id = id;
+      document.head.appendChild(styleTag);
+    }
+    const isDark = theme === 'dark';
+    styleTag.textContent = isDark ? hljsDark : hljsLight;
+    return () => {
+      // Clean up on unmount to avoid duplicates
+      const existing = document.getElementById(id);
+      if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+    };
+  }, [theme]);
 
   // Initialize posts with imported data from generated file
   React.useEffect(() => {
@@ -83,7 +104,8 @@ const Notes = () => {
 
   // Handler for graph node clicks
   const handleGraphNodeClick = (nodeId: string) => {
-    const matchingPost = posts.find(post => post.title === nodeId);
+    const targetNorm = normalizeTitle(nodeId);
+    const matchingPost = posts.find(post => normalizeTitle(post.title) === targetNorm);
     if (matchingPost) {
       setSelectedNodeInGraph(nodeId);
       navigate(`/notes/${matchingPost.id}`);
@@ -151,7 +173,7 @@ const Notes = () => {
           <RelativityFieldLines />
           <div className="relative z-10">
             <PageHeader title="Home" showHomeButton={false} />
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-2 pt-2 pb-20">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-2 pt-28 pb-20">
             <div className="text-center">
               <h1 className="text-2xl font-bold text-foreground mb-4">Note Not Found</h1>
               <p className="text-muted-foreground mb-8">The note you are looking for does not exist.</p>
@@ -166,8 +188,9 @@ const Notes = () => {
     return (
       <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
         <RelativityFieldLines />
+        {/* Removed light-mode decorative glows inside note view */}
         <PageHeader title="Home" showHomeButton={false} />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pt-24 pb-20 relative z-20">
+        <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-8 pt-28 pb-24 relative z-20">
           <div className="mb-8 relative z-30">
             <div className="flex items-center justify-between mb-6">
               <div>
@@ -195,7 +218,7 @@ const Notes = () => {
                 <Button 
                   onClick={() => navigate('/notes')}
                   variant="outline" 
-                  className="text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400"
+                  className="bg-black text-white border-black hover:bg-gray-800 hover:text-white dark:text-blue-500 dark:border-blue-500 dark:bg-transparent dark:hover:bg-transparent dark:hover:text-blue-400"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Notes
@@ -203,7 +226,7 @@ const Notes = () => {
                 <Button 
                   onClick={() => setShowTOC(!showTOC)}
                   variant="outline" 
-                  className="text-blue-500 border-blue-500 bg-transparent hover:bg-transparent hover:text-blue-400"
+                  className="bg-black text-white border-black hover:bg-gray-800 hover:text-white dark:text-red-500 dark:border-red-500 dark:bg-transparent dark:hover:bg-transparent dark:hover:text-red-400"
                 >
                   <List className="w-4 h-4 mr-2" />
                   {showTOC ? 'Hide TOC' : 'Show TOC'}
@@ -219,7 +242,7 @@ const Notes = () => {
                     document.body.removeChild(link);
                   }}
                   variant="outline" 
-                  className="text-red-500 border-red-500 bg-transparent hover:bg-transparent hover:text-red-400"
+                  className="bg-black text-white border-black hover:bg-gray-800 hover:text-white dark:text-purple-500 dark:border-purple-500 dark:bg-transparent dark:hover:bg-transparent dark:hover:text-purple-400"
                 >
                   <Download className="w-4 h-4 mr-2" />
                   Download PDF
@@ -228,7 +251,7 @@ const Notes = () => {
                 <Button 
                   onClick={toggleGraphView}
                   variant="outline" 
-                  className="text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400"
+                  className="bg-black text-white border-black hover:bg-gray-800 hover:text-white dark:text-pink-500 dark:border-pink-500 dark:bg-transparent dark:hover:bg-transparent dark:hover:text-pink-400"
                 >
                   <Network className="w-4 h-4 mr-2" />
                   {showGraphView ? 'Hide Graph' : 'Show Graph'}
@@ -238,8 +261,8 @@ const Notes = () => {
           </div>
 
           <Card className="bg-card/30 border-border/50 backdrop-blur-sm">
-            <CardContent className="pt-6">
-              <div className="prose dark:prose-invert max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-code:text-purple-500 prose-pre:bg-card prose-pre:border prose-pre:border-border">
+            <CardContent className="p-6 md:p-8">
+              <div className="prose dark:prose-invert max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-pre:bg-card prose-pre:border prose-pre:border-border">
                 <WikiMarkdown 
                   content={removeFrontmatter(selectedPost.content)}
                   posts={posts}
@@ -373,10 +396,17 @@ const Notes = () => {
   return (
     <div className="min-h-screen relative overflow-hidden bg-background gradient-bg flex flex-col">
       <RelativityFieldLines />
+      {/* Light-mode decorative glows for list view */}
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 translate-y-1/3 z-0 pointer-events-none block dark:hidden">
+        <div className="w-[36rem] h-[36rem] rounded-full blur-3xl opacity-60" style={{background:'radial-gradient(circle, rgba(139,92,246,0.10), rgba(59,130,246,0.06), transparent)'}}></div>
+      </div>
+      <div className="fixed top-28 left-8 z-0 pointer-events-none block dark:hidden">
+        <div className="w-56 h-56 rounded-full blur-2xl opacity-70" style={{background:'radial-gradient(circle, rgba(56,189,248,0.10), rgba(147,51,234,0.08), transparent)'}}></div>
+      </div>
       <div className="relative z-10 flex-1">
         <PageHeader title="Home" showHomeButton={false} />
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pt-24">
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 py-8 pt-28">
         {/* Header Section */}
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Atomic Notes</h1>
@@ -434,7 +464,7 @@ const Notes = () => {
             currentPosts.map((post) => (
               <Card 
                 key={post.id} 
-                className="bg-card/30 border-purple-200 dark:border-purple-800/50 backdrop-blur-sm hover:shadow-lg hover:shadow-purple-500/20 transition-shadow duration-300"
+                className="bg-card/30 border-purple-200 dark:border-purple-800/50 backdrop-blur-sm transition-shadow duration-300"
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
@@ -448,7 +478,7 @@ const Notes = () => {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="pt-0 flex flex-col h-full">
+                <CardContent className="p-5 md:p-6 flex flex-col h-full">
                   <p className="text-muted-foreground text-sm mb-4 leading-relaxed flex-grow">
                     {post.excerpt}
                   </p>

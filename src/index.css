@@ -111,7 +111,47 @@
   }
 }
 
-/* Dark-only page gradient utility */
+/* Page gradient utility: light default + dark override */
+.gradient-bg {
+  /* Inverse of dark gradient: #000000, #161027, #270000 -> #ffffff, #E9EFD8, #D8FFFF */
+  background: linear-gradient(to bottom right, #fffbc9, #f5ffd9, #c1ffff);
+}
+
 .dark .gradient-bg {
   background: linear-gradient(to bottom right, #000000, #161027, #270000);
+}
+
+/* Reusable glow for cards (light + dark variants) */
+.card-hover-glow {
+  position: relative;
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+.card-hover-glow::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(600px 300px at 10% -10%, rgba(139,92,246,0.12), transparent 50%),
+              radial-gradient(500px 260px at 110% -10%, rgba(59,130,246,0.10), transparent 50%);
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+.card-hover-glow:hover::before { opacity: 1; }
+.card-hover-glow:hover { box-shadow: 0 8px 30px rgba(139,92,246,0.18); }
+
+.dark .card-hover-glow::before {
+  background: radial-gradient(600px 300px at 10% -10%, rgba(139,92,246,0.16), transparent 50%),
+              radial-gradient(500px 260px at 110% -10%, rgba(59,130,246,0.12), transparent 50%);
+}
+.dark .card-hover-glow:hover { box-shadow: 0 8px 30px rgba(99,102,241,0.25); }
+
+/* Subtle light background for graph cards (keeps dark transparent) */
+.graph-card-light {
+  background: linear-gradient(180deg, rgba(255,255,255,0.75), rgba(250,250,255,0.65));
+  backdrop-filter: blur(6px);
+}
+.dark .graph-card-light {
+  background: transparent;
+  backdrop-filter: none;
 }

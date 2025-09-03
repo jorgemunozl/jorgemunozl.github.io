@@ -52,12 +52,19 @@ const AdditionalContents = () => {
   return (
     <div className="min-h-screen relative overflow-hidden bg-background gradient-bg flex flex-col">
       <RelativityFieldLines />
-      {/* Lightbulb glow effect - fixed to viewport bottom (dark mode only) */}
-      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-0 hidden dark:block">
+      {/* Dark mode glows */}
+      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-0 hidden dark:block pointer-events-none">
         <div className="w-96 h-96 rounded-full blur-3xl" style={{background: 'radial-gradient(circle, #030d630c, #47020209, transparent)'}}></div>
       </div>
-      <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-0 hidden dark:block">
+      <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-0 hidden dark:block pointer-events-none">
         <div className="w-48 h-48 rounded-full blur-2xl" style={{background: 'radial-gradient(circle, #9900000c, #01039b0c, #b902a005)'}}></div>
+      </div>
+      {/* Light mode glows */}
+      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/3 z-0 block dark:hidden pointer-events-none">
+        <div className="w-[34rem] h-[34rem] rounded-full blur-3xl opacity-60" style={{background: 'radial-gradient(circle, rgba(139,92,246,0.12), rgba(59,130,246,0.08), transparent)'}}></div>
+      </div>
+      <div className="fixed top-16 right-10 z-0 block dark:hidden pointer-events-none">
+        <div className="w-64 h-64 rounded-full blur-2xl opacity-70" style={{background: 'radial-gradient(circle, rgba(253,186,116,0.12), rgba(236,72,153,0.08), transparent)'}}></div>
       </div>
       
       <div className="relative z-10 flex-1">
@@ -81,7 +88,7 @@ const AdditionalContents = () => {
                 {pdfDocuments.map((document) => (
                   <Card 
                     key={document.id} 
-                    className="group relative bg-card/20 border-0 backdrop-blur-sm hover:bg-card/40 transition-all duration-500 overflow-hidden flex flex-col"
+                    className="group relative bg-card/20 border-0 backdrop-blur-sm hover:bg-card/40 transition-all duration-500 overflow-hidden flex flex-col card-hover-glow"
                   >
                     {/* Neon glow effect on hover */}
                     <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none">
