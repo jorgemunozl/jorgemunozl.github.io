@@ -192,11 +192,8 @@ function generateNotesData() {
         const readTime = estimateReadTime(content);
         const uploadDate = frontmatter.date || new Date().toISOString().split('T')[0];
 
-        // Escape content for JavaScript string
-        const escapedContent = fileContent
-          .replace(/\\/g, '\\\\')
-          .replace(/`/g, '\\`')
-          .replace(/\${/g, '\\${');
+        // Keep raw content; JSON.stringify will escape safely
+        const escapedContent = fileContent;
 
         collected.push({
           title,
@@ -229,24 +226,26 @@ function generateNotesData() {
     }
 
     // Generate TypeScript file content
-    const tsContent = `// Auto-generated file - do not edit manually
-// Generated on: ${new Date().toISOString()}
-
-export interface BlogPost {
-  id: string;
-  title: string;
-  content: string;
-  excerpt: string;
-  uploadDate: string;
-  readTime: string;
-  fileName: string;
-  featured: boolean;
-}
-
-export const blogPosts: BlogPost[] = ${JSON.stringify(blogPosts, null, 2)};
-
-export default blogPosts;
-`;
+    const tsContent = [
+      '// Auto-generated file - do not edit manually',
+      `// Generated on: ${new Date().toISOString()}`,
+      '',
+      'export interface BlogPost {',
+      '  id: string;',
+      '  title: string;',
+      '  content: string;',
+      '  excerpt: string;',
+      '  uploadDate: string;',
+      '  readTime: string;',
+      '  fileName: string;',
+      '  featured: boolean;',
+      '}',
+      '',
+      `export const blogPosts: BlogPost[] = ${JSON.stringify(blogPosts, null, 2)};`,
+      '',
+      'export default blogPosts;',
+      ''
+    ].join('\n');
 
     // Write the generated file
     fs.writeFileSync(OUTPUT_FILE, tsContent);

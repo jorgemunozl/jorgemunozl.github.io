@@ -36,13 +36,14 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
   const [textThreshold, setTextThreshold] = useState(2.0);
   
   // Physics forces
-  const [centerForce, setCenterForce] = useState(0.3);
+  const [centerForce, setCenterForce] = useState(0.15);
   const [repelForce, setRepelForce] = useState(-120);
   const [linkForce, setLinkForce] = useState(1);
-  const [linkDistance, setLinkDistance] = useState(30);
-  
-  // Drag rearrangement timers per node
-  const rearrangeTimeoutsRef = useRef<Map<string, number>>(new Map());
+  const [linkDistance, setLinkDistance] = useState(60);
+
+  // Inertial drag state and alpha target
+  const dragStateRef = useRef(new Map<string, { x: number; y: number; t: number }>());
+  const [alphaTarget, setAlphaTarget] = useState(0);
 
   useEffect(() => {
     if (isVisible) {
@@ -162,25 +163,54 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
     }, 500);
   };
 
-  // Simple, stable drag handlers (match GlobalGraphView stability)
+  // Inertial drag handlers (Obsidian-like)
   const handleNodeDrag = (node: any, translate: { x: number; y: number }) => {
-    node.fx = translate.x;
-    node.fy = translate.y;
+    const x = translate.x;
+    const y = translate.y;
+    const now = performance.now();
+    const id = String(node.id ?? '');
+
+    const prev = dragStateRef.current.get(id);
+    if (prev) {
+      const dt = (now - prev.t) / 1000; // seconds
+      if (dt > 0) {
+        node.vx = (x - prev.x) / dt;
+        node.vy = (y - prev.y) / dt;
+      }
+    }
+
+    node.fx = x;
+    node.fy = y;
+    dragStateRef.current.set(id, { x, y, t: now });
+
+    setAlphaTarget(0.2);
+    graphRef.current?.d3ReheatSimulation();
   };
 
-  const handleNodeDragEnd = (node: any) => {
-    // Clear any existing timeout for this node
+  const handleNodeDragEnd = (node: any, translate?: { x: number; y: number }) => {
     const id = String(node.id ?? '');
-    const existing = rearrangeTimeoutsRef.current.get(id);
-    if (existing) window.clearTimeout(existing);
+    const last = dragStateRef.current.get(id);
 
-    const timeoutId = window.setTimeout(() => {
-      node.fx = undefined;
-      node.fy = undefined;
-      rearrangeTimeoutsRef.current.delete(id);
-    }, 2000);
+    if (translate) {
+      const x = translate.x;
+      const y = translate.y;
+      const now = performance.now();
+      if (last) {
+        const dt = (now - last.t) / 1000;
+        if (dt > 0) {
+          node.vx = (x - last.x) / dt;
+          node.vy = (y - last.y) / dt;
+        }
+      }
+    }
 
-    rearrangeTimeoutsRef.current.set(id, timeoutId);
+    // Immediate release
+    node.fx = undefined;
+    node.fy = undefined;
+    dragStateRef.current.delete(id);
+
+    setAlphaTarget(0);
+    graphRef.current?.d3ReheatSimulation();
   };
 
   if (!isVisible) return null;
@@ -191,18 +221,18 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
 
   return (
     <div className={containerClasses}>
-      <Card className={`group bg-transparent border border-gray-200/30 dark:border-gray-700/30 shadow-sm backdrop-blur-none rounded-lg ${isFullscreen ? 'w-full h-full max-w-none' : ''} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : '')}`}
+      <Card className={`group graph-card-light card-hover-glow border border-gray-400/60 dark:border-gray-700/30 shadow-sm rounded-lg ${isFullscreen ? 'w-full h-full max-w-none' : ''} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : '')}`}
         style={!isFullscreen ? { width: dimensions.width } : undefined}
       >
         
         {/* Detachable Controls Arrow - appears on hover */}
         <div className="absolute -top-2 -right-2 opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300 z-50">
-          <div className="flex items-center space-x-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-1 border border-gray-200/50 dark:border-gray-700/50 shadow-sm">
+          <div className="flex items-center space-x-1 bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-1 border border-gray-400/60 dark:border-gray-700/50 shadow-sm">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowControls(!showControls)}
-              className="text-gray-500 hover:text-purple-600 dark:text-gray-400 dark:hover:text-purple-400 p-1 h-6 w-6 rounded-full"
+              className="text-gray-600 hover:text-purple-700 dark:text-gray-400 dark:hover:text-purple-400 p-1 h-6 w-6 rounded-full"
               title="Settings"
             >
               <Settings className="w-3 h-3" />
@@ -211,7 +241,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 p-1 h-6 w-6 rounded-full"
+              className="text-gray-600 hover:text-red-700 dark:text-gray-400 dark:hover:text-red-400 p-1 h-6 w-6 rounded-full"
               title="Close"
             >
               <X className="w-3 h-3" />
@@ -221,7 +251,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
 
         {/* Graph Controls - floating overlay when visible */}
         {showControls && (
-          <div className="absolute top-4 left-4 right-4 p-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg border border-gray-200/50 dark:border-gray-700/50 shadow-lg space-y-2 z-40">
+          <div className="absolute top-4 left-4 right-4 p-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg border border-gray-400/60 dark:border-gray-700/50 shadow-lg space-y-2 z-40">
             <div className="space-y-1">
               <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-600 dark:text-gray-400">Node Size</span>
@@ -362,6 +392,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                 linkWidth={() => linkThickness}
                 onNodeClick={handleNodeClick}
                 enableNodeDrag={true}
+                onNodeDrag={handleNodeDrag}
                 onNodeDragEnd={handleNodeDragEnd}
                 nodeCanvasObject={(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
                   const label = node.title;
@@ -391,10 +422,11 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                     ctx.fillText(label, node.x!, node.y! + radius + fontSize / 2 + 4);
                   }
                 }}
-                cooldownTicks={50}
-                d3AlphaDecay={0.05}
-                d3VelocityDecay={0.3}
-                d3AlphaMin={0.001}
+                cooldownTicks={Infinity}
+                d3AlphaDecay={0.02}
+                d3VelocityDecay={0.15}
+                d3AlphaMin={0.0001}
+                d3AlphaTarget={alphaTarget}
                 enablePanInteraction={true}
                 enableZoomInteraction={true}
               />
