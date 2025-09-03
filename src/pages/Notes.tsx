@@ -13,7 +13,7 @@ import { useTheme } from 'next-themes';
 import hljsLight from 'highlight.js/styles/github.css?raw';
 import hljsDark from 'highlight.js/styles/github-dark.css?raw';
 import 'katex/dist/katex.min.css';
-import { blogPosts as importedBlogPosts, BlogPost } from '@/data/notes';
+import { blogPosts as importedBlogPosts, BlogPost } from '@/components/data/notes';
 import PageHeader from '@/components/PageHeader';
 import { findRelatedNotes, normalizeTitle } from '@/utils/wikiLinks';
 
@@ -190,7 +190,7 @@ const Notes = () => {
         <RelativityFieldLines />
         {/* Removed light-mode decorative glows inside note view */}
         <PageHeader title="Home" showHomeButton={false} />
-        <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-8 pt-28 pb-24 relative z-20">
+        <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-8 pt-8 pb-24 relative z-20">
           <div className="mb-8 relative z-30">
             <div className="flex items-center justify-between mb-6">
               <div>

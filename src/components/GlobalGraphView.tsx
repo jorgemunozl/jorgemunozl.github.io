@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { X, Maximize2, Minimize2, RefreshCw, Network, Settings } from 'lucide-react';
 import { buildGraphFromPosts, GraphData, GraphNode, GraphLink } from '@/utils/wikiLinks';
-import { blogPosts } from '@/data/notes';
+import { blogPosts } from '@/components/data/notes';
 import { useTheme } from 'next-themes';
 
 interface GlobalGraphViewProps {

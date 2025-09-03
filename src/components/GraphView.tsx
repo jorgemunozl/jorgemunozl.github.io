@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { X, Maximize2, Minimize2, RefreshCw, Network } from 'lucide-react';
 import { buildGraphFromPosts, GraphData, GraphNode, GraphLink } from '@/utils/wikiLinks';
-import { blogPosts } from '@/data/notes';
+import { blogPosts } from '@/components/data/notes';
 
 interface GraphViewProps {
   isVisible: boolean;
@@ -64,11 +64,17 @@ const GraphView: React.FC<GraphViewProps> = ({
     }
   };
 
-  const handleNodeHover = (node: GraphNode | null) => {
-    if (graphRef.current) {
-      graphRef.current.d3Force('charge').strength(node ? -300 : -150);
-      graphRef.current.d3ReheatSimulation();
-    }
+  // Avoid changing forces on hover; it causes jumpy behavior
+  const handleNodeHover = (_node: GraphNode | null) => {};
+
+  const handleNodeDrag = (node: any) => {
+    node.fx = node.x;
+    node.fy = node.y;
+  };
+
+  const handleNodeDragEnd = (node: any) => {
+    node.fx = undefined;
+    node.fy = undefined;
   };
 
   const toggleFullscreen = () => {
@@ -162,6 +168,9 @@ const GraphView: React.FC<GraphViewProps> = ({
                 linkDirectionalArrowRelPos={1}
                 onNodeClick={handleNodeClick}
                 onNodeHover={handleNodeHover}
+                enableNodeDrag={true}
+                onNodeDrag={handleNodeDrag}
+                onNodeDragEnd={handleNodeDragEnd}
                 nodeCanvasObject={(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
                   const label = node.title;
                   const fontSize = 12 / globalScale;
@@ -198,9 +207,9 @@ const GraphView: React.FC<GraphViewProps> = ({
                   ctx.fillStyle = '#FFFFFF';
                   ctx.fillText(label, node.x!, node.y! + radius + bckgDimensions[1] / 2 + 2);
                 }}
-                cooldownTicks={100}
-                d3AlphaDecay={0.02}
-                d3VelocityDecay={0.3}
+                cooldownTicks={120}
+                d3AlphaDecay={0.03}
+                d3VelocityDecay={0.25}
               />
             )}
           </div>
