@@ -6,7 +6,7 @@ import rehypeHighlight from 'rehype-highlight';
 import rehypeKatex from 'rehype-katex';
 import { processWikiLinksToMarkdown } from '@/utils/wikiLinks';
 import { convertObsidianMathSyntax } from '@/utils/mathSyntax';
-import type { BlogPost } from '@/data/notes';
+import type { BlogPost } from '@/components/data/notes';
 
 interface WikiMarkdownProps {
   content: string;
@@ -46,6 +46,16 @@ const WikiMarkdown: React.FC<WikiMarkdownProps> = ({
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[[rehypeHighlight, { detect: true, ignoreMissing: true }], rehypeKatex]}
         components={{
+          img: ({ src = '', alt = '', ...props }) => {
+            // Prefix non-external image srcs with Vite base URL
+            const isExternal = /^(?:[a-z]+:)?\/\//i.test(src) || src.startsWith('data:');
+            let finalSrc = src;
+            if (!isExternal) {
+              const base = (import.meta as any).env?.BASE_URL || '/';
+              finalSrc = `${base}${String(src).replace(/^\/+/, '')}`;
+            }
+            return <img src={finalSrc} alt={alt} {...props} />;
+          },
           // Custom heading components with auto-generated IDs
           h1: createHeadingComponent(1),
           h2: createHeadingComponent(2),

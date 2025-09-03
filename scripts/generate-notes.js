@@ -14,6 +14,8 @@ const DIRECTORIES = [
   { dir: path.join(__dirname, '..', 'src', 'components', 'Notes'), featured: false },
 ];
 const OUTPUT_FILE = path.join(__dirname, '..', 'src', 'data', 'notes.ts');
+const PUBLIC_ASSETS_DIR = path.join(__dirname, '..', 'public', 'notes-assets');
+const IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.svg', '.webp', '.gif'];
 
 // Function to parse frontmatter from markdown content
 function parseFrontmatter(content) {
@@ -65,6 +67,87 @@ function generateExcerpt(content, maxLength = 150) {
   
   const excerpt = firstParagraph.substring(0, maxLength);
   return excerpt.length < firstParagraph.length ? excerpt + '...' : excerpt;
+}
+
+// Find markdown image references and return their paths
+function extractImageRefs(markdown) {
+  const refs = [];
+  const imgRegex = /!\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g; // ![alt](path "title")
+  let m;
+  while ((m = imgRegex.exec(markdown)) !== null) {
+    const src = m[1];
+    // Skip external or data URIs
+    if (/^(?:[a-z]+:)?\/\//i.test(src) || src.startsWith('data:')) continue;
+    refs.push({ match: m[0], src });
+  }
+  return refs;
+}
+
+// Copy local images to public/notes-assets/<note-base>/ and rewrite src in markdown
+function rewriteAndCopyImages(markdown, mdDir, mdFileName) {
+  try {
+    const base = mdFileName.replace(/\.md$/i, '').replace(/\s+/g, '-').toLowerCase();
+    const destDir = path.join(PUBLIC_ASSETS_DIR, base);
+    if (!fs.existsSync(destDir)) {
+      fs.mkdirSync(destDir, { recursive: true });
+    }
+
+    const refs = extractImageRefs(markdown);
+    let out = markdown;
+    for (const { match, src } of refs) {
+      let resolvedPath = null;
+      let fileName = null;
+
+      const hasExt = path.extname(src) !== '';
+      if (hasExt) {
+        const abs = path.resolve(mdDir, src);
+        if (fs.existsSync(abs) && fs.statSync(abs).isFile()) {
+          resolvedPath = abs;
+          fileName = path.basename(src);
+        }
+      } else {
+        // Try common image extensions when none provided
+        for (const ext of IMAGE_EXTENSIONS) {
+          const candidate = path.resolve(mdDir, src + ext);
+          if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
+            resolvedPath = candidate;
+            fileName = path.basename(src + ext);
+            break;
+          }
+        }
+      }
+
+      if (!resolvedPath || !fileName) continue;
+
+      const destPath = path.join(destDir, fileName);
+      try {
+        fs.copyFileSync(resolvedPath, destPath);
+      } catch {}
+
+      const altSrcMatch = match.match(/!\[([^\]]*)\]\(([^)\s]+)/);
+      const altText = altSrcMatch ? altSrcMatch[1] : '';
+      const newSrc = `notes-assets/${base}/${fileName}`;
+      const rewritten = `![${altText}](${newSrc})`;
+      out = out.replace(match, rewritten);
+    }
+    return out;
+  } catch {
+    return markdown;
+  }
+}
+
+// Normalize common non-standard image syntaxes to standard markdown
+function normalizeImageSyntax(markdown) {
+  let out = markdown;
+  // Convert ![filename.ext] -> ![filename.ext](filename.ext)
+  out = out.replace(/!\[([^\]\(\)]+\.(?:png|jpg|jpeg|gif|svg|webp))\](?!\()/gi, (_m, fname) => `![${fname}](${fname})`);
+  // Convert Obsidian embeds ![[file.ext]] (optionally with |alt or #anchor)
+  out = out.replace(/!\[\[([^\]]+)\]\]/g, (_m, inner) => {
+    const clean = String(inner).split('|')[0].split('#')[0];
+    const alt = clean;
+    return `![${alt}](${clean})`;
+  });
+  return out;
 }
 
 // Function to estimate read time based on content analysis
@@ -192,8 +275,11 @@ function generateNotesData() {
         const readTime = estimateReadTime(content);
         const uploadDate = frontmatter.date || new Date().toISOString().split('T')[0];
 
-        // Keep raw content; JSON.stringify will escape safely
-        const escapedContent = fileContent;
+        // Normalize image syntaxes and copy referenced images to public
+        const normalized = normalizeImageSyntax(fileContent);
+        const processedContent = rewriteAndCopyImages(normalized, dir, file);
+        // Keep processed content; JSON.stringify will escape safely
+        const escapedContent = processedContent;
 
         collected.push({
           title,

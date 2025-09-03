@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { X, Maximize2, Minimize2, RefreshCw, Network, Settings } from 'lucide-react';
 import { buildGraphFromPosts, GraphData, GraphNode, GraphLink, findRelatedNotes } from '@/utils/wikiLinks';
-import { blogPosts, BlogPost } from '@/data/notes';
+import { blogPosts, BlogPost } from '@/components/data/notes';
 import { useTheme } from 'next-themes';
 
 interface LocalGraphViewProps {
@@ -36,14 +36,12 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
   const [textThreshold, setTextThreshold] = useState(2.0);
   
   // Physics forces
-  const [centerForce, setCenterForce] = useState(0.15);
+  const [centerForce, setCenterForce] = useState(0); // start with no radial pull
   const [repelForce, setRepelForce] = useState(-120);
   const [linkForce, setLinkForce] = useState(1);
   const [linkDistance, setLinkDistance] = useState(60);
 
-  // Inertial drag state and alpha target
-  const dragStateRef = useRef(new Map<string, { x: number; y: number; t: number }>());
-  const [alphaTarget, setAlphaTarget] = useState(0);
+  // Simpler drag behavior to avoid jumps/teleport
 
   useEffect(() => {
     if (isVisible) {
@@ -163,54 +161,15 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
     }, 500);
   };
 
-  // Inertial drag handlers (Obsidian-like)
-  const handleNodeDrag = (node: any, translate: { x: number; y: number }) => {
-    const x = translate.x;
-    const y = translate.y;
-    const now = performance.now();
-    const id = String(node.id ?? '');
-
-    const prev = dragStateRef.current.get(id);
-    if (prev) {
-      const dt = (now - prev.t) / 1000; // seconds
-      if (dt > 0) {
-        node.vx = (x - prev.x) / dt;
-        node.vy = (y - prev.y) / dt;
-      }
-    }
-
-    node.fx = x;
-    node.fy = y;
-    dragStateRef.current.set(id, { x, y, t: now });
-
-    setAlphaTarget(0.2);
-    graphRef.current?.d3ReheatSimulation();
+  const handleNodeDrag = (node: any) => {
+    // Let force-graph compute the translate; we just fix to current layout coords
+    node.fx = node.x;
+    node.fy = node.y;
   };
 
-  const handleNodeDragEnd = (node: any, translate?: { x: number; y: number }) => {
-    const id = String(node.id ?? '');
-    const last = dragStateRef.current.get(id);
-
-    if (translate) {
-      const x = translate.x;
-      const y = translate.y;
-      const now = performance.now();
-      if (last) {
-        const dt = (now - last.t) / 1000;
-        if (dt > 0) {
-          node.vx = (x - last.x) / dt;
-          node.vy = (y - last.y) / dt;
-        }
-      }
-    }
-
-    // Immediate release
+  const handleNodeDragEnd = (node: any) => {
     node.fx = undefined;
     node.fy = undefined;
-    dragStateRef.current.delete(id);
-
-    setAlphaTarget(0);
-    graphRef.current?.d3ReheatSimulation();
   };
 
   if (!isVisible) return null;
@@ -422,11 +381,11 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                     ctx.fillText(label, node.x!, node.y! + radius + fontSize / 2 + 4);
                   }
                 }}
-                cooldownTicks={Infinity}
-                d3AlphaDecay={0.02}
-                d3VelocityDecay={0.15}
-                d3AlphaMin={0.0001}
-                d3AlphaTarget={alphaTarget}
+                // Let it settle and stop to avoid constant jitter
+                cooldownTicks={120}
+                d3AlphaDecay={0.03}
+                d3VelocityDecay={0.25}
+                d3AlphaMin={0.001}
                 enablePanInteraction={true}
                 enableZoomInteraction={true}
               />

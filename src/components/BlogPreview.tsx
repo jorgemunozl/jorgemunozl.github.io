@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, BookOpen, Clock } from 'lucide-react';
-import { blogPosts, BlogPost } from '@/data/notes';
+import { blogPosts, BlogPost } from '@/components/data/notes';
 
 const BlogPreview = () => {
   const navigate = useNavigate();
