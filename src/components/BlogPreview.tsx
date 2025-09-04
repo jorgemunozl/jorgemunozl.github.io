@@ -23,10 +23,10 @@ const BlogPreview = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="space-y-6 mb-6">
           {recentPosts.map((post) => (
-            <Card key={post.id} className="bg-card/30 border-purple-200 dark:border-purple-800/50 backdrop-blur-sm hover:shadow-lg hover:shadow-purple-500/20 transition-shadow duration-300">
+            <Card key={post.id} className="bg-card/30 border-black dark:border-purple-800/50 backdrop-blur-sm hover:shadow-lg hover:shadow-black/20 dark:hover:shadow-purple-500/20 transition-shadow duration-300">
               <CardHeader className="pb-3">
                 <CardTitle 
-                  className="text-xl text-foreground hover:text-purple-400 transition-colors cursor-pointer"
+                  className="text-xl text-foreground hover:text-black dark:hover:text-purple-400 transition-colors cursor-pointer"
                   onClick={() => navigate(`/notes/${post.id}`)}
                 >
                   {post.title}
@@ -38,7 +38,7 @@ const BlogPreview = () => {
                 </p>
                 
                 {/* Date and Read Time at Bottom */}
-                <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto border-t border-purple-200 dark:border-purple-800/50 pt-3">
+                <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto border-t border-black dark:border-purple-800/50 pt-3">
                   <div className="flex items-center">
                     <Calendar className="w-3 h-3 mr-1" />
                     {new Date(post.uploadDate).toLocaleString('en-US', { 
@@ -64,7 +64,7 @@ const BlogPreview = () => {
           <div className="flex justify-center space-x-4">
             <Button 
               onClick={() => navigate('/notes')}
-              className="bg-gradient-to-r from-purple-500 to-purple-500 hover:from-purple-600 hover:to-purple-600 text-white"
+              className="bg-gradient-to-r from-black-500 to-black-600 hover:from-black-600 hover:to-black-700 dark:bg-gradient-to-r dark:from-purple-500 dark:to-purple-500 dark:hover:from-purple-600 dark:hover:to-purple-600 text-white"
             >
               <BookOpen className="w-5 h-5 mr-2" />
               View All Notes
@@ -72,7 +72,7 @@ const BlogPreview = () => {
             <Button 
               onClick={() => navigate('/additional-contents')}
               variant="outline"
-              className="border-purple-200 text-gree-700 hover:bg-gree-50 hover:text-purple-800 hover:border-purple-300 dark:border-purple-800 dark:text-purple-300 dark:hover:bg-purple-950 dark:hover:text-purple-200 dark:hover:border-purple-700"
+              className="border-black text-black hover:bg-black/10 hover:text-black hover:border-black dark:border-purple-800 dark:text-purple-300 dark:hover:bg-purple-950 dark:hover:text-purple-200 dark:hover:border-purple-700"
             >
               Additional Contents
             </Button>

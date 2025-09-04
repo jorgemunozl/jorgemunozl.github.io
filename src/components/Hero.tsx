@@ -9,8 +9,8 @@ const Hero = () => {
           <div className="flex items-center justify-center mb-6">
             <h1 className="text-5xl md:text-6xl font-bold text-foreground">
               👋 welcome to mun
-              <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">Blog</span>
             </h1>
+              <span className="bg-gradient-to-r from-black-400 via-black-500 to-black-600 dark:from-purple-400 dark:via-pink-500 dark:to-purple-600 bg-clip-text text-transparent">Blog</span>
           </div>
           <p className="text-xl text-muted-foreground max-w-xl mx-auto mb-8">
             Hi there, this is jorge munoz. I'm documenting my learning notes in this blog since 2020. Based on the number of grammar mistakes in my posts, you can tell how much ChatGPT is involved 😉.
@@ -21,7 +21,7 @@ const Hero = () => {
         <div className="flex justify-center space-x-8 text-muted-foreground">
           <a 
             href="mailto:alvaro18ml@gmail.com" 
-            className="hover:text-purple-400 transition-colors p-2"
+            className="hover:text-black dark:hover:text-purple-400 transition-colors p-2"
             title="Email"
           >
             <Mail className="w-6 h-6" />
@@ -30,7 +30,7 @@ const Hero = () => {
             href="https://www.linkedin.com/in/jorgemunozlar/"
             target="_blank" 
             rel="noopener noreferrer"
-            className="hover:text-purple-400 transition-colors p-2"
+            className="hover:text-black dark:hover:text-purple-400 transition-colors p-2"
             title="LinkedIn"
           >
             <Linkedin className="w-6 h-6" />
@@ -39,7 +39,7 @@ const Hero = () => {
             href="https://x.com/jorgemunozla" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="hover:text-purple-400 transition-colors p-2"
+            className="hover:text-black dark:hover:text-purple-400 transition-colors p-2"
             title="X (Twitter)"
           >
             <Twitter className="w-6 h-6" />
@@ -48,7 +48,7 @@ const Hero = () => {
             href="https://github.com/jorgemunozl" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="hover:text-purple-400 transition-colors p-2"
+            className="hover:text-black dark:hover:text-purple-400 transition-colors p-2"
             title="GitHub"
           >
             <Github className="w-6 h-6" />
@@ -57,7 +57,7 @@ const Hero = () => {
             href="https://huggingface.co/jorgemunozl"
             target="_blank" 
             rel="noopener noreferrer"
-            className="hover:text-purple-400 transition-colors p-2"
+            className="hover:text-black dark:hover:text-purple-400 transition-colors p-2"
             title="Hugging Face"
           >
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">

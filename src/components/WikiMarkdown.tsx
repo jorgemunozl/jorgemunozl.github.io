@@ -69,7 +69,7 @@ const WikiMarkdown: React.FC<WikiMarkdownProps> = ({
               const postId = href.replace('wiki:', '');
               return (
                 <button
-                  className="text-purple-400 hover:text-purple-300 underline cursor-pointer font-medium transition-colors"
+                  className="text-black dark:text-purple-400 hover:text-gray-800 dark:hover:text-purple-300 underline cursor-pointer font-medium transition-colors"
                   onClick={(e) => {
                     e.preventDefault();
                     if (onWikiLinkClick) {
@@ -102,7 +102,7 @@ const WikiMarkdown: React.FC<WikiMarkdownProps> = ({
                   href={href} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-purple-400 hover:text-purple-300 underline"
+                  className="text-black dark:text-purple-400 hover:text-gray-800 dark:hover:text-purple-300 underline"
                   {...props}
                 >
                   {children}
@@ -111,7 +111,7 @@ const WikiMarkdown: React.FC<WikiMarkdownProps> = ({
             }
             
             // Regular links
-            return <a href={href} className="text-purple-400 hover:text-purple-300 underline" {...props}>{children}</a>;
+            return <a href={href} className="text-black dark:text-purple-400 hover:text-gray-800 dark:hover:text-purple-300 underline" {...props}>{children}</a>;
           }
         }}
       >

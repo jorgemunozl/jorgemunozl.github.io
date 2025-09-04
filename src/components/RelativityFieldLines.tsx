@@ -18,7 +18,7 @@ const RelativityFieldLines = () => {
         </defs>
 
         {/* Highly curved spacetime grid lines with animation */}
-        <g className="text-purple-500 dark:text-purple-400">
+        <g className="text-black dark:text-purple-400">
           {/* Horizontal curved lines with more extreme curvature */}
           <path 
             d="M0,50 Q200,80 400,60 Q600,40 800,70 Q1000,100 1200,80 Q1400,60 1600,90" 

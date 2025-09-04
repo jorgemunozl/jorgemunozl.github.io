@@ -39,11 +39,19 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --border: 214.3 31.8% 70%;
+    --input: 214.3 31.8% 70%;
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
+
+    /* Custom Theme Colors */
+    --theme-primary-light: #000000;    /* Black for light mode */
+    --theme-primary-dark: #8b5cf6;     /* Purple for dark mode */
+    --theme-secondary-light: #000000;  /* Black for light mode */
+    --theme-secondary-dark: #ec4899;   /* Pink for dark mode */
+    --theme-accent-light: #000000;     /* Black for light mode */
+    --theme-accent-dark: #a855f7;      /* Purple variant for dark mode */
 
     --sidebar-background: 0 0% 98%;
 
@@ -114,11 +122,49 @@
 /* Page gradient utility: light default + dark override */
 .gradient-bg {
   /* Inverse of dark gradient: #000000, #161027, #270000 -> #ffffff, #E9EFD8, #D8FFFF */
-  background: linear-gradient(to bottom right, #fffbc9, #f5ffd9, #c1ffff);
+  background: linear-gradient(to bottom right, #fff78a, #f5ffd9, #c1ffff);
 }
 
 .dark .gradient-bg {
   background: linear-gradient(to bottom right, #000000, #161027, #270000);
+}
+
+/* Custom Theme Color Utilities */
+@layer utilities {
+  .text-theme-primary {
+    color: var(--theme-primary-light);
+  }
+  .dark .text-theme-primary {
+    color: var(--theme-primary-dark);
+  }
+  
+  .text-theme-secondary {
+    color: var(--theme-secondary-light);
+  }
+  .dark .text-theme-secondary {
+    color: var(--theme-secondary-dark);
+  }
+  
+  .text-theme-accent {
+    color: var(--theme-accent-light);
+  }
+  .dark .text-theme-accent {
+    color: var(--theme-accent-dark);
+  }
+  
+  .hover\:text-theme-primary:hover {
+    color: var(--theme-primary-light);
+  }
+  .dark .hover\:text-theme-primary:hover {
+    color: var(--theme-primary-dark);
+  }
+  
+  .hover\:text-theme-secondary:hover {
+    color: var(--theme-secondary-light);
+  }
+  .dark .hover\:text-theme-secondary:hover {
+    color: var(--theme-secondary-dark);
+  }
 }
 
 /* Reusable glow for cards (light + dark variants) */
