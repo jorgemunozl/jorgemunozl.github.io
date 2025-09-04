@@ -191,7 +191,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
               variant="ghost"
               size="sm"
               onClick={() => setShowControls(!showControls)}
-              className="text-gray-600 hover:text-purple-700 dark:text-gray-400 dark:hover:text-purple-400 p-1 h-6 w-6 rounded-full"
+              className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-purple-400 p-1 h-6 w-6 rounded-full"
               title="Settings"
             >
               <Settings className="w-3 h-3" />
@@ -257,7 +257,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
             </div>
             
             {/* Physics Forces */}
-            <div className="pt-2 border-t border-gray-300/50 dark:border-gray-700">
+            <div className="pt-2 border-t border-gray-600/50 dark:border-gray-700">
               <div className="text-xs text-gray-700 dark:text-gray-300 mb-2">Physics Forces</div>
               
               <div className="space-y-2">

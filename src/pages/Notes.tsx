@@ -254,7 +254,7 @@ const Notes = () => {
                       document.body.removeChild(link);
                     }}
                     variant="outline" 
-                    className="bg-black text-white border-black hover:bg-gray-800 hover:text-white dark:text-purple-500 dark:border-purple-500 dark:bg-transparent dark:hover:bg-transparent dark:hover:text-purple-400"
+                    className="bg-black text-white border-purple hover:bg-gray-800 hover:text-white dark:text-purple-500 dark:border-purple dark:bg-transparent dark:hover:bg-transparent dark:hover:text-purple-400"
                   >
                     <Download className="w-4 h-4 mr-2" />
                     Download PDF
@@ -303,7 +303,7 @@ const Notes = () => {
                           key={relatedPost.id}
                           variant="outline"
                           size="sm"
-                          className="text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400"
+                          className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400"
                           onClick={() => navigate(`/notes/${relatedPost.id}`)}
                         >
                           {noteTitle}
@@ -332,10 +332,10 @@ const Notes = () => {
                 }}
               >
                 {/* TOC Card with minimalist styling */}
-                <div className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm rounded-md border border-gray-400/40 dark:border-gray-700/20 shadow-sm card-hover-glow">
+                <div className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm rounded-md border border-gray-600/60 dark:border-gray-700/20 shadow-sm card-hover-glow">
                   {/* TOC Header - Draggable */}
                   <div
-                    className="flex items-center justify-between px-3 py-2 bg-gray-50/10 dark:bg-gray-700/10 rounded-t-md cursor-move border-b border-gray-300/30 dark:border-gray-700/30"
+                    className="flex items-center justify-between px-3 py-2 bg-gray-50/10 dark:bg-gray-700/10 rounded-t-md cursor-move border-b border-gray-600/50 dark:border-gray-700/30"
                     onMouseDown={(e) => {
                       setIsDragging(true);
                       setDragOffset({
@@ -436,7 +436,7 @@ const Notes = () => {
             <Button 
               onClick={toggleGraphView}
               variant="outline" 
-              className="text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400"
+              className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400"
             >
               <Network className="w-4 h-4 mr-2" />
               {showGraphView ? 'Hide Graph' : 'Show Graph'}
@@ -445,7 +445,7 @@ const Notes = () => {
               onClick={() => setShowSearch((v) => !v)}
               variant="outline"
               aria-label="Toggle search"
-              className="text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400 p-2 h-9 w-9 rounded-full flex items-center justify-center"
+              className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400 p-2 h-9 w-9 rounded-full flex items-center justify-center"
             >
               <Search className="w-4 h-4" />
             </Button>
@@ -468,7 +468,7 @@ const Notes = () => {
               placeholder="Search notes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="px-4 py-3 text-lg bg-card/30 border-purple-200 dark:border-purple-800/50 backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:border-purple-500"
+              className="px-4 py-3 text-lg bg-card/30 border-black dark:border-black backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:border-black"
               autoFocus={showSearch}
             />
           </div>
@@ -486,7 +486,7 @@ const Notes = () => {
             currentPosts.map((post) => (
               <Card 
                 key={post.id} 
-                className="bg-card/30 border-purple-200 dark:border-purple-800/50 backdrop-blur-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:border-purple-400 dark:hover:border-purple-500"
+                className="bg-card/30 border-black dark:border-black backdrop-blur-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:border-black"
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
@@ -508,7 +508,7 @@ const Notes = () => {
                     {post.excerpt}
                   </p>
                   {/* Date and Read Time at Bottom */}
-                  <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto border-t border-purple-200 dark:border-purple-800/50 pt-3">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto border-t border-black dark:border-black pt-3">
                     <div className="flex items-center">
                       <Calendar className="w-3 h-3 mr-1" />
                       {new Date(post.uploadDate).toLocaleString('en-US', { 
@@ -538,7 +538,7 @@ const Notes = () => {
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
               variant="outline"
-              className="text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Previous
             </Button>
@@ -550,8 +550,8 @@ const Notes = () => {
                   onClick={() => setCurrentPage(page)}
                   variant={currentPage === page ? "default" : "outline"}
                   className={currentPage === page 
-                    ? "bg-transparent text-purple-400 border-purple-400 hover:bg-transparent hover:text-purple-300" 
-                    : "text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400"
+                    ? "bg-transparent text-purple-400 border-black hover:bg-transparent hover:text-purple-300" 
+                    : "text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400"
                   }
                   size="sm"
                 >
@@ -564,7 +564,7 @@ const Notes = () => {
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
               variant="outline"
-              className="text-purple-500 border-purple-500 bg-transparent hover:bg-transparent hover:text-purple-400 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </Button>

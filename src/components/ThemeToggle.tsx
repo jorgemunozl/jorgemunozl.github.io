@@ -10,8 +10,8 @@ const ThemeToggle: React.FC = () => {
   const toggle = () => setTheme(isDark ? 'light' : 'dark')
 
   return (
-    <Button variant="ghost" size="sm" onClick={toggle} className="text-purple-400 hover:text-purple-300 hover:bg-gray-800/50">
-      {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+    <Button variant="ghost" size="sm" onClick={toggle} className="text-green-400 hover:text-green-300 hover:bg-green-100/20 dark:text-purple-400 dark:hover:text-purple-300 dark:hover:bg-gray-800/50">
+      {isDark ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
     </Button>
   )
 }
