@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Moon, Sun } from 'lucide-react';
@@ -15,6 +14,10 @@ const Navigation = () => {
 
   const handleNotesClick = () => {
     navigate('/notes');
+  };
+
+  const handlePortfolioClick = () => {
+    navigate('/portfolio');
   };
 
   const toggleTheme = () => {
@@ -39,6 +42,12 @@ const Navigation = () => {
               className="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-purple-400 transition-colors font-medium"
             >
               Home
+            </button>
+            <button
+              onClick={handlePortfolioClick}
+              className="text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-purple-400 transition-colors font-medium"
+            >
+              Portfolio
             </button>
             <button 
               onClick={handleNotesClick}
