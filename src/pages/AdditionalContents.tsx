@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import PageHeader from '@/components/PageHeader';
 import Footer from '@/components/Footer';
 import RelativityFieldLines from '@/components/RelativityFieldLines';
+import TopControls from '@/components/TopControls';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText } from 'lucide-react';
@@ -68,10 +68,9 @@ const AdditionalContents = () => {
       </div>
       
       <div className="relative z-10 flex-1">
-        <PageHeader title="Additional Contents" showHomeButton={false} />
-        
+        <TopControls title="Additional Contents" />
         <main className="flex-1">
-          <div className="container mx-auto px-4 py-8 pt-32">
+          <div className="container mx-auto px-4 py-8 pt-20">
             <div className="max-w-6xl mx-auto">
               {/* Header */}
               <div className="text-center mb-12">

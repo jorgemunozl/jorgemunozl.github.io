@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated on: 2025-10-23T21:57:06.482Z
+// Generated on: 2025-10-23T22:34:42.627Z
 
 export interface BlogPost {
   id: string;
