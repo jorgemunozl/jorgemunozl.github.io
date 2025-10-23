@@ -2,8 +2,8 @@
 import React from 'react';
 import Hero from '@/components/Hero';
 import BlogPreview from '@/components/BlogPreview';
-import PageHeader from '@/components/PageHeader';
 import RelativityFieldLines from '@/components/RelativityFieldLines';
+import TopControls from '@/components/TopControls';
 
 const Index = () => {
   return (
@@ -20,8 +20,8 @@ const Index = () => {
       </div>
       
       <div className="relative z-10">
-        <PageHeader title="Home" showHomeButton={false} />
-        <div className="pt-16">
+        <TopControls />
+        <div className="pt-20">
           <Hero />
           <BlogPreview />
         </div>

@@ -1,7 +1,7 @@
 import React from 'react';
-import PageHeader from '@/components/PageHeader';
 import RelativityFieldLines from '@/components/RelativityFieldLines';
 import PortfolioGrid from '@/components/Portfolio';
+import TopControls from '@/components/TopControls';
 
 const PortfolioPage = () => {
   return (
@@ -22,8 +22,8 @@ const PortfolioPage = () => {
       </div>
 
       <div className="relative z-10">
-        <PageHeader title="Portfolio" />
-        <div className="pt-24 pb-20">
+        <TopControls title="Portfolio" />
+        <div className="pt-20 pb-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground">Selected Projects</h1>
             <p className="mt-4 text-muted-foreground">

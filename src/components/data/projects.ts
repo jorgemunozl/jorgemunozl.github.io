@@ -19,20 +19,20 @@ export const projects: Project[] = [
   },
   {
     id: 'project-llm-lab',
-    title: 'LLM Research Lab',
+    title: 'Solving the many electron Schrodinger Equation with Transformer',
     description:
       'Prototyping workflows for large language models with evaluation dashboards and prompt libraries.',
     technologies: ['Next.js', 'Vercel', 'OpenAI API'],
-    link: 'https://github.com/jorgemunozl?tab=repositories',
+    link: 'https://github.com/jorgemunozl',
     repo: 'https://github.com/jorgemunozl',
   },
   {
     id: 'project-quant-lab',
-    title: 'Quantitative Notes Lab',
+    title: 'Training a VLLM to recognise flowcharts',
     description:
-      'A collection of notebooks exploring quantitative finance topics with visual explanations and simulations.',
+      'Mermaid',
     technologies: ['Python', 'Jupyter', 'Plotly'],
-    link: 'https://github.com/jorgemunozl?tab=repositories',
-    repo: 'https://github.com/jorgemunozl',
+    link: 'https://github.com/jorgemunozl',
+    repo: 'git@github.com:jorgemunozl/vllm.git',
   },
 ];

@@ -9,6 +9,7 @@ import GlobalGraphView from '@/components/GlobalGraphView';
 import LocalGraphView from '@/components/LocalGraphView';
 import RelativityFieldLines from '@/components/RelativityFieldLines';
 import Footer from '@/components/Footer';
+import TopControls from '@/components/TopControls';
 import { useTheme } from 'next-themes';
 import hljsLight from 'highlight.js/styles/github.css?raw';
 import hljsDark from 'highlight.js/styles/github-dark.css?raw';
@@ -18,7 +19,6 @@ import { blogPosts as importedBlogPosts, BlogPost } from '@/components/data/note
 // Add entries here to enable the Download button for specific notes
 // Example: import somePdf from 'path/to/file.pdf'; then map it below
 import provePdf from '@/components/Featured Notes/prove.pdf';
-import PageHeader from '@/components/PageHeader';
 import { findRelatedNotes, normalizeTitle } from '@/utils/wikiLinks';
 
 // Function to remove YAML frontmatter from content
@@ -182,14 +182,14 @@ const Notes = () => {
         <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
           <RelativityFieldLines />
           <div className="relative z-10">
-            <PageHeader title="Home" showHomeButton={false} />
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-2 pt-28 pb-20">
-            <div className="text-center">
-              <h1 className="text-2xl font-bold text-foreground mb-4">Note Not Found</h1>
-              <p className="text-muted-foreground mb-8">The note you are looking for does not exist.</p>
-              {/* Removed Return to Notes button per request */}
+            <TopControls title="Notes" />
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-2 pt-20 pb-20">
+              <div className="text-center">
+                <h1 className="text-2xl font-bold text-foreground mb-4">Note Not Found</h1>
+                <p className="text-muted-foreground mb-8">The note you are looking for does not exist.</p>
+                {/* Removed Return to Notes button per request */}
+              </div>
             </div>
-          </div>
           </div>
         </div>
       );
@@ -199,9 +199,10 @@ const Notes = () => {
       <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
         <RelativityFieldLines />
         {/* Removed light-mode decorative glows inside note view */}
-        <PageHeader title="Home" showHomeButton={false} />
-        {/* Push content below fixed header so buttons are clickable */}
-        <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-8 pt-28 pb-24 relative z-20">
+        <div className="relative z-10">
+          <TopControls title="Notes" />
+        </div>
+        <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-8 pt-20 pb-24 relative z-20">
           <div className="mb-8 relative z-30">
             <div className="flex items-center justify-between mb-6">
               <div>
@@ -426,164 +427,184 @@ const Notes = () => {
         <div className="w-56 h-56 rounded-full blur-2xl opacity-70" style={{background:'radial-gradient(circle, rgba(56,189,248,0.10), rgba(147,51,234,0.08), transparent)'}}></div>
       </div>
       <div className="relative z-10 flex-1">
-        <PageHeader title="Home" showHomeButton={false} />
-
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 py-8 pt-28">
-        {/* Header Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Atomic Notes</h1>
-          <div className="flex justify-center items-center gap-2 mb-4">
-            <Button 
-              onClick={toggleGraphView}
-              variant="outline" 
-              className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400"
-            >
-              <Network className="w-4 h-4 mr-2" />
-              {showGraphView ? 'Hide Graph' : 'Show Graph'}
-            </Button>
-            <Button
-              onClick={() => setShowSearch((v) => !v)}
-              variant="outline"
-              aria-label="Toggle search"
-              className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400 p-2 h-9 w-9 rounded-full flex items-center justify-center"
-            >
-              <Search className="w-4 h-4" />
-            </Button>
-          </div>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            A collection of my thoughts, discoveries, and learnings in mathematics, physics, and computer science.
-          </p>
-        </div>
-
-        {/* Search and Filter (animated) */}
-        <div
-          className={`mb-8 space-y-4 overflow-hidden transition-all duration-300 ease-out ${
-            showSearch ? 'opacity-100 translate-y-0 max-h-28' : 'opacity-0 -translate-y-2 max-h-0 pointer-events-none'
-          }`}
-          aria-hidden={!showSearch}
-        >
-          <div className={`relative transition-transform duration-300 ${showSearch ? 'scale-100' : 'scale-95'}`}>
-            <Input
-              type="text"
-              placeholder="Search notes..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="px-4 py-3 text-lg bg-card/30 border-black dark:border-black backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:border-black"
-              autoFocus={showSearch}
-            />
-          </div>
-        </div>
-
-        {/* Blog Posts List */}
-        <div className="space-y-8">
-          {currentPosts.length === 0 ? (
-            <div className="text-center py-12">
-              <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-muted-foreground mb-2">No notes found</h3>
-              <p className="text-muted-foreground">Try adjusting your search or upload a new note.</p>
-            </div>
-          ) : (
-            currentPosts.map((post) => (
-              <Card 
-                key={post.id} 
-                className="bg-card/30 border-black dark:border-black backdrop-blur-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:border-black"
+        <TopControls title="Notes" />
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 py-8 pt-20">
+          {/* Header Section */}
+          <div className="text-center mb-12">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Atomic Notes</h1>
+            <div className="flex justify-center items-center gap-2 mb-4">
+              <Button 
+                onClick={toggleGraphView}
+                variant="outline" 
+                className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400"
               >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 flex items-center">
-                      {post.featured && (
-                        <Star className="w-4 h-4 text-yellow-500 fill-current mr-2 flex-shrink-0" />
-                      )}
-                      <Link 
-                        to={`/notes/${post.id}`}
-                        className="text-xl font-semibold text-foreground hover:text-purple-400 transition-colors block"
-                      >
-                        {post.title}
-                      </Link>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-5 md:p-6 flex flex-col h-full">
-                  <p className="text-muted-foreground text-sm mb-4 leading-relaxed flex-grow">
-                    {post.excerpt}
-                  </p>
-                  {/* Date and Read Time at Bottom */}
-                  <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto border-t border-black dark:border-black pt-3">
-                    <div className="flex items-center">
-                      <Calendar className="w-3 h-3 mr-1" />
-                      {new Date(post.uploadDate).toLocaleString('en-US', { 
-                        year: 'numeric', 
-                        month: 'short', 
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: false
-                      })}
-                    </div>
-                    <div className="flex items-center">
-                      <Clock className="w-3 h-3 mr-1" />
-                      {post.readTime}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
-        </div>
-
-        {/* Pagination Controls */}
-        {totalPages > 1 && (
-          <div className="flex justify-center items-center space-x-4 mt-12">
-            <Button
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              variant="outline"
-              className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Previous
-            </Button>
-            
-            <div className="flex items-center space-x-2">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <Button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  variant={currentPage === page ? "default" : "outline"}
-                  className={currentPage === page 
-                    ? "bg-transparent text-purple-400 border-black hover:bg-transparent hover:text-purple-300" 
-                    : "text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400"
-                  }
-                  size="sm"
-                >
-                  {page}
-                </Button>
-              ))}
+                <Network className="w-4 h-4 mr-2" />
+                {showGraphView ? 'Hide Graph' : 'Show Graph'}
+              </Button>
+              <Button
+                onClick={() => setShowSearch((v) => !v)}
+                variant="outline"
+                aria-label="Toggle search"
+                className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400 p-2 h-9 w-9 rounded-full flex items-center justify-center"
+              >
+                <Search className="w-4 h-4" />
+              </Button>
             </div>
-            
-            <Button
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              variant="outline"
-              className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </Button>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              A collection of my thoughts, discoveries, and learnings in mathematics, physics, and computer science.
+            </p>
           </div>
-        )}
 
-        {/* Page Info */}
-        {sortedPosts.length > 0 && (
-          <div className="text-center mt-6 text-sm text-muted-foreground">
-            Showing {startIndex + 1}-{Math.min(endIndex, sortedPosts.length)} of {sortedPosts.length} notes
+          {/* Search and Filter (animated) */}
+          <div
+            className={`mb-8 space-y-4 overflow-hidden transition-all duration-300 ease-out ${
+              showSearch ? 'opacity-100 translate-y-0 max-h-28' : 'opacity-0 -translate-y-2 max-h-0 pointer-events-none'
+            }`}
+            aria-hidden={!showSearch}
+          >
+            <div className={`relative transition-transform duration-300 ${showSearch ? 'scale-100' : 'scale-95'}`}>
+              <Input
+                type="text"
+                placeholder="Search notes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="px-4 py-3 text-lg bg-card/30 border-black dark:border-black backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:border-black"
+                autoFocus={showSearch}
+              />
+            </div>
           </div>
-        )}
-        
-        {/* Global Graph View Component for Notes Overview */}
-        <GlobalGraphView
-          isVisible={showGraphView}
-          onClose={() => setShowGraphView(false)}
-          onNodeClick={handleGraphNodeClick}
-        />
+
+          {/* Blog Posts List */}
+          <div className="space-y-8">
+            {currentPosts.length === 0 ? (
+              <div className="text-center py-12">
+                <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-muted-foreground mb-2">No notes found</h3>
+                <p className="text-muted-foreground">Try adjusting your search or upload a new note.</p>
+              </div>
+            ) : (
+              currentPosts.map((post) => (
+                <Card 
+                  key={post.id} 
+                  className="bg-card/30 border-black dark:border-black backdrop-blur-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:border-black"
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 flex items-center">
+                        {post.featured && (
+                          <Star className="w-4 h-4 text-yellow-500 fill-current mr-2 flex-shrink-0" />
+                        )}
+                        <Link 
+                          to={`/notes/${post.id}`}
+                          className="text-xl font-semibold text-foreground hover:text-purple-400 transition-colors block"
+                        >
+                          {post.title}
+                        </Link>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-5 md:p-6 flex flex-col h-full">
+                    <p className="text-muted-foreground text-sm mb-4 leading-relaxed flex-grow">
+                      {post.excerpt}
+                    </p>
+                    {/* Date and Read Time at Bottom */}
+                    <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto border-t border-black dark:border-black pt-3">
+                      <div className="flex items-center">
+                        <Calendar className="w-3 h-3 mr-1" />
+                        {new Date(post.uploadDate).toLocaleString('en-US', { 
+                          year: 'numeric', 
+                          month: 'short', 
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: false
+                        })}
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="w-3 h-3 mr-1" />
+                        {post.readTime}
+                      </div>
+                      <div className="flex items-center">
+                        <ExternalLink className="w-3 h-3 mr-1" />
+                        <a 
+                          href={post.repoUrl}
+                          className="text-purple-400 hover:text-purple-300 transition-colors"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {post.repoName}
+                        </a>
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardContent className="pt-3 pb-5 px-5 md:px-6">
+                    <div className="flex flex-wrap gap-2">
+                      {post.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="text-xs uppercase tracking-wide bg-purple-100 text-purple-600 dark:bg-purple-950/40 dark:text-purple-400 px-2 py-1 rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center space-x-4 mt-12">
+              <Button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                variant="outline"
+                className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </Button>
+              
+              <div className="flex items-center space-x-2">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    variant={currentPage === page ? "default" : "outline"}
+                    className={currentPage === page 
+                      ? "bg-transparent text-purple-400 border-black hover:bg-transparent hover:text-purple-300" 
+                      : "text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400"
+                    }
+                    size="sm"
+                  >
+                    {page}
+                  </Button>
+                ))}
+              </div>
+              
+              <Button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                variant="outline"
+                className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </Button>
+            </div>
+          )}
+          {/* Page Info */}
+          {sortedPosts.length > 0 && (
+            <div className="text-center mt-6 text-sm text-muted-foreground">
+              Showing {startIndex + 1}-{Math.min(endIndex, sortedPosts.length)} of {sortedPosts.length} notes
+            </div>
+          )}
+          
+          {/* Global Graph View Component for Notes Overview */}
+          <GlobalGraphView
+            isVisible={showGraphView}
+            onClose={() => setShowGraphView(false)}
+            onNodeClick={handleGraphNodeClick}
+          />
         </div>
       </div>
       
