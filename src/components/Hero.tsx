@@ -1,5 +1,8 @@
 import React from 'react';
-import { Mail, Linkedin, Twitter, Github } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Mail, Linkedin, Twitter, Github, Briefcase, BookOpen } from 'lucide-react';
+import HuggingFaceIcon from '@/components/icons/HuggingFaceIcon';
+import { Button } from '@/components/ui/button';
 
 const Hero = () => {
   return (
@@ -8,17 +11,41 @@ const Hero = () => {
         <div className="mb-8">
           <div className="flex items-center justify-center mb-6">
             <h1 className="text-5xl md:text-6xl font-bold text-foreground">
-              👋 welcome to mun
+              👋 welcome to mun{' '}
+              <span className="bg-gradient-to-r from-black-400 via-black-500 to-black-600 dark:from-purple-400 dark:via-pink-500 dark:to-purple-600 bg-clip-text text-transparent">
+                Blog
+              </span>
             </h1>
-              <span className="bg-gradient-to-r from-black-400 via-black-500 to-black-600 dark:from-purple-400 dark:via-pink-500 dark:to-purple-600 bg-clip-text text-transparent">Blog</span>
           </div>
           <p className="text-xl text-muted-foreground max-w-xl mx-auto mb-8">
             Hi there, this is jorge munoz. I'm documenting my learning notes in this blog since 2020. Based on the number of grammar mistakes in my posts, you can tell how much ChatGPT is involved 😉.
           </p>
+
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-10">
+            <Button
+              asChild
+              className="bg-gradient-to-r from-black-500 to-black-600 hover:from-black-600 hover:to-black-700 dark:from-purple-500 dark:to-purple-600 dark:hover:from-purple-600 dark:hover:to-purple-700 text-white"
+            >
+              <Link to="/portfolio">
+                <Briefcase className="w-5 h-5 mr-2" />
+                View Portfolio
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              asChild
+              className="border-black text-black hover:bg-black/10 hover:text-black hover:border-black dark:border-purple-800 dark:text-purple-300 dark:hover:bg-purple-950 dark:hover:text-purple-200 dark:hover:border-purple-700"
+            >
+              <Link to="/notes">
+                <BookOpen className="w-5 h-5 mr-2" />
+                Read Notes
+              </Link>
+            </Button>
+          </div>
         </div>
 
         {/* Contact Links */}
-        <div className="flex justify-center space-x-8 text-muted-foreground">
+        <div className="flex justify-center space-x-6 sm:space-x-8 text-muted-foreground">
           <a 
             href="mailto:alvaro18ml@gmail.com" 
             className="hover:text-black dark:hover:text-purple-400 transition-colors p-2"
@@ -60,12 +87,7 @@ const Hero = () => {
             className="hover:text-black dark:hover:text-purple-400 transition-colors p-2"
             title="Hugging Face"
           >
-            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/>
-              <circle cx="8.5" cy="9" r="1.5"/>
-              <circle cx="15.5" cy="9" r="1.5"/>
-              <path d="M12 17c-2.5 0-4.5-1.5-4.5-3.5 0-0.5 0.4-1 1-1s1 0.5 1 1c0 1 1.1 1.5 2.5 1.5s2.5-0.5 2.5-1.5c0-0.5 0.4-1 1-1s1 0.5 1 1c0 2-2 3.5-4.5 3.5z"/>
-            </svg>
+            <HuggingFaceIcon className="w-6 h-6" />
           </a>
         </div>
       </div>
