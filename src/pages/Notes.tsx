@@ -49,10 +49,16 @@ const extractHeadings = (content: string) => {
   return headings;
 };
 
+type ExtendedBlogPost = BlogPost & {
+  tags?: string[];
+  repoUrl?: string;
+  repoName?: string;
+};
+
 const Notes = () => {
   const { theme } = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
-  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [posts, setPosts] = useState<ExtendedBlogPost[]>([]);
   const [showGraphView, setShowGraphView] = useState(false); // Default to hidden
   const [showSearch, setShowSearch] = useState(false);
   const [selectedNodeInGraph, setSelectedNodeInGraph] = useState<string | undefined>();
@@ -88,7 +94,7 @@ const Notes = () => {
   // Initialize posts with imported data from generated file
   React.useEffect(() => {
     if (posts.length === 0) {
-      setPosts(importedBlogPosts);
+      setPosts(importedBlogPosts as ExtendedBlogPost[]);
     }
   }, [posts.length]);
 
@@ -508,7 +514,7 @@ const Notes = () => {
                       {post.excerpt}
                     </p>
                     {/* Date and Read Time at Bottom */}
-                    <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto border-t border-black dark:border-black pt-3">
+                    <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground mt-auto border-t border-black dark:border-black pt-3">
                       <div className="flex items-center">
                         <Calendar className="w-3 h-3 mr-1" />
                         {new Date(post.uploadDate).toLocaleString('en-US', { 
@@ -524,31 +530,35 @@ const Notes = () => {
                         <Clock className="w-3 h-3 mr-1" />
                         {post.readTime}
                       </div>
-                      <div className="flex items-center">
-                        <ExternalLink className="w-3 h-3 mr-1" />
-                        <a 
-                          href={post.repoUrl}
-                          className="text-purple-400 hover:text-purple-300 transition-colors"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {post.repoName}
-                        </a>
+                      {post.repoUrl && post.repoName && (
+                        <div className="flex items-center">
+                          <ExternalLink className="w-3 h-3 mr-1" />
+                          <a 
+                            href={post.repoUrl}
+                            className="text-purple-400 hover:text-purple-300 transition-colors"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {post.repoName}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                  {post.tags && post.tags.length > 0 && (
+                    <CardContent className="pt-3 pb-5 px-5 md:px-6">
+                      <div className="flex flex-wrap gap-2">
+                        {post.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="text-xs uppercase tracking-wide bg-purple-100 text-purple-600 dark:bg-purple-950/40 dark:text-purple-400 px-2 py-1 rounded-full"
+                          >
+                            {tag}
+                          </span>
+                        ))}
                       </div>
-                    </div>
-                  </CardContent>
-                  <CardContent className="pt-3 pb-5 px-5 md:px-6">
-                    <div className="flex flex-wrap gap-2">
-                      {post.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="text-xs uppercase tracking-wide bg-purple-100 text-purple-600 dark:bg-purple-950/40 dark:text-purple-400 px-2 py-1 rounded-full"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </CardContent>
+                    </CardContent>
+                  )}
                 </Card>
               ))
             )}

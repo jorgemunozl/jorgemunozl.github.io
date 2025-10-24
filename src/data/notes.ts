@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated on: 2025-10-23T22:34:42.627Z
+// Generated on: 2025-10-24T20:15:40.175Z
 
 export interface BlogPost {
   id: string;
@@ -18,7 +18,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Prove",
     "excerpt": "This note explores the fundamental concepts of mathematical proofs and their applications in computer science and artificial intelligence.",
     "content": "# Prove - Mathematical Foundations\n\n## Introduction\n\nThis note explores the fundamental concepts of mathematical proofs and their applications in computer science and artificial intelligence.\n\n## Types of Proofs\n[[Activation function]]\n[[AI agent]]\n[[Anaconda]]\n\n### Direct Proof\nA direct proof establishes the truth of a statement by logical reasoning from known facts and axioms.\n\n### Proof by Contradiction\nAlso known as *reductio ad absurdum*, this method assumes the negation of what we want to prove and shows this leads to a contradiction.\n\n### Mathematical Induction\nA powerful technique for proving statements about natural numbers:\n1. **Base case**: Prove P(1) is true\n2. **Inductive step**: Show that if P(k) is true, then P(k+1) is also true\n\n## Applications in AI\n\nMathematical proofs are essential in:\n- Algorithm correctness verification\n- Complexity analysis\n- Neural network convergence guarantees\n- Optimization theory\n\nInline math works too, for example $E = mc^2$, and display math:\n\n$$\n\\int_0^1 x^2 \\, dx = \\frac{1}{3}\n$$\n\nImage \n\n![prove.png](notes-assets/prove/prove.png)\n\n\n### Algorithm Correctness\n\n```python\ndef binary_search(arr, target):\n    \"\"\"\n    Binary search with proof of correctness\n    Invariant: target is in arr[left:right+1] if it exists\n    \"\"\"\n    left, right = 0, len(arr) - 1\n    \n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    \n    return -1\n```\n\n### Complexity Analysis\n\nTime complexity proofs help us understand algorithm performance and make informed decisions about which algorithms to use in different scenarios.\n\n## Conclusion\n\nUnderstanding proofs is crucial for developing robust algorithms and ensuring the reliability of AI systems. This mathematical rigor forms the foundation of computer science theory.\n\n---\n\n*This note demonstrates the importance of mathematical reasoning in computational thinking and serves as a foundational concept for more advanced topics in artificial intelligence and machine learning.* $\\frac{1}{2}$\n",
-    "uploadDate": "2025-10-23",
+    "uploadDate": "2025-10-24",
     "readTime": "4 min read",
     "fileName": "prove.md",
     "featured": true
@@ -28,7 +28,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Feed Forward Neural Network",
     "excerpt": "No excerpt available",
     "content": "",
-    "uploadDate": "2025-10-23",
+    "uploadDate": "2025-10-24",
     "readTime": "1 min read",
     "fileName": "Feed-forward neural network.md",
     "featured": false
@@ -38,7 +38,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Hopfield Networks",
     "excerpt": "No excerpt available",
     "content": "",
-    "uploadDate": "2025-10-23",
+    "uploadDate": "2025-10-24",
     "readTime": "1 min read",
     "fileName": "Hopfield Networks.md",
     "featured": false
@@ -48,7 +48,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Neural Networks And Deep Learning",
     "excerpt": "No excerpt available",
     "content": "",
-    "uploadDate": "2025-10-23",
+    "uploadDate": "2025-10-24",
     "readTime": "1 min read",
     "fileName": "Neural Networks and Deep Learning.md",
     "featured": false

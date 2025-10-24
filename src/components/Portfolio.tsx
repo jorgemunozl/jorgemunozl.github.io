@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ExternalLink, Github } from 'lucide-react';
 import { projects } from '@/components/data/projects';
+import { useNavigate } from 'react-router-dom';
 
 type PortfolioProps = {
   id?: string;
@@ -11,6 +12,19 @@ type PortfolioProps = {
 };
 
 const Portfolio = ({ id = 'portfolio', showHeading = true }: PortfolioProps) => {
+  const navigate = useNavigate();
+
+  const handleCardActivate = (projectId: string) => {
+    navigate(`/portfolio/${projectId}`);
+  };
+
+  const handleCardKeyDown = (event: React.KeyboardEvent<HTMLDivElement>, projectId: string) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleCardActivate(projectId);
+    }
+  };
+
   return (
     <section id={id} className="py-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,8 +43,23 @@ const Portfolio = ({ id = 'portfolio', showHeading = true }: PortfolioProps) => 
           {projects.map((project) => (
             <Card
               key={project.id}
-              className="bg-card/30 border-black/70 dark:border-purple-800/60 backdrop-blur-sm hover:shadow-lg hover:shadow-black/15 dark:hover:shadow-purple-500/20 transition-shadow duration-300"
+              className="group bg-card/30 border-black/70 dark:border-purple-800/60 backdrop-blur-sm hover:shadow-lg hover:shadow-black/15 dark:hover:shadow-purple-500/20 transition-shadow duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:ring-foreground/70 overflow-hidden"
+              tabIndex={0}
+              role="link"
+              aria-label={`View project ${project.title}`}
+              onClick={() => handleCardActivate(project.id)}
+              onKeyDown={(event) => handleCardKeyDown(event, project.id)}
             >
+              {project.heroImage && (
+                <div className="relative h-44 overflow-hidden">
+                  <img
+                    src={project.heroImage}
+                    alt={project.imageAlt || project.title}
+                    className="h-full w-full object-cover transition-transform duration-700 ease-out transform group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/30 via-transparent to-transparent" />
+                </div>
+              )}
               <CardHeader className="pb-4">
                 <CardTitle className="text-xl text-foreground">{project.title}</CardTitle>
                 <CardDescription className="leading-relaxed">{project.description}</CardDescription>
@@ -52,7 +81,13 @@ const Portfolio = ({ id = 'portfolio', showHeading = true }: PortfolioProps) => 
                       asChild
                       className="bg-gradient-to-r from-black-500/10 to-black-600/30 text-black hover:from-black-500/20 hover:to-black-600/40 dark:from-purple-500/10 dark:to-purple-600/20 dark:text-purple-200"
                     >
-                      <a href={project.link} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={project.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(event) => event.stopPropagation()}
+                        onKeyDown={(event) => event.stopPropagation()}
+                      >
                         <ExternalLink className="w-4 h-4 mr-2" />
                         Live
                       </a>
@@ -61,7 +96,13 @@ const Portfolio = ({ id = 'portfolio', showHeading = true }: PortfolioProps) => 
 
                   {project.repo && (
                     <Button variant="outline" size="sm" asChild>
-                      <a href={project.repo} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={project.repo}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(event) => event.stopPropagation()}
+                        onKeyDown={(event) => event.stopPropagation()}
+                      >
                         <Github className="w-4 h-4 mr-2" />
                         Repo
                       </a>
