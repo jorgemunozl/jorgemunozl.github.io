@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f3c"/>
+      <stop offset="50%" stop-color="#37106d"/>
+      <stop offset="100%" stop-color="#8a1c74"/>
+    </linearGradient>
+    <radialGradient id="pulse" cx="70%" cy="30%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#grad)"/>
+  <circle cx="460" cy="120" r="180" fill="url(#pulse)"/>
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1.5">
+    <path d="M40 260Q180 220 320 260T600 260"/>
+    <path d="M40 210Q180 170 320 210T600 210" stroke-opacity="0.35"/>
+    <path d="M40 170Q180 130 320 170T600 170" stroke-opacity="0.2"/>
+  </g>
+  <g fill="#36f5ff" fill-opacity="0.8">
+    <circle cx="160" cy="190" r="5"/>
+    <circle cx="240" cy="150" r="4"/>
+    <circle cx="320" cy="210" r="6"/>
+    <circle cx="400" cy="170" r="4.5"/>
+    <circle cx="480" cy="220" r="5"/>
+  </g>
+  <g fill="none" stroke="#36f5ff" stroke-opacity="0.4" stroke-width="1">
+    <path d="M160 190C200 140 280 140 320 210"/>
+    <path d="M320 210C360 270 440 240 480 220"/>
+    <path d="M240 150C280 220 360 200 400 170"/>
+  </g>
+  <text x="40" y="80" fill="#e6e6ff" font-family="monospace" font-size="18" letter-spacing="1.5">transformer_wavefunction()</text>
+  <text x="40" y="110" fill="#e6e6ff" font-family="monospace" font-size="16" opacity="0.75">return many_body_state.attend(electron_density)</text>
+</svg>

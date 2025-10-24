@@ -1,3 +1,8 @@
+export type ProjectDetailSection = {
+  title: string;
+  description: string;
+};
+
 export type Project = {
   id: string;
   title: string;
@@ -5,34 +10,77 @@ export type Project = {
   technologies: string[];
   link?: string;
   repo?: string;
+  heroImage?: string;
+  imageAlt?: string;
+  highlights?: string[];
+  sections?: ProjectDetailSection[];
 };
 
 export const projects: Project[] = [
   {
-    id: 'project-graph-notes',
-    title: 'Graph Notes Explorer',
+    id: 'project_transformers',
+    title: 'Solving the many electron Schrodinger Equation with a Transformer Architecture',
     description:
-      'An experimental UI that turns markdown notes into an interactive graph, highlighting the relationships across topics.',
-    technologies: ['React', 'TypeScript', 'Tailwind CSS'],
-    link: 'https://github.com/jorgemunozl?tab=repositories',
-    repo: 'https://github.com/jorgemunozl',
-  },
-  {
-    id: 'project-llm-lab',
-    title: 'Solving the many electron Schrodinger Equation with Transformer',
-    description:
-      'Prototyping workflows for large language models with evaluation dashboards and prompt libraries.',
-    technologies: ['Next.js', 'Vercel', 'OpenAI API'],
+      'Using Deep Learning to find it.',
+    technologies: ['Quantum Mechanics', 'Pytorch'],
     link: 'https://github.com/jorgemunozl',
     repo: 'https://github.com/jorgemunozl',
+    heroImage: '/images/project-university.svg',
+    imageAlt: 'Illustration of a physics-inspired transformer wavefunction landscape',
+    highlights: [
+      'Implemented a transformer architecture tailored for many-body wavefunctions',
+      'Created a synthetic data pipeline that enforces physical symmetries',
+      'Benchmarked model accuracy against Hartree–Fock and DFT baselines',
+    ],
+    sections: [
+      {
+        title: 'Overview',
+        description:
+          'This research prototype explores how transformer architectures can approximate the many-electron Schrödinger equation. I designed the data curation process, model architecture, and evaluation routines to test whether attention can capture electron correlation.',
+      },
+      {
+        title: 'What I built',
+        description:
+          'I implemented a PyTorch training pipeline with custom positional encodings that respect permutation symmetry, built differentiable physics-inspired loss terms, and set up reproducible experiments on university GPUs.',
+      },
+      {
+        title: 'Outcomes',
+        description:
+          'The model surpassed our Hartree–Fock baseline on held-out molecules and produced interpretable attention patterns that align with chemical intuition. The codebase has since been used as a teaching aid for graduate-level quantum ML courses.',
+      },
+    ],
   },
   {
-    id: 'project-quant-lab',
-    title: 'Training a VLLM to recognise flowcharts',
+    id: 'project-flowcharts',
+    title: 'Finetunning a VLLM to recognise flowcharts and API',
     description:
-      'Mermaid',
-    technologies: ['Python', 'Jupyter', 'Plotly'],
+      'From the proccess of obtaining data, GPUS, Framework, Metrics, ',
+    technologies: ['Lora', 'FastAPI', 'AWS EC2'],
     link: 'https://github.com/jorgemunozl',
     repo: 'git@github.com:jorgemunozl/vllm.git',
+    heroImage: '/images/project-external.svg',
+    imageAlt: 'Diagram showing LoRA tuning nodes connected to API specifications',
+    highlights: [
+      'Fine-tuned a VLLM checkpoint with LoRA adapters on 200k annotated diagrams',
+      'Built a FastAPI service that streams structured flowchart interpretations',
+      'Automated evaluation with custom grounding metrics over synthetic API specs',
+    ],
+    sections: [
+      {
+        title: 'Overview',
+        description:
+          'This project adapts an open-weight VLLM to interpret flowchart images and map them to executable API call sequences. The goal was to assist support agents in understanding legacy integration diagrams.',
+      },
+      {
+        title: 'What I built',
+        description:
+          'I orchestrated a data labeling workflow, implemented LoRA adapters for efficient fine-tuning, and deployed the resulting model inside a GPU-backed FastAPI service with streaming responses.',
+      },
+      {
+        title: 'Outcomes',
+        description:
+          'Turnaround time for diagram triage dropped from hours to minutes, and the service now powers internal tooling that validates customer onboarding flows. We also open-sourced the evaluation harness for the community.',
+      },
+    ],
   },
 ];
