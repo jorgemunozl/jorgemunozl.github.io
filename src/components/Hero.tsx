@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Linkedin, Twitter, Github, Briefcase, BookOpen } from 'lucide-react';
-import HuggingFaceIcon from '@/components/icons/HuggingFaceIcon';
+import { Mail, Linkedin, Twitter, Github, Briefcase, BookOpen, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Hero = () => {
@@ -87,7 +86,7 @@ const Hero = () => {
             className="hover:text-black dark:hover:text-purple-400 transition-colors p-2"
             title="Hugging Face"
           >
-            <HuggingFaceIcon className="w-6 h-6" />
+            <Globe className="w-6 h-6" />
           </a>
         </div>
       </div>

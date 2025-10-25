@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated on: 2025-10-24T20:15:40.175Z
+// Generated on: 2025-10-25T16:53:21.673Z
 
 export interface BlogPost {
   id: string;
@@ -15,43 +15,43 @@ export interface BlogPost {
 export const blogPosts: BlogPost[] = [
   {
     "id": "1",
-    "title": "Prove",
-    "excerpt": "This note explores the fundamental concepts of mathematical proofs and their applications in computer science and artificial intelligence.",
-    "content": "# Prove - Mathematical Foundations\n\n## Introduction\n\nThis note explores the fundamental concepts of mathematical proofs and their applications in computer science and artificial intelligence.\n\n## Types of Proofs\n[[Activation function]]\n[[AI agent]]\n[[Anaconda]]\n\n### Direct Proof\nA direct proof establishes the truth of a statement by logical reasoning from known facts and axioms.\n\n### Proof by Contradiction\nAlso known as *reductio ad absurdum*, this method assumes the negation of what we want to prove and shows this leads to a contradiction.\n\n### Mathematical Induction\nA powerful technique for proving statements about natural numbers:\n1. **Base case**: Prove P(1) is true\n2. **Inductive step**: Show that if P(k) is true, then P(k+1) is also true\n\n## Applications in AI\n\nMathematical proofs are essential in:\n- Algorithm correctness verification\n- Complexity analysis\n- Neural network convergence guarantees\n- Optimization theory\n\nInline math works too, for example $E = mc^2$, and display math:\n\n$$\n\\int_0^1 x^2 \\, dx = \\frac{1}{3}\n$$\n\nImage \n\n![prove.png](notes-assets/prove/prove.png)\n\n\n### Algorithm Correctness\n\n```python\ndef binary_search(arr, target):\n    \"\"\"\n    Binary search with proof of correctness\n    Invariant: target is in arr[left:right+1] if it exists\n    \"\"\"\n    left, right = 0, len(arr) - 1\n    \n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    \n    return -1\n```\n\n### Complexity Analysis\n\nTime complexity proofs help us understand algorithm performance and make informed decisions about which algorithms to use in different scenarios.\n\n## Conclusion\n\nUnderstanding proofs is crucial for developing robust algorithms and ensuring the reliability of AI systems. This mathematical rigor forms the foundation of computer science theory.\n\n---\n\n*This note demonstrates the importance of mathematical reasoning in computational thinking and serves as a foundational concept for more advanced topics in artificial intelligence and machine learning.* $\\frac{1}{2}$\n",
-    "uploadDate": "2025-10-24",
-    "readTime": "4 min read",
-    "fileName": "prove.md",
-    "featured": true
-  },
-  {
-    "id": "2",
     "title": "Feed Forward Neural Network",
     "excerpt": "No excerpt available",
     "content": "",
-    "uploadDate": "2025-10-24",
+    "uploadDate": "2025-10-25",
     "readTime": "1 min read",
     "fileName": "Feed-forward neural network.md",
     "featured": false
   },
   {
-    "id": "3",
+    "id": "2",
     "title": "Hopfield Networks",
     "excerpt": "No excerpt available",
     "content": "",
-    "uploadDate": "2025-10-24",
+    "uploadDate": "2025-10-25",
     "readTime": "1 min read",
     "fileName": "Hopfield Networks.md",
     "featured": false
   },
   {
-    "id": "4",
+    "id": "3",
     "title": "Neural Networks And Deep Learning",
     "excerpt": "No excerpt available",
     "content": "",
-    "uploadDate": "2025-10-24",
+    "uploadDate": "2025-10-25",
     "readTime": "1 min read",
     "fileName": "Neural Networks and Deep Learning.md",
     "featured": false
+  },
+  {
+    "id": "4",
+    "title": "Understanding Vision Modeling",
+    "excerpt": "Special thanks to [Joel Timana](https://2.com) for a lot of super valuable feedback during the process of this project.",
+    "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-09-25 11:29\nmodified: 2025-10-25 11:24\n---\n\nSpecial thanks to [Joel Timana](https://2.com) for a lot of super valuable feedback during the process of this project.\n\n# Why I would do that?\n\nAgentic solutions had spread around the globe and had been widely aceppted , some incredibles examples are Lovable, Cursor, ClaudeCode  the most use for differents companies and start ups, the core of them are Multimodal Large Language Models, these are provided by companies such as OpenAI, Anthropic, Google, etc. \n\nThe performance of such a models are amazingly good, the prices each time are more accesible, and the inference speed grews since the clusters get improved, the investment on infrastructure continue growing and all seems that is going to the hill.\n\nNow there are cases when we want to use a model for an specific task that is not that complex, it worth use a model that big for this matter? \n\n**cite** proposes SLM's to tackle specifc-repetitive task. A small model should be less around 10 billion of parameters and they propose interesting stuff, but also the limitations that these models create. \n\nOne matter relies on the finne tunne of SML's which in a near future, could be change or insert foot note to that post. And this the topic of this work.\n\nIs clear that in high specialized environment each of the steps to tune a model is delegate to a expert group, so for a basic understanding of how this process is made this work exist.\n\nWe are gonna to realizing a fine-tune over the Llama Vision 3.2 model from META.AI with the goal of the recognisement of flowcharts for the translation into Mermaid code.\ncurated by [unsloth](https://unsloth.ai/).\n\n\n# Why small models?\n\nIs clear that talking in a more general case we are going always prefer a LLM rather than a SLM, they are indeed better, but stop there it doesn't have sense use a exagerately big model on a repetitive specif task, they are not economy and in comparation to a SLM the latency is !. \n\nAnother more efficent but tedious approach is use a fine-tune model specific for the said task.\n\nyour task, we could take an open source model and we only worry about the hardware needed to inference. But actually exists a considerable amount of cloud services so let's suppose that is not actually a problem.\n\nIf we want to achieve a good performance in a specific task, have limited resources fine-tune is not a trivial task, there are also certain nuances that are necessary to face.\n\n# Llama Vision \n\nClip based.\n\n\n# Tunning Challenges - LLM TO SLM\n\nChoose a proper model, if we want a specific model that resolve that task, we need to answer the follow matters: the base model, data with train, the best ways and more cutting edge ways to train the model, the hardware and environment needed in order to make that, the metrics and benchmarks to know if indeed exist a improvements, and of course the knowledge necessary to implement all.\n\nIf it's true that currently exist a huge amount of tools available on internet published by the community which make the process more direct and seamsly there is still a considerable work to do it, \n\n## Explaining the Large Vision model\nThe computer vision is one field that trough\n\n## Llama Vision 3.2 Architecture\n> With focus eyes on the Finne Tunning.\n\nBefore to begin with the data-set obtain. A comprenhesive understanding of how this models works is important in order to understand the respective the parameters.\nThe family of Vision models is big exist different innovation that each company made, how you realize the pre-training is an important one\n\nThe first is find actual works on Lora I wonder if I can tweak the unsloth code to use QLora. First you have to make some reasearch on QLora, the pseudo code, how applied to where to find the data sets, generation of data synthetic, data augmentation where to find the data sets, generation of data synthetic, data Augmentation, some nice graphs during the training process, the GPUS used inference and training, finding metric, reference to the actual metrics. And further improvements.Yeah I can make the pdf and the .md version, so how to the Llama 3.11 models. vision instruct, we could make also llm tunning with the mermaid syntax, yeah we have until know. The visual large language models are funded on the convolutional layers which are quite amazing, the goal of this text is train a vllm more specificaly. I have one month to do it! Which it is the first part? The model is gonna to be fine-tune for the creation of diagrams using Mermaid.\n\n\n# Synthetic Data\n\nTo fine-tune the model we are gonna to use a big\nWe could create Synthetic data easily with Langgraph and an API.\n\n\n# Data Preparation\nSince we are gonna to be training a model to from images create code, we are\ngonna to use a collator to merge them.\nThe HugginFace repositories are always available, we are gonna to use four\nrepositories more Data augmentation techniques\nyou can easily find the data set on\n\n\n# Training process using Lora\nThe training process is straighforward since the library PEFT from HugginFace do\nall the work for us. Our work relies on know what hiper parameters are gonna to use\nto use since if we want to apply QLora in the future\n\n\n# Inference Time\n\n\n\n# Benchmarks\n\n\n# Take Aways\n\n# Citation \n\nOr use BibTex citation:\n\n```\n@article{munoz2025vision,\n  title = {Understanding Vision Models},\n  author = {Munoz, Jorge},\n  journal = {munBlog},\n  year = {2025},\n  month = {July},\n  url = \"https://lilianweng.github.io/posts/2025-05-01-thinking/\"\n}\n```\n\n# References\n\n_Latex Based_",
+    "uploadDate": "2025-09-25 11:29",
+    "readTime": "6 min read",
+    "fileName": "Understanding vision modeling.md",
+    "featured": true
   },
   {
     "id": "5",

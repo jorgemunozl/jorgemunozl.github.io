@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { projects } from '@/components/data/projects';
 import { Card, CardContent } from '@/components/ui/card';
+import Footer from '@/components/Footer';
 
 const ProjectDetail = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -33,7 +34,7 @@ const ProjectDetail = () => {
         ></div>
       </div>
 
-      <div className="relative z-10">
+      <div className="relative z-10 pb-24">
         <TopControls title="Project Detail" />
         <div className="pt-24 pb-20">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
@@ -126,6 +127,7 @@ const ProjectDetail = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
