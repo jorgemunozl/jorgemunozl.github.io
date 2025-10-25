@@ -13,7 +13,7 @@ const DIRECTORIES = [
   { dir: path.join(__dirname, '..', 'src', 'components', 'Featured Notes'), featured: true },
   { dir: path.join(__dirname, '..', 'src', 'components', 'Notes'), featured: false },
 ];
-const OUTPUT_FILE = path.join(__dirname, '..', 'src', 'data', 'notes.ts');
+const OUTPUT_FILE = path.join(__dirname, '..', 'src', 'components', 'data', 'notes.ts');
 const PUBLIC_ASSETS_DIR = path.join(__dirname, '..', 'public', 'notes-assets');
 const IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.svg', '.webp', '.gif'];
 

@@ -6,7 +6,8 @@ const RelativityFieldLines = () => {
       <svg 
         className="w-full h-full" 
         xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="xMidYMid slice"
+        viewBox="0 0 1600 800"
+        preserveAspectRatio="none"
       >
         <defs>
           {/* Gradient for field lines */}

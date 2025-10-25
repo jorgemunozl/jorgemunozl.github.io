@@ -15,11 +15,24 @@ import hljsLight from 'highlight.js/styles/github.css?raw';
 import hljsDark from 'highlight.js/styles/github-dark.css?raw';
 import 'katex/dist/katex.min.css';
 import { blogPosts as importedBlogPosts, BlogPost } from '@/components/data/notes';
-// Optional per-note PDFs (imported as assets)
-// Add entries here to enable the Download button for specific notes
-// Example: import somePdf from 'path/to/file.pdf'; then map it below
-import provePdf from '@/components/Featured Notes/prove.pdf';
 import { findRelatedNotes, normalizeTitle } from '@/utils/wikiLinks';
+
+// Optional per-note PDFs are auto-discovered from the Featured Notes directory.
+// Drop a PDF next to its matching markdown file and it will show up in the Download button.
+const pdfAssetModules = import.meta.glob('@/components/Featured Notes/*.pdf', {
+  eager: true,
+  import: 'default',
+}) as Record<string, string>;
+
+const pdfByNormalizedTitle = Object.entries(pdfAssetModules).reduce<Record<string, string>>(
+  (acc, [path, url]) => {
+    const fileName = path.split('/').pop() ?? '';
+    const baseName = fileName.replace(/\.pdf$/i, '');
+    acc[normalizeTitle(baseName)] = url;
+    return acc;
+  },
+  {}
+);
 
 // Function to remove YAML frontmatter from content
 const removeFrontmatter = (content: string): string => {
@@ -177,17 +190,13 @@ const Notes = () => {
   if (noteId) {
     const selectedPost = posts.find(post => post.id === noteId);
     const normalizedSelectedTitle = selectedPost ? normalizeTitle(selectedPost.title) : undefined;
-    const pdfByNormalizedTitle: Record<string, string> = {
-      // Map normalized titles to their PDF asset URLs
-      'prove': provePdf,
-    };
     const selectedPdfUrl = normalizedSelectedTitle ? pdfByNormalizedTitle[normalizedSelectedTitle] : undefined;
     
     if (!selectedPost) {
       return (
-        <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
+        <div className="min-h-screen relative overflow-hidden bg-background gradient-bg flex flex-col">
           <RelativityFieldLines />
-          <div className="relative z-10">
+          <div className="relative z-10 flex-1 pb-24">
             <TopControls title="Notes" />
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-2 pt-20 pb-20">
               <div className="text-center">
@@ -197,219 +206,220 @@ const Notes = () => {
               </div>
             </div>
           </div>
+          <Footer />
         </div>
       );
     }
 
     return (
-      <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
+      <div className="min-h-screen relative overflow-hidden bg-background gradient-bg flex flex-col">
         <RelativityFieldLines />
         {/* Removed light-mode decorative glows inside note view */}
-        <div className="relative z-10">
+        <div className="relative z-10 flex-1">
           <TopControls title="Notes" />
-        </div>
-        <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-8 pt-20 pb-24 relative z-20">
-          <div className="mb-8 relative z-30">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h1 className="text-2xl font-bold text-foreground mb-2">{selectedPost.title}</h1>
-                <div className="flex items-center text-sm text-muted-foreground space-x-4">
-                  <span className="flex items-center">
-                    <Calendar className="w-4 h-4 mr-1" />
-                    {new Date(selectedPost.uploadDate).toLocaleString('en-US', { 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: false
-                    })}
-                  </span>
-                  <span className="flex items-center">
-                    <Clock className="w-4 h-4 mr-1" />
-                    {selectedPost.readTime}
-                  </span>
+          <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-8 pt-20 pb-24 relative z-20">
+            <div className="mb-8 relative z-30">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h1 className="text-2xl font-bold text-foreground mb-2">{selectedPost.title}</h1>
+                  <div className="flex items-center text-sm text-muted-foreground space-x-4">
+                    <span className="flex items-center">
+                      <Calendar className="w-4 h-4 mr-1" />
+                      {new Date(selectedPost.uploadDate).toLocaleString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                      })}
+                    </span>
+                    <span className="flex items-center">
+                      <Clock className="w-4 h-4 mr-1" />
+                      {selectedPost.readTime}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center space-x-3">
-                <Button 
-                  onClick={() => navigate('/notes')}
-                  variant="outline" 
-                  className="bg-black text-white border-black hover:bg-gray-800 hover:text-white dark:text-blue-500 dark:border-blue-500 dark:bg-transparent dark:hover:bg-transparent dark:hover:text-blue-400"
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Notes
-                </Button>
-                <Button 
-                  onClick={() => setShowTOC(!showTOC)}
-                  variant="outline" 
-                  className="bg-black text-white border-black hover:bg-gray-800 hover:text-white dark:text-red-500 dark:border-red-500 dark:bg-transparent dark:hover:bg-transparent dark:hover:text-red-400"
-                >
-                  <List className="w-4 h-4 mr-2" />
-                  {showTOC ? 'Hide TOC' : 'Show TOC'}
-                </Button>
-
-                {selectedPdfUrl && (
-                  <Button 
-                    onClick={() => {
-                      const link = document.createElement('a');
-                      link.href = selectedPdfUrl;
-                      link.download = `${selectedPost.title}.pdf`;
-                      document.body.appendChild(link);
-                      link.click();
-                      document.body.removeChild(link);
-                    }}
-                    variant="outline" 
-                    className="bg-black text-white border-purple hover:bg-gray-800 hover:text-white dark:text-purple-500 dark:border-purple dark:bg-transparent dark:hover:bg-transparent dark:hover:text-purple-400"
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    Download PDF
-                  </Button>
-                )}
                 
-                <Button 
-                  onClick={toggleGraphView}
-                  variant="outline" 
-                  className="bg-black text-white border-black hover:bg-gray-800 hover:text-white dark:text-pink-500 dark:border-pink-500 dark:bg-transparent dark:hover:bg-transparent dark:hover:text-pink-400"
-                >
-                  <Network className="w-4 h-4 mr-2" />
-                  {showGraphView ? 'Hide Graph' : 'Show Graph'}
-                </Button>
+                <div className="flex items-center space-x-3">
+                  <Button 
+                    onClick={() => navigate('/notes')}
+                    variant="outline" 
+                    className="bg-black text-white border-black hover:bg-gray-800 hover:text-white dark:text-blue-500 dark:border-blue-500 dark:bg-transparent dark:hover:bg-transparent dark:hover:text-blue-400"
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Notes
+                  </Button>
+                  <Button 
+                    onClick={() => setShowTOC(!showTOC)}
+                    variant="outline" 
+                    className="bg-black text-white border-black hover:bg-gray-800 hover:text-white dark:text-red-500 dark:border-red-500 dark:bg-transparent dark:hover:bg-transparent dark:hover:text-red-400"
+                  >
+                    <List className="w-4 h-4 mr-2" />
+                    {showTOC ? 'Hide TOC' : 'Show TOC'}
+                  </Button>
+
+                  {selectedPdfUrl && (
+                    <Button 
+                      onClick={() => {
+                        const link = document.createElement('a');
+                        link.href = selectedPdfUrl;
+                        link.download = `${selectedPost.title}.pdf`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      }}
+                      variant="outline" 
+                      className="bg-black text-white border-purple hover:bg-gray-800 hover:text-white dark:text-purple-500 dark:border-purple dark:bg-transparent dark:hover:bg-transparent dark:hover:text-purple-400"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download PDF
+                    </Button>
+                  )}
+                  
+                  <Button 
+                    onClick={toggleGraphView}
+                    variant="outline" 
+                    className="bg-black text-white border-black hover:bg-gray-800 hover:text-white dark:text-pink-500 dark:border-pink-500 dark:bg-transparent dark:hover:bg-transparent dark:hover:text-pink-400"
+                  >
+                    <Network className="w-4 h-4 mr-2" />
+                    {showGraphView ? 'Hide Graph' : 'Show Graph'}
+                  </Button>
+                </div>
               </div>
             </div>
+
+            <Card className="bg-card/30 border-border/50 backdrop-blur-sm">
+              <CardContent className="p-6 md:p-8">
+                <div className="prose dark:prose-invert max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-pre:bg-card prose-pre:border prose-pre:border-border">
+                  <WikiMarkdown 
+                    content={removeFrontmatter(selectedPost.content)}
+                    posts={posts}
+                    onWikiLinkClick={handleWikiLinkClick}
+                    className="wiki-content"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Related Notes Section */}
+            {(() => {
+              const relatedNotes = findRelatedNotes(selectedPost.title, posts);
+              return relatedNotes.length > 0 ? (
+                <Card className="bg-card/30 border-border/50 backdrop-blur-sm mt-6">
+                  <CardHeader>
+                    <h3 className="text-lg font-semibold text-foreground">Related Notes</h3>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-wrap gap-2">
+                      {relatedNotes.map((noteTitle) => {
+                        const relatedPost = posts.find(p => p.title === noteTitle);
+                        return relatedPost ? (
+                          <Button
+                            key={relatedPost.id}
+                            variant="outline"
+                            size="sm"
+                            className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400"
+                            onClick={() => navigate(`/notes/${relatedPost.id}`)}
+                          >
+                            {noteTitle}
+                          </Button>
+                        ) : null;
+                      })}
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : null;
+            })()}
+            
+            {/* Detachable Table of Contents */}
+            {(() => {
+              const headings = extractHeadings(selectedPost.content);
+              if (!showTOC || headings.length === 0) return null;
+
+              return (
+                <div
+                  className="fixed z-50 group"
+                  style={{
+                    left: tocPosition.x,
+                    top: tocPosition.y,
+                    width: isMinimized ? 'auto' : '300px',
+                    maxHeight: isMinimized ? 'auto' : '450px'
+                  }}
+                >
+                  {/* TOC Card with minimalist styling */}
+                  <div className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm rounded-md border border-gray-600/60 dark:border-gray-700/20 shadow-sm card-hover-glow">
+                    {/* TOC Header - Draggable */}
+                    <div
+                      className="flex items-center justify-between px-3 py-2 bg-gray-50/10 dark:bg-gray-700/10 rounded-t-md cursor-move border-b border-gray-600/50 dark:border-gray-700/30"
+                      onMouseDown={(e) => {
+                        setIsDragging(true);
+                        setDragOffset({
+                          x: e.clientX - tocPosition.x,
+                          y: e.clientY - tocPosition.y
+                        });
+                      }}
+                    >
+                      <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400 flex items-center">
+                        <List className="w-3 h-3 mr-1 text-gray-500 dark:text-gray-500" />
+                        Contents
+                      </h3>
+                      <div className="flex items-center space-x-0.5">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-5 w-5 p-0 text-gray-500 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-300 hover:bg-transparent rounded-full"
+                          onClick={() => setIsMinimized(!isMinimized)}
+                          title={isMinimized ? "Expand" : "Minimize"}
+                        >
+                          {isMinimized ? <Maximize2 className="h-2.5 w-2.5" /> : <Minimize2 className="h-2.5 w-2.5" />}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-5 w-5 p-0 text-gray-500 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-300 hover:bg-transparent rounded-full"
+                          onClick={() => setShowTOC(false)}
+                          title="Close"
+                        >
+                          <X className="h-2.5 w-2.5" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* TOC Content */}
+                    {!isMinimized && (
+                      <div className="p-2 max-h-80 overflow-y-auto">
+                        <nav className="space-y-0.5">
+                          {headings.map((heading, index) => (
+                            <a
+                              key={index}
+                              href={`#${heading.id}`}
+                              className={`block text-xs transition-colors hover:text-blue-500 dark:hover:text-blue-400 cursor-pointer py-1 px-2 rounded hover:bg-blue-50/50 dark:hover:bg-blue-900/10 ${
+                                heading.level === 1 ? 'font-medium text-gray-700 dark:text-gray-300' :
+                                heading.level === 2 ? 'pl-3 text-gray-600 dark:text-gray-400' :
+                                heading.level === 3 ? 'pl-4 text-gray-500 dark:text-gray-500' :
+                                'pl-5 text-gray-400 dark:text-gray-600 text-xs'
+                              }`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                const element = document.getElementById(heading.id);
+                                if (element) {
+                                  element.scrollIntoView({ behavior: 'smooth' });
+                                }
+                              }}
+                            >
+                              {heading.text}
+                            </a>
+                          ))}
+                        </nav>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
-          <Card className="bg-card/30 border-border/50 backdrop-blur-sm">
-            <CardContent className="p-6 md:p-8">
-              <div className="prose dark:prose-invert max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-pre:bg-card prose-pre:border prose-pre:border-border">
-                <WikiMarkdown 
-                  content={removeFrontmatter(selectedPost.content)}
-                  posts={posts}
-                  onWikiLinkClick={handleWikiLinkClick}
-                  className="wiki-content"
-                />
-              </div>
-            </CardContent>
-          </Card>
-          
-          {/* Related Notes Section */}
-          {(() => {
-            const relatedNotes = findRelatedNotes(selectedPost.title, posts);
-            return relatedNotes.length > 0 ? (
-              <Card className="bg-card/30 border-border/50 backdrop-blur-sm mt-6">
-                <CardHeader>
-                  <h3 className="text-lg font-semibold text-foreground">Related Notes</h3>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {relatedNotes.map((noteTitle) => {
-                      const relatedPost = posts.find(p => p.title === noteTitle);
-                      return relatedPost ? (
-                        <Button
-                          key={relatedPost.id}
-                          variant="outline"
-                          size="sm"
-                          className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400"
-                          onClick={() => navigate(`/notes/${relatedPost.id}`)}
-                        >
-                          {noteTitle}
-                        </Button>
-                      ) : null;
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-            ) : null;
-          })()}
-          
-          {/* Detachable Table of Contents */}
-          {(() => {
-            const headings = extractHeadings(selectedPost.content);
-            if (!showTOC || headings.length === 0) return null;
-
-            return (
-              <div
-                className="fixed z-50 group"
-                style={{
-                  left: tocPosition.x,
-                  top: tocPosition.y,
-                  width: isMinimized ? 'auto' : '300px',
-                  maxHeight: isMinimized ? 'auto' : '450px'
-                }}
-              >
-                {/* TOC Card with minimalist styling */}
-                <div className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm rounded-md border border-gray-600/60 dark:border-gray-700/20 shadow-sm card-hover-glow">
-                  {/* TOC Header - Draggable */}
-                  <div
-                    className="flex items-center justify-between px-3 py-2 bg-gray-50/10 dark:bg-gray-700/10 rounded-t-md cursor-move border-b border-gray-600/50 dark:border-gray-700/30"
-                    onMouseDown={(e) => {
-                      setIsDragging(true);
-                      setDragOffset({
-                        x: e.clientX - tocPosition.x,
-                        y: e.clientY - tocPosition.y
-                      });
-                    }}
-                  >
-                    <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400 flex items-center">
-                      <List className="w-3 h-3 mr-1 text-gray-500 dark:text-gray-500" />
-                      Contents
-                    </h3>
-                    <div className="flex items-center space-x-0.5">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-5 w-5 p-0 text-gray-500 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-300 hover:bg-transparent rounded-full"
-                        onClick={() => setIsMinimized(!isMinimized)}
-                        title={isMinimized ? "Expand" : "Minimize"}
-                      >
-                        {isMinimized ? <Maximize2 className="h-2.5 w-2.5" /> : <Minimize2 className="h-2.5 w-2.5" />}
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-5 w-5 p-0 text-gray-500 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-300 hover:bg-transparent rounded-full"
-                        onClick={() => setShowTOC(false)}
-                        title="Close"
-                      >
-                        <X className="h-2.5 w-2.5" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* TOC Content */}
-                  {!isMinimized && (
-                    <div className="p-2 max-h-80 overflow-y-auto">
-                      <nav className="space-y-0.5">
-                        {headings.map((heading, index) => (
-                          <a
-                            key={index}
-                            href={`#${heading.id}`}
-                            className={`block text-xs transition-colors hover:text-blue-500 dark:hover:text-blue-400 cursor-pointer py-1 px-2 rounded hover:bg-blue-50/50 dark:hover:bg-blue-900/10 ${
-                              heading.level === 1 ? 'font-medium text-gray-700 dark:text-gray-300' :
-                              heading.level === 2 ? 'pl-3 text-gray-600 dark:text-gray-400' :
-                              heading.level === 3 ? 'pl-4 text-gray-500 dark:text-gray-500' :
-                              'pl-5 text-gray-400 dark:text-gray-600 text-xs'
-                            }`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              const element = document.getElementById(heading.id);
-                              if (element) {
-                                element.scrollIntoView({ behavior: 'smooth' });
-                              }
-                            }}
-                          >
-                            {heading.text}
-                          </a>
-                        ))}
-                      </nav>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })()}
-          
           {/* Local Graph View Component for Individual Notes */}
           <LocalGraphView
             isVisible={showGraphView}
@@ -418,6 +428,7 @@ const Notes = () => {
             currentNote={selectedPost.title}
           />
         </div>
+        <Footer />
       </div>
     );
   }

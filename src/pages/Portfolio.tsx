@@ -2,6 +2,7 @@ import React from 'react';
 import RelativityFieldLines from '@/components/RelativityFieldLines';
 import PortfolioGrid from '@/components/Portfolio';
 import TopControls from '@/components/TopControls';
+import Footer from '@/components/Footer';
 
 const PortfolioPage = () => {
   return (
@@ -21,7 +22,7 @@ const PortfolioPage = () => {
         ></div>
       </div>
 
-      <div className="relative z-10">
+      <div className="relative z-10 pb-24">
         <TopControls title="Portfolio" />
         <div className="pt-20 pb-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
@@ -38,6 +39,7 @@ const PortfolioPage = () => {
           <PortfolioGrid showHeading={false} id="portfolio-grid" />
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

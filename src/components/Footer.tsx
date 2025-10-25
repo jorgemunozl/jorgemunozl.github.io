@@ -1,8 +1,15 @@
 
 import React from 'react';
 import { Github, Twitter, Mail, Linkedin } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 const Footer = () => {
+  const location = useLocation();
+
+  if (location.pathname === '/') {
+    return null;
+  }
+
   return (
     <footer className="fixed bottom-0 left-0 right-0 z-40 bg-transparent backdrop-blur-sm border-t border-gray-200/20 dark:border-gray-800/20 py-4">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
