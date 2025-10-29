@@ -29,6 +29,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [dimensions, setDimensions] = useState({ width: 350, height: 250 });
   const [showControls, setShowControls] = useState(false);
+  const dragCooldownTimeout = useRef<number | null>(null);
   
   // Graph customization options
   const [nodeSize, setNodeSize] = useState(8);
@@ -93,6 +94,15 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
     window.addEventListener('resize', updateDimensions);
     return () => window.removeEventListener('resize', updateDimensions);
   }, [isFullscreen]);
+
+  useEffect(() => {
+    return () => {
+      if (dragCooldownTimeout.current) {
+        clearTimeout(dragCooldownTimeout.current);
+        dragCooldownTimeout.current = null;
+      }
+    };
+  }, []);
 
   // Update graph forces when parameters change
   useEffect(() => {
@@ -162,14 +172,32 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
   };
 
   const handleNodeDrag = (node: any) => {
-    // Let force-graph compute the translate; we just fix to current layout coords
+    // Keep the node under the cursor while re-heating the simulation for smoother motion
     node.fx = node.x;
     node.fy = node.y;
+    if (graphRef.current) {
+      graphRef.current.d3AlphaTarget(0.4);
+      graphRef.current.d3ReheatSimulation();
+    }
   };
 
   const handleNodeDragEnd = (node: any) => {
     node.fx = undefined;
     node.fy = undefined;
+    if (graphRef.current) {
+      const fg = graphRef.current;
+      fg.d3AlphaTarget(0.12);
+      fg.d3ReheatSimulation();
+      if (dragCooldownTimeout.current) {
+        clearTimeout(dragCooldownTimeout.current);
+      }
+      dragCooldownTimeout.current = window.setTimeout(() => {
+        if (graphRef.current === fg) {
+          fg.d3AlphaTarget(0);
+        }
+        dragCooldownTimeout.current = null;
+      }, 2000);
+    }
   };
 
   if (!isVisible) return null;
@@ -381,10 +409,10 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                     ctx.fillText(label, node.x!, node.y! + radius + fontSize / 2 + 4);
                   }
                 }}
-                // Let it settle and stop to avoid constant jitter
-                cooldownTicks={120}
-                d3AlphaDecay={0.03}
-                d3VelocityDecay={0.25}
+                // Continuous low-friction simulation for smoother drag like Obsidian
+                cooldownTicks={0}
+                d3AlphaDecay={0.018}
+                d3VelocityDecay={0.09}
                 d3AlphaMin={0.001}
                 enablePanInteraction={true}
                 enableZoomInteraction={true}

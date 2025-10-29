@@ -1,4 +1,10 @@
-# Lie Algebras — a step toward the universal theory
+---
+tags:
+  - baby
+author: Jorge
+date: 2025-09-25 11:29
+modified: 2025-10-25 11:24
+---
 
 This note gives a concise, intuitive introduction to Lie algebras and explains why they matter so much in physics. It aims to bridge the mathematical definition and the standard physical applications (symmetries, conservation laws, quantum mechanics, and gauge theories).
 
