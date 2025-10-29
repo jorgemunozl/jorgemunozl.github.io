@@ -6,7 +6,7 @@ date: 2025-09-25 11:29
 modified: 2025-10-25 11:24
 ---
 
-Special thanks to [Joel Timana](https://2.com) for a lot of super valuable feedback during the process of this project.
+Special thanks to [Joel Timana](https://pe.linkedin.com/) for a lot of super valuable feedback during the process of this project.
 
 # Why I would do that?
 

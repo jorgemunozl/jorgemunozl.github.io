@@ -33,7 +33,7 @@ const Navigation = () => {
             onClick={handleLogoClick}
           >
             <BookOpen className="w-7 h-7 text-black dark:text-purple-500" />
-            <span className="text-xl font-bold text-gray-900 dark:text-white">Learning Notes</span>
+            <span className="text-2xl font-bold text-gray-900 dark:text-white">Learning Notes</span>
           </div>
           
           <div className="hidden md:flex items-center space-x-8">
@@ -65,7 +65,7 @@ const Navigation = () => {
               onClick={toggleTheme}
               className="text-gray-600 dark:text-gray-300 hover:text-theme-primary"
             >
-              {theme === 'dark' ? <Sun className="w-7 h-7" /> : <Moon className="w-7 h-7" />}
+              {theme === 'dark' ? <Sun className="w-9 h-9" /> : <Moon className="w-9 h-9" />}
             </Button>
             <Button 
               onClick={() => navigate('/notes')}
