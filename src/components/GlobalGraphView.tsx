@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ForceGraph2D from 'react-force-graph-2d';
+import ForceGraph2D, { type NodeObject } from 'react-force-graph-2d';
 import * as d3 from 'd3';
+import type { ForceLink, ForceManyBody } from 'd3';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -8,6 +9,7 @@ import { X, Maximize2, Minimize2, RefreshCw, Network, Settings } from 'lucide-re
 import { buildGraphFromPosts, GraphData, GraphNode, GraphLink } from '@/utils/wikiLinks';
 import { blogPosts } from '@/components/data/notes';
 import { useTheme } from 'next-themes';
+import { useSmoothForceGraphZoom, type ForceGraphInstance } from '@/hooks/useSmoothForceGraphZoom';
 
 interface GlobalGraphViewProps {
   isVisible: boolean;
@@ -20,7 +22,8 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
   onClose, 
   onNodeClick
 }) => {
-  const graphRef = useRef<any>(null);
+  const graphRef = useRef<ForceGraphInstance<GraphNode, GraphLink> | null>(null);
+  const graphContainerRef = useRef<HTMLDivElement | null>(null);
   const { theme } = useTheme();
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -88,14 +91,14 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
       }
 
       // Update charge and link forces
-      const charge = fg.d3Force('charge');
-      if (charge && typeof (charge as any).strength === 'function') {
-        (charge as any).strength(repelForce);
+      const charge = fg.d3Force('charge') as ForceManyBody<NodeObject<GraphNode>> | undefined;
+      if (charge) {
+        charge.strength(repelForce);
       }
 
-      const link = fg.d3Force('link');
-      if (link && typeof (link as any).strength === 'function') {
-        (link as any).strength(linkForce).distance(linkDistance);
+      const link = fg.d3Force('link') as ForceLink<NodeObject<GraphNode>, GraphLink> | undefined;
+      if (link) {
+        link.strength(linkForce).distance(linkDistance);
       }
 
       // Restart simulation
@@ -128,7 +131,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
   };
 
   // Smooth release after dragging (Obsidian-like)
-  const handleNodeDragEnd = (node: any) => {
+  const handleNodeDragEnd = (node: NodeObject<GraphNode>) => {
     // Clear any existing rearrangement timeout
     if (rearrangeTimeoutRef.current) {
       window.clearTimeout(rearrangeTimeoutRef.current);
@@ -141,6 +144,12 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
       node.fy = undefined;
     }, 2000);
   };
+
+  useSmoothForceGraphZoom(graphRef, graphContainerRef, {
+    minZoom: 0.25,
+    maxZoom: 6,
+    sensitivity: 0.0012,
+  });
 
   if (!isVisible) return null;
 
@@ -293,7 +302,11 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
           </div>
         )}
         <CardContent className="p-0 bg-transparent">
-          <div className={`relative overflow-hidden bg-transparent ${isFullscreen ? 'h-full' : ''}`} style={!isFullscreen ? { height: dimensions.height } : undefined}>
+          <div
+            ref={graphContainerRef}
+            className={`relative overflow-hidden touch-none overscroll-contain bg-transparent ${isFullscreen ? 'h-full' : ''}`}
+            style={!isFullscreen ? { height: dimensions.height } : undefined}
+          >
             {isLoading ? (
               <div className="flex items-center justify-center h-full bg-transparent">
                 <div className="text-gray-500 text-xs">Loading...</div>
@@ -350,7 +363,9 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 d3VelocityDecay={0.3}
                 d3AlphaMin={0.001}
                 enablePanInteraction={true}
-                enableZoomInteraction={true}
+                enableZoomInteraction={false}
+                minZoom={0.25}
+                maxZoom={6}
               />
             )}
           </div>
