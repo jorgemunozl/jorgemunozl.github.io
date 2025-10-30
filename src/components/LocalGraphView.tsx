@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import ForceGraph2D from 'react-force-graph-2d';
+import type { ForceLink, ForceManyBody } from 'd3';
+import ForceGraph2D, { type NodeObject } from 'react-force-graph-2d';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -8,6 +9,7 @@ import { X, Maximize2, Minimize2, RefreshCw, Network, Settings } from 'lucide-re
 import { buildGraphFromPosts, GraphData, GraphNode, GraphLink, findRelatedNotes } from '@/utils/wikiLinks';
 import { blogPosts, BlogPost } from '@/components/data/notes';
 import { useTheme } from 'next-themes';
+import { useSmoothForceGraphZoom, type ForceGraphInstance } from '@/hooks/useSmoothForceGraphZoom';
 
 interface LocalGraphViewProps {
   isVisible: boolean;
@@ -18,11 +20,12 @@ interface LocalGraphViewProps {
 
 const LocalGraphView: React.FC<LocalGraphViewProps> = ({ 
   isVisible, 
-  onClose, 
+  onClose,
   onNodeClick,
   currentNote 
 }) => {
-  const graphRef = useRef<any>(null);
+  const graphRef = useRef<ForceGraphInstance<GraphNode, GraphLink> | null>(null);
+  const graphContainerRef = useRef<HTMLDivElement | null>(null);
   const { theme } = useTheme();
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -117,13 +120,13 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
       }
 
       // Update charge and link forces
-      const charge = fg.d3Force('charge');
-      if (charge && typeof (charge as any).strength === 'function') {
-        (charge as any).strength(repelForce);
+      const charge = fg.d3Force('charge') as ForceManyBody<NodeObject<GraphNode>> | undefined;
+      if (charge) {
+        charge.strength(repelForce);
       }
-      const link = fg.d3Force('link');
-      if (link && typeof (link as any).strength === 'function') {
-        (link as any).strength(linkForce).distance(linkDistance);
+      const link = fg.d3Force('link') as ForceLink<NodeObject<GraphNode>, GraphLink> | undefined;
+      if (link) {
+        link.strength(linkForce).distance(linkDistance);
       }
       
       // Restart simulation
@@ -171,7 +174,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
     }, 500);
   };
 
-  const handleNodeDrag = (node: any) => {
+  const handleNodeDrag = (node: NodeObject<GraphNode>) => {
     // Keep the node under the cursor while re-heating the simulation for smoother motion
     node.fx = node.x;
     node.fy = node.y;
@@ -181,7 +184,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
     }
   };
 
-  const handleNodeDragEnd = (node: any) => {
+  const handleNodeDragEnd = (node: NodeObject<GraphNode>) => {
     node.fx = undefined;
     node.fy = undefined;
     if (graphRef.current) {
@@ -200,11 +203,17 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
     }
   };
 
-  if (!isVisible) return null;
-
   const containerClasses = isFullscreen
     ? 'fixed inset-0 z-50 bg-black/90 dark:bg-black/90 flex items-center justify-center'
     : 'fixed bottom-4 right-4 z-40';
+
+  useSmoothForceGraphZoom(graphRef, graphContainerRef, {
+    minZoom: 0.25,
+    maxZoom: 6,
+    sensitivity: 0.0012,
+  });
+
+  if (!isVisible) return null;
 
   return (
     <div className={containerClasses}>
@@ -353,7 +362,11 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
           </div>
         )}
         <CardContent className="p-0 bg-transparent">
-          <div className={`relative overflow-hidden ${isFullscreen ? 'h-full' : ''}`} style={!isFullscreen ? { height: dimensions.height } : undefined}>
+          <div
+            ref={graphContainerRef}
+            className={`relative overflow-hidden touch-none overscroll-contain ${isFullscreen ? 'h-full' : ''}`}
+            style={!isFullscreen ? { height: dimensions.height } : undefined}
+          >
             {isLoading ? (
               <div className="flex items-center justify-center h-full bg-gray-50/50 dark:bg-gray-900/50">
                 <div className="text-gray-500 dark:text-gray-500 text-xs">Loading...</div>
@@ -415,7 +428,9 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                 d3VelocityDecay={0.09}
                 d3AlphaMin={0.001}
                 enablePanInteraction={true}
-                enableZoomInteraction={true}
+                enableZoomInteraction={false}
+                minZoom={0.25}
+                maxZoom={6}
               />
             )}
           </div>

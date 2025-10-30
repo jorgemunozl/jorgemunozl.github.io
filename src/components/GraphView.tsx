@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ForceGraph2D from 'react-force-graph-2d';
+import ForceGraph2D, { type NodeObject } from 'react-force-graph-2d';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { X, Maximize2, Minimize2, RefreshCw, Network } from 'lucide-react';
 import { buildGraphFromPosts, GraphData, GraphNode, GraphLink } from '@/utils/wikiLinks';
 import { blogPosts } from '@/components/data/notes';
+import { useSmoothForceGraphZoom, type ForceGraphInstance } from '@/hooks/useSmoothForceGraphZoom';
 
 interface GraphViewProps {
   isVisible: boolean;
@@ -19,7 +20,8 @@ const GraphView: React.FC<GraphViewProps> = ({
   onNodeClick,
   selectedNode 
 }) => {
-  const graphRef = useRef<any>(null);
+  const graphRef = useRef<ForceGraphInstance<GraphNode, GraphLink> | null>(null);
+  const graphContainerRef = useRef<HTMLDivElement | null>(null);
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -67,12 +69,12 @@ const GraphView: React.FC<GraphViewProps> = ({
   // Avoid changing forces on hover; it causes jumpy behavior
   const handleNodeHover = (_node: GraphNode | null) => {};
 
-  const handleNodeDrag = (node: any) => {
+  const handleNodeDrag = (node: NodeObject<GraphNode>) => {
     node.fx = node.x;
     node.fy = node.y;
   };
 
-  const handleNodeDragEnd = (node: any) => {
+  const handleNodeDragEnd = (node: NodeObject<GraphNode>) => {
     node.fx = undefined;
     node.fy = undefined;
   };
@@ -93,6 +95,12 @@ const GraphView: React.FC<GraphViewProps> = ({
       setIsLoading(false);
     }, 500);
   };
+
+  useSmoothForceGraphZoom(graphRef, graphContainerRef, {
+    minZoom: 0.25,
+    maxZoom: 6,
+    sensitivity: 0.0012,
+  });
 
   if (!isVisible) return null;
 
@@ -144,7 +152,10 @@ const GraphView: React.FC<GraphViewProps> = ({
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <div className={`relative overflow-hidden ${isFullscreen ? 'h-full' : 'h-80'}`}>
+          <div
+            ref={graphContainerRef}
+            className={`relative overflow-hidden touch-none overscroll-contain ${isFullscreen ? 'h-full' : 'h-80'}`}
+          >
             {isLoading ? (
               <div className="flex items-center justify-center h-full bg-gray-800">
                 <div className="text-gray-400 text-sm">Loading graph...</div>
@@ -210,6 +221,9 @@ const GraphView: React.FC<GraphViewProps> = ({
                 cooldownTicks={120}
                 d3AlphaDecay={0.03}
                 d3VelocityDecay={0.25}
+                enableZoomInteraction={false}
+                minZoom={0.25}
+                maxZoom={6}
               />
             )}
           </div>
