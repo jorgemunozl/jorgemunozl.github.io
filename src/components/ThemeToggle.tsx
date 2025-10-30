@@ -1,6 +1,6 @@
 import React from 'react'
 import { useTheme } from 'next-themes'
-import { Moon, Sun } from 'lucide-react'
+import { Sun, Moon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 const ThemeToggle: React.FC = () => {
@@ -10,8 +10,13 @@ const ThemeToggle: React.FC = () => {
   const toggle = () => setTheme(isDark ? 'light' : 'dark')
 
   return (
-    <Button variant="ghost" size="sm" onClick={toggle} className="text-green-400 hover:text-green-300 hover:bg-green-100/20 dark:text-purple-400 dark:hover:text-purple-300 dark:hover:bg-gray-800/50">
-      {isDark ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={toggle}
+      className="h-10 w-10 text-emerald-700 hover:text-cyan-600 dark:text-emerald-300 dark:hover:text-cyan-300 transition-colors [&_svg]:size-10"
+    >
+      {isDark ? <Sun /> : <Moon />}
     </Button>
   )
 }

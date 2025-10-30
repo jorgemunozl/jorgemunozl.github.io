@@ -11,7 +11,7 @@ const Hero = () => {
           <div className="flex items-center justify-center mb-6">
             <h1 className="text-5xl md:text-6xl font-bold text-foreground">
               👋 welcome to mun{' '}
-              <span className="bg-gradient-to-r from-black-400 via-black-500 to-black-600 dark:from-purple-400 dark:via-pink-500 dark:to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-emerald-900 via-emerald-800 to-cyan-600 dark:from-purple-400 dark:via-pink-500 dark:to-purple-600 bg-clip-text text-transparent">
                 Blog
               </span>
             </h1>
