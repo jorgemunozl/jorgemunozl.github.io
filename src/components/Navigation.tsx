@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Moon, Sun } from 'lucide-react';
+import { Sun, BookOpen, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from 'next-themes';
 
@@ -32,7 +32,7 @@ const Navigation = () => {
             className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity"
             onClick={handleLogoClick}
           >
-            <BookOpen className="w-7 h-7 text-black dark:text-purple-500" />
+            <BookOpen className="w-20 h-20 text-black dark:text-purple-500" />
             <span className="text-2xl font-bold text-gray-900 dark:text-white">Learning Notes</span>
           </div>
           
@@ -61,11 +61,11 @@ const Navigation = () => {
           <div className="flex items-center space-x-3">
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={toggleTheme}
-              className="text-gray-600 dark:text-gray-300 hover:text-theme-primary"
+              className="h-16 w-16 text-emerald-700 hover:text-cyan-600 dark:text-emerald-300 dark:hover:text-cyan-300 transition-colors [&_svg]:size-1"
             >
-              {theme === 'dark' ? <Sun className="w-9 h-9" /> : <Moon className="w-9 h-9" />}
+              {theme === 'dark' ? <Sun /> : <Moon />}
             </Button>
             <Button 
               onClick={() => navigate('/notes')}
