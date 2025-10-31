@@ -2,11 +2,12 @@
 tags:
   - baby
 author: Jorge
-date: 2025-09-25 11:29
+date: 2024-11-25 11:29
 modified: 2025-10-25 11:24
 ---
+I mean there are a ton of beauty ideas.
 
-This note gives a concise, intuitive introduction to Lie algebras and explains why they matter so much in physics. It aims to bridge the mathematical definition and the standard physical applications (symmetries, conservation laws, quantum mechanics, and gauge theories).
+intuitive introduction to Lie algebras and explains why they matter so much in physics. It aims to bridge the mathematical definition and the standard physical applications (symmetries, conservation laws, quantum mechanics, and gauge theories).
 
 ## What is a Lie algebra?
 
