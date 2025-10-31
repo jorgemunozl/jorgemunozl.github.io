@@ -69,6 +69,13 @@ const BlogPreview = () => {
               <BookOpen className="w-5 h-5 mr-2" />
               View All Notes
             </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate('/notes/featured')}
+              className="border-black text-black hover:bg-black/10 hover:text-black hover:border-black dark:border-purple-800 dark:text-purple-300 dark:hover:bg-purple-950 dark:hover:text-purple-200 dark:hover:border-purple-700"
+            >
+              Featured Notes
+            </Button>
             <Button 
               onClick={() => navigate('/additional-contents')}
               variant="outline"
