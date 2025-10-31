@@ -5,7 +5,14 @@ author: Jorge
 date: 2020-10-29 10:28
 modified: 2025-10-29 10:49
 ---
-# The Problem
+Did you see those videos on slow motion? How they are possible?
+
+So is clear that there are two main options or well you have a camera with 20000 FPS and that's it or well you record with your sad phone and use another techniques (Pirate Twixtor).
+
+But how that works?
+
+
+# Now The Problem
 
 Have you ever shot something at **24 fps** or **30 fps** and later wished you had that buttery, dreamy slow‑motion look? If you just duplicate frames or let your editing software blend them, you’ll see jittery jumps or smeared motion. That happens because there simply aren’t enough pictures per second. To slow time gracefully you need to **invent** new pictures between the real ones.
 
