@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Linkedin, Twitter, Github, Briefcase, BookOpen, Globe } from 'lucide-react';
+import { Mail, Linkedin, Twitter, Github, Briefcase, BookOpen, Globe, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Hero = () => {
@@ -38,6 +38,16 @@ const Hero = () => {
               <Link to="/notes">
                 <BookOpen className="w-5 h-5 mr-2" />
                 Read Notes
+              </Link>
+            </Button>
+            <Button
+              variant="ghost"
+              asChild
+              className="text-black hover:text-black/80 dark:text-purple-200 dark:hover:text-purple-100"
+            >
+              <Link to="/about">
+                <User className="w-5 h-5 mr-2" />
+                About Me
               </Link>
             </Button>
           </div>
