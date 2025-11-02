@@ -35,8 +35,40 @@ export function normalizeTitle(input: string): string {
     .toLowerCase()
     // treat hyphens and multiple spaces the same
     .replace(/[-_]+/g, ' ')
+    // remove punctuation/special chars while preserving letters and numbers
+    .replace(/[^\p{L}\p{N}\s]+/gu, ' ')
     .replace(/\s+/g, ' ');
 }
+
+type PostLike = {
+  id: string;
+  title: string;
+  content: string;
+  fileName?: string;
+};
+
+const stripMarkdownExtension = (fileName: string) =>
+  fileName.replace(/\.(md|markdown)$/i, '');
+
+const normalizeFileReference = (fileName: string) =>
+  normalizeTitle(stripMarkdownExtension(fileName));
+
+const findPostByNormalizedTarget = <T extends { title: string; fileName?: string }>(
+  normalizedTarget: string,
+  posts: T[]
+): T | undefined => {
+  return posts.find((post) => {
+    if (normalizeTitle(post.title) === normalizedTarget) {
+      return true;
+    }
+    if (post.fileName) {
+      if (normalizeFileReference(post.fileName) === normalizedTarget) {
+        return true;
+      }
+    }
+    return false;
+  });
+};
 
 /**
  * Extract WikiLinks [[]] from text content
@@ -92,33 +124,20 @@ export function processWikiLinksToMarkdown(content: string, posts: Array<{ id: s
 /**
  * Find a matching post for a wiki link target
  */
-export function findMatchingPost(target: string, posts: Array<{ id: string; title: string; fileName: string }>) {
-  const normalizedTarget = target.toLowerCase().trim();
-  
-  return posts.find(post => {
-    // Direct title match
-    if (post.title.toLowerCase() === normalizedTarget) return true;
-    
-    // Filename match (with and without .md extension)
-    const baseFileName = post.fileName.toLowerCase().replace('.md', '');
-    if (baseFileName === normalizedTarget) return true;
-    
-    // Convert spaces to hyphens and try again
-    const hyphenated = normalizedTarget.replace(/\s+/g, '-');
-    if (baseFileName === hyphenated) return true;
-    
-    // Convert hyphens to spaces and try again
-    const spaced = baseFileName.replace(/-/g, ' ');
-    if (spaced === normalizedTarget) return true;
-    
-    return false;
-  });
+export function findMatchingPost(
+  target: string,
+  posts: Array<{ id: string; title: string; fileName: string }>
+) {
+  const normalizedTarget = normalizeTitle(target);
+  return findPostByNormalizedTarget(normalizedTarget, posts);
 }
 
 /**
  * Build graph data from blog posts
  */
-export function buildGraphFromPosts(posts: Array<{ id: string; title: string; content: string }>): GraphData {
+export function buildGraphFromPosts(
+  posts: Array<{ id: string; title: string; content: string; fileName?: string }>
+): GraphData {
   const nodes: Map<string, GraphNode> = new Map();
   const linkCounts: Map<string, number> = new Map();
   const links: GraphLink[] = [];
@@ -141,7 +160,7 @@ export function buildGraphFromPosts(posts: Array<{ id: string; title: string; co
     wikiLinks.forEach(link => {
       // Try to resolve target to an existing post title using normalization
       const normalizedTarget = normalizeTitle(link.target);
-      const matchedPost = posts.find(p => normalizeTitle(p.title) === normalizedTarget);
+      const matchedPost = findPostByNormalizedTarget(normalizedTarget, posts);
       const targetTitle = matchedPost ? matchedPost.title : link.target;
       
       // Create target node if it doesn't exist (orphaned link)
@@ -199,26 +218,36 @@ export function buildGraphFromPosts(posts: Array<{ id: string; title: string; co
 /**
  * Find related notes based on WikiLinks
  */
-export function findRelatedNotes(currentTitle: string, posts: Array<{ id: string; title: string; content: string }>): string[] {
+export function findRelatedNotes(
+  currentTitle: string,
+  posts: Array<PostLike>
+): string[] {
   const related = new Set<string>();
-  const normalizedCurrent = normalizeTitle(currentTitle);
-  
+  const currentPost = posts.find(p => p.title === currentTitle);
+
+  const normalizedTargets = new Set<string>();
+  normalizedTargets.add(normalizeTitle(currentTitle));
+
+  if (currentPost?.fileName) {
+    normalizedTargets.add(normalizeFileReference(currentPost.fileName));
+  }
+
   // Find notes that link to current note
   posts.forEach(post => {
     if (post.title === currentTitle) return;
     
     const links = extractWikiLinks(post.content);
-    if (links.some(link => normalizeTitle(link.target) === normalizedCurrent)) {
+    if (links.some(link => normalizedTargets.has(normalizeTitle(link.target)))) {
       related.add(post.title);
     }
   });
 
   // Find notes that current note links to
-  const currentPost = posts.find(p => p.title === currentTitle);
   if (currentPost) {
     const links = extractWikiLinks(currentPost.content);
     links.forEach(link => {
-      const targetPost = posts.find(p => normalizeTitle(p.title) === normalizeTitle(link.target));
+      const normalizedTarget = normalizeTitle(link.target);
+      const targetPost = findPostByNormalizedTarget(normalizedTarget, posts);
       if (targetPost) {
         related.add(targetPost.title);
       }

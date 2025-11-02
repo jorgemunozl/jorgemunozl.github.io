@@ -5,31 +5,7 @@ author: Jorge
 date: 2025-10-13 11:29
 modified: 2025-10-25 11:24
 ---
-# Developing of a Transformed based architecture to solve the Time Independent Many Electron Schrodinger Equation
-## Table of Contents
-1. [Abstract](#Abstract)
-2. [Introduction](#Introduction)
-3. [Objectives](#Objectives)
-4. [Theoretical Framework](#Theoretical%20Framework)
-	1. [The problem](#The%20problem)
-		1. [The Schrodinger Equation](#The%20Schrodinger%20Equation)
-		2. [The many electron Schrodinger Equation](#The%20many%20electron%20Schrodinger%20Equation)
-	2. [Approximating a solution](#Approximating%20a%20solution)
-		1. [RayLeight Quotient](#RayLeight%20Quotient)
-	3. [Using Deep Learning](#Using%20Deep%20Learning)
-		1. [Fermi Net](#Fermi%20Net)
-		2. [Transformers](#Transformers)
-		3. [Psi Former](#Psi%20Former)
-		4. [Loss function](#Loss%20function)
-		5. [Optimizer](#Optimizer)
-		6. [Flow of the architecture](#Flow%20of%20the%20architecture)
-5. [Methodology](#Methodology)
-	1. [Environment](#Environment)
-	2. [Training](#Training)
-
----
-
-[[observations 1]]
+# Development of a Transformed based architecture to solve the Time Independent Many Electron Schrodinger Equation
 
 # Abstract
 
@@ -92,7 +68,7 @@ Using atomic units we [[Quantum Chemistry units|Atomic Units]]:
 
 The Hamiltonian using the [[Quantum Chemistry units]] becomes:
 
-$$ \hat{H}=-\frac{1}{2}\sum \nabla^{2}+\sum \frac{1}{\lvert r_{i}-r_{j} \rvert }-\sum \frac{Z_{I}}{\lvert r_{i}-R_{I} \rvert }+\sum \frac{Z_{I}Z_{J}}{\lvert R_{i}-R_{j} \rvert } $$
+$$ \hat{H}=-\frac{1}{2}\sum \nabla^{2}+\sum \frac{1}{\lvert r_{i}-r_{j} \rvert }-\sum \frac{Z_{I}}{\lvert r_{i}-R_{I} \rvert }+\sum \frac{Z_{I}Z_{J}}{\lvert R_{i}-R_{j} \rvert }$$
 
 Where $Z_{I}$ are the [[atomic number]] $r_{i}$ is the distance from a reference frame 
 
@@ -104,18 +80,11 @@ $$
 
 The potential energy becomes infinite when two electrons overlap , this could be formalized via the [[Kato Cusp Conditions]], a Jastrow factor $\exp(\mathcal{J})$. The explicit form of $\mathcal{J}$ depends on the author.
 
-
-
-
 ## Approximating a solution
 
 Find possible solution in the traditional way is prohibitively hard. So what people have doing and it seem that it becomes a success is guess that solution and using another techniques to improve the solution, to this guess solution we called **Ansatz**.
 
 Once that you have your Ansatz, which normally depends on depends on certain parameters.
-
-
-
-
 
 ### Variational Monte Carlo
 
@@ -127,7 +96,10 @@ $$ \mathcal{L}=\frac{\bra{\psi} \hat{H}\ket{\psi} }{\braket{ \psi | \psi } }=\fr
 So how we optimized this. Here appears [[Variational Quantum Monte Carlo]].
 
 Which can be re-written as:
-$$ E_{L}(x)=\Psi ^{-1}_{\theta}(x)\hat{H}\Psi_{\theta}(x) $$
+
+$$
+E_{L}(x)=\Psi ^{-1}_{\theta}(x)\hat{H}\Psi_{\theta}(x)
+$$
 
 $$ \mathcal{L}_{\theta}=\mathbb{E}_{x\sim \Psi^{2}_{\theta}}[E_{L}(x)] $$
 

@@ -26,6 +26,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
 }) => {
   const graphRef = useRef<ForceGraphInstance<GraphNode, GraphLink> | null>(null);
   const graphContainerRef = useRef<HTMLDivElement | null>(null);
+  const settleAnimationRef = useRef<number | null>(null);
+  const alphaResetTimeoutRef = useRef<number | null>(null);
   const { theme } = useTheme();
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -55,7 +57,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
       const relatedNotes = findRelatedNotes(currentNote, blogPosts.map(post => ({
         id: post.id,
         title: post.title,
-        content: post.content
+        content: post.content,
+        fileName: post.fileName
       })));
 
       // Include current note and its immediate connections
@@ -66,7 +69,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
       const data = buildGraphFromPosts(localPosts.map(post => ({
         id: post.id,
         title: post.title,
-        content: post.content
+        content: post.content,
+        fileName: post.fileName
       })));
 
       // Highlight the current note
@@ -103,6 +107,14 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
       if (dragCooldownTimeout.current) {
         clearTimeout(dragCooldownTimeout.current);
         dragCooldownTimeout.current = null;
+      }
+      if (settleAnimationRef.current !== null) {
+        cancelAnimationFrame(settleAnimationRef.current);
+        settleAnimationRef.current = null;
+      }
+      if (alphaResetTimeoutRef.current !== null) {
+        clearTimeout(alphaResetTimeoutRef.current);
+        alphaResetTimeoutRef.current = null;
       }
     };
   }, []);
@@ -150,7 +162,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
       const relatedNotes = findRelatedNotes(currentNote, blogPosts.map(post => ({
         id: post.id,
         title: post.title,
-        content: post.content
+        content: post.content,
+        fileName: post.fileName
       })));
 
       const localPosts = blogPosts.filter(post => 
@@ -160,7 +173,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
       const data = buildGraphFromPosts(localPosts.map(post => ({
         id: post.id,
         title: post.title,
-        content: post.content
+        content: post.content,
+        fileName: post.fileName
       })));
 
       data.nodes = data.nodes.map(node => ({
@@ -179,7 +193,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
     node.fx = node.x;
     node.fy = node.y;
     if (graphRef.current) {
-      graphRef.current.d3AlphaTarget(0.4);
+      graphRef.current.d3AlphaTarget(0.25);
       graphRef.current.d3ReheatSimulation();
     }
   };
@@ -189,7 +203,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
     node.fy = undefined;
     if (graphRef.current) {
       const fg = graphRef.current;
-      fg.d3AlphaTarget(0.12);
+      fg.d3AlphaTarget(0.08);
       fg.d3ReheatSimulation();
       if (dragCooldownTimeout.current) {
         clearTimeout(dragCooldownTimeout.current);
@@ -202,6 +216,56 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
       }, 2000);
     }
   };
+
+  // Smoothly re-center graph when data or layout context changes
+  useEffect(() => {
+    if (isLoading || graphData.nodes.length === 0) {
+      return;
+    }
+
+    if (settleAnimationRef.current !== null) {
+      cancelAnimationFrame(settleAnimationRef.current);
+      settleAnimationRef.current = null;
+    }
+    if (alphaResetTimeoutRef.current !== null) {
+      clearTimeout(alphaResetTimeoutRef.current);
+      alphaResetTimeoutRef.current = null;
+    }
+
+    settleAnimationRef.current = requestAnimationFrame(() => {
+      const fg = graphRef.current;
+      if (!fg) return;
+
+      const container = graphContainerRef.current;
+      const containerHasSize =
+        container && container.offsetWidth > 0 && container.offsetHeight > 0;
+      const padding = isFullscreen ? 120 : 36;
+      const duration = isFullscreen ? 900 : 520;
+
+      if (containerHasSize) {
+        fg.zoomToFit(duration, padding);
+      }
+
+      fg.d3AlphaTarget(0.15);
+      alphaResetTimeoutRef.current = window.setTimeout(() => {
+        if (graphRef.current === fg) {
+          fg.d3AlphaTarget(0);
+        }
+        alphaResetTimeoutRef.current = null;
+      }, duration + 160);
+    });
+
+    return () => {
+      if (settleAnimationRef.current !== null) {
+        cancelAnimationFrame(settleAnimationRef.current);
+        settleAnimationRef.current = null;
+      }
+      if (alphaResetTimeoutRef.current !== null) {
+        clearTimeout(alphaResetTimeoutRef.current);
+        alphaResetTimeoutRef.current = null;
+      }
+    };
+  }, [graphData, isLoading, isFullscreen]);
 
   const containerClasses = isFullscreen
     ? 'fixed inset-0 z-50 bg-black/90 dark:bg-black/90 flex items-center justify-center'
@@ -411,10 +475,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                   
                   // Draw label when zoomed in enough
                   if (globalScale > textThreshold) {
-                    const textWidth = ctx.measureText(label).width;
                     const padding = 4;
-                    
-                    // Text (no background - fully transparent)
                     ctx.font = `${fontSize}px Inter, system-ui, sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
@@ -422,10 +483,10 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                     ctx.fillText(label, node.x!, node.y! + radius + fontSize / 2 + 4);
                   }
                 }}
-                // Continuous low-friction simulation for smoother drag like Obsidian
+                // Continuous simulation with higher damping for a calmer layout
                 cooldownTicks={0}
-                d3AlphaDecay={0.018}
-                d3VelocityDecay={0.09}
+                d3AlphaDecay={0.03}
+                d3VelocityDecay={0.3}
                 d3AlphaMin={0.001}
                 enablePanInteraction={true}
                 enableZoomInteraction={false}
