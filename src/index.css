@@ -179,7 +179,7 @@
   }
 
   .page-header {
-    @apply relative mx-auto flex max-w-5xl flex-col items-center gap-6 px-4 pt-32 pb-12 text-center sm:px-6 lg:px-8;
+    @apply relative mx-auto flex max-w-5xl flex-col items-center gap-6 px-4 pt-20 pb-10 text-center sm:px-6 lg:px-8;
   }
 
   .section-eyebrow {

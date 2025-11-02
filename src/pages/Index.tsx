@@ -21,7 +21,7 @@ const Index = () => {
       
       <div className="page-surface">
         <TopControls />
-        <div className="pt-32">
+        <div className="pt-16 sm:pt-20">
           <Hero />
           <BlogPreview />
         </div>

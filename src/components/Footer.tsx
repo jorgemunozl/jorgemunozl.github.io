@@ -11,9 +11,9 @@ const Footer = () => {
   }
 
   return (
-    <footer className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-6 sm:px-6">
-      <div className="pointer-events-auto flex w-full max-w-5xl flex-col items-center gap-3 rounded-full border border-slate-900/10 bg-white/85 px-6 py-3 text-xs text-slate-500 shadow-lg shadow-emerald-500/10 backdrop-blur-xl transition-colors dark:border-white/10 dark:bg-white/10 dark:text-white/60 dark:shadow-purple-500/10">
-        <div className="flex items-center gap-5">
+    <footer className="pointer-events-none fixed right-4 top-1/2 z-40 flex -translate-y-1/2 sm:right-6">
+      <div className="pointer-events-auto flex flex-col items-center gap-4 rounded-3xl border border-slate-900/10 bg-white/85 px-4 py-6 text-xs text-slate-500 shadow-lg shadow-emerald-500/10 backdrop-blur-xl transition-colors dark:border-white/10 dark:bg-white/10 dark:text-white/60 dark:shadow-purple-500/10">
+        <div className="flex flex-col items-center gap-5">
           <a 
             href="https://github.com/jorgemunozl" 
             target="_blank"
@@ -49,7 +49,10 @@ const Footer = () => {
             <Mail className="h-4 w-4" />
           </a>
         </div>
-        <p className="text-[11px] uppercase tracking-[0.35em] text-slate-400 dark:text-white/40">
+        <p
+          className="text-[11px] uppercase tracking-[0.35em] text-slate-400 dark:text-white/40"
+          style={{ writingMode: 'vertical-rl' }}
+        >
           © {new Date().getFullYear()} Jorge Munoz
         </p>
       </div>
