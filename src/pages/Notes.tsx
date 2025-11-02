@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { BookOpen, Calendar, Search, Clock, ArrowLeft, ExternalLink, Network, Download, List, X, Maximize2, Minimize2, Star } from 'lucide-react';
+import { BookOpen, Calendar, Search, Clock, ArrowLeft, ExternalLink, Network, Download, Star, ChevronDown } from 'lucide-react';
 import WikiMarkdown from '@/components/WikiMarkdown';
 import GlobalGraphView from '@/components/GlobalGraphView';
 import LocalGraphView from '@/components/LocalGraphView';
@@ -76,11 +76,7 @@ const Notes = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [selectedNodeInGraph, setSelectedNodeInGraph] = useState<string | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
-  const [showTOC, setShowTOC] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [tocPosition, setTocPosition] = useState({ x: 20, y: 100 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [tocExpanded, setTocExpanded] = useState(true);
   const postsPerPage = 7;
   const params = useParams();
   const navigate = useNavigate();
@@ -160,38 +156,29 @@ const Notes = () => {
     setCurrentPage(1);
   }, [searchTerm]);
 
-  // Handle dragging
+  const selectedPost = noteId ? posts.find(post => post.id === noteId) : undefined;
+  const normalizedSelectedTitle = selectedPost ? normalizeTitle(selectedPost.title) : undefined;
+  const selectedPdfUrl = normalizedSelectedTitle ? pdfByNormalizedTitle[normalizedSelectedTitle] : undefined;
+  const tocHeadings = React.useMemo(() => {
+    if (!selectedPost) return [];
+    return extractHeadings(removeFrontmatter(selectedPost.content));
+  }, [selectedPost?.content]);
+
   React.useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (isDragging) {
-        setTocPosition({
-          x: e.clientX - dragOffset.x,
-          y: e.clientY - dragOffset.y
-        });
-      }
-    };
-
-    const handleMouseUp = () => {
-      setIsDragging(false);
-    };
-
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+    if (noteId) {
+      setTocExpanded(true);
     }
+  }, [noteId]);
 
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isDragging, dragOffset]);
+  const handleScrollToHeading = React.useCallback((headingId: string) => {
+    const element = document.getElementById(headingId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, []);
 
   // If we have a noteId, find and display that specific note
   if (noteId) {
-    const selectedPost = posts.find(post => post.id === noteId);
-    const normalizedSelectedTitle = selectedPost ? normalizeTitle(selectedPost.title) : undefined;
-    const selectedPdfUrl = normalizedSelectedTitle ? pdfByNormalizedTitle[normalizedSelectedTitle] : undefined;
-    
     if (!selectedPost) {
       return (
         <div className="min-h-screen relative overflow-hidden bg-background gradient-bg flex flex-col">
@@ -241,26 +228,18 @@ const Notes = () => {
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-3">
-                  <Button 
+                <div className="flex flex-wrap items-center gap-3">
+                  <Button
                     onClick={() => navigate('/notes')}
-                    variant="outline" 
-                    className="bg-black text-white border-black hover:bg-gray-800 hover:text-white dark:text-blue-500 dark:border-blue-500 dark:bg-transparent dark:hover:bg-transparent dark:hover:text-blue-400"
+                    variant="default"
+                    size="sm"
+                    className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white shadow-lg shadow-slate-900/30 hover:-translate-y-0.5 hover:shadow-slate-900/40 dark:from-slate-100 dark:via-white dark:to-slate-200 dark:text-slate-900"
                   >
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Notes
+                    <ArrowLeft className="w-4 h-4" />
+                    Back to Notes
                   </Button>
-                  <Button 
-                    onClick={() => setShowTOC(!showTOC)}
-                    variant="outline" 
-                    className="bg-black text-white border-black hover:bg-gray-800 hover:text-white dark:text-red-500 dark:border-red-500 dark:bg-transparent dark:hover:bg-transparent dark:hover:text-red-400"
-                  >
-                    <List className="w-4 h-4 mr-2" />
-                    {showTOC ? 'Hide TOC' : 'Show TOC'}
-                  </Button>
-
                   {selectedPdfUrl && (
-                    <Button 
+                    <Button
                       onClick={() => {
                         const link = document.createElement('a');
                         link.href = selectedPdfUrl;
@@ -269,30 +248,84 @@ const Notes = () => {
                         link.click();
                         document.body.removeChild(link);
                       }}
-                      variant="outline" 
-                      className="bg-black text-white border-purple hover:bg-gray-800 hover:text-white dark:text-purple-500 dark:border-purple dark:bg-transparent dark:hover:bg-transparent dark:hover:text-purple-400"
+                      variant="default"
+                      size="sm"
+                      className="bg-gradient-to-r from-fuchsia-500 via-purple-500 to-indigo-500 text-white shadow-lg shadow-purple-500/30 hover:-translate-y-0.5 hover:shadow-purple-500/50 dark:from-fuchsia-500/40 dark:via-purple-500/40 dark:to-indigo-500/40"
                     >
-                      <Download className="w-4 h-4 mr-2" />
+                      <Download className="w-4 h-4" />
                       Download PDF
                     </Button>
                   )}
-                  
-                  <Button 
+                  <Button
                     onClick={toggleGraphView}
-                    variant="outline" 
-                    className="bg-black text-white border-black hover:bg-gray-800 hover:text-white dark:text-pink-500 dark:border-pink-500 dark:bg-transparent dark:hover:bg-transparent dark:hover:text-pink-400"
+                    variant="default"
+                    size="sm"
+                    className="bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-500 text-white shadow-lg shadow-sky-500/30 hover:-translate-y-0.5 hover:shadow-sky-500/45 dark:from-indigo-500/40 dark:via-sky-500/40 dark:to-cyan-500/40"
                   >
-                    <Network className="w-4 h-4 mr-2" />
+                    <Network className="w-4 h-4" />
                     {showGraphView ? 'Hide Graph' : 'Show Graph'}
                   </Button>
                 </div>
               </div>
             </div>
 
-            <Card className="bg-card/30 border-border/50 backdrop-blur-sm">
+            {tocHeadings.length > 0 && (
+              <Card className="mt-8 mb-8 border border-slate-900/10 bg-white/80 text-slate-700 shadow-lg shadow-purple-500/15 backdrop-blur-md dark:border-white/10 dark:bg-slate-900/70 dark:text-slate-100 dark:shadow-purple-500/25">
+                <CardContent className="p-6 md:p-7">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-500 dark:text-slate-300">
+                      <ChevronDown
+                        className={`h-4 w-4 text-purple-500 transition-transform duration-200 dark:text-purple-300 ${tocExpanded ? '' : '-rotate-90'}`}
+                      />
+                      Table of Contents
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setTocExpanded((prev) => !prev)}
+                      className="rounded-full border border-slate-900/10 bg-white/70 px-3 py-1 text-xs font-medium tracking-wide text-slate-600 transition-colors hover:bg-white hover:text-slate-900 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+                    >
+                      {tocExpanded ? 'Collapse' : 'Expand'}
+                    </button>
+                  </div>
+                  {tocExpanded && (
+                    <nav className="mt-5 space-y-1.5">
+                      {tocHeadings.map((heading) => {
+                        const level = Math.min(heading.level, 4);
+                        const levelClass =
+                          level === 1
+                            ? 'pl-0 text-sm font-semibold text-slate-800 dark:text-white'
+                            : level === 2
+                              ? 'pl-4 text-sm text-slate-600 dark:text-slate-200'
+                              : level === 3
+                                ? 'pl-8 text-xs text-slate-500 dark:text-slate-300'
+                                : 'pl-12 text-xs text-slate-500 dark:text-slate-400';
+                        return (
+                          <a
+                            key={`${heading.id}-${heading.level}`}
+                            href={`#${heading.id}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleScrollToHeading(heading.id);
+                            }}
+                            className={`group flex w-full items-center rounded-lg py-2 pr-3 text-left transition-colors hover:bg-purple-500/10 hover:text-purple-600 dark:hover:bg-purple-500/20 dark:hover:text-purple-100 ${levelClass}`}
+                          >
+                            <span className="mr-2 text-xs text-purple-400 transition-colors group-hover:text-purple-600 dark:text-purple-300 dark:group-hover:text-purple-100">
+                              •
+                            </span>
+                            <span className="flex-1">{heading.text}</span>
+                          </a>
+                        );
+                      })}
+                    </nav>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            <Card className="bg-card/40 border-border/40 backdrop-blur-sm shadow-lg shadow-black/5 dark:shadow-purple-500/10">
               <CardContent className="p-6 md:p-8">
                 <div className="prose dark:prose-invert max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-pre:bg-card prose-pre:border prose-pre:border-border">
-                  <WikiMarkdown 
+                  <WikiMarkdown
                     content={removeFrontmatter(selectedPost.content)}
                     posts={posts}
                     onWikiLinkClick={handleWikiLinkClick}
@@ -331,93 +364,6 @@ const Notes = () => {
                 </Card>
               ) : null;
             })()}
-            
-            {/* Detachable Table of Contents */}
-            {(() => {
-              const headings = extractHeadings(selectedPost.content);
-              if (!showTOC || headings.length === 0) return null;
-
-              return (
-                <div
-                  className="fixed z-50 group"
-                  style={{
-                    left: tocPosition.x,
-                    top: tocPosition.y,
-                    width: isMinimized ? 'auto' : '300px',
-                    maxHeight: isMinimized ? 'auto' : '450px'
-                  }}
-                >
-                  {/* TOC Card with minimalist styling */}
-                  <div className="bg-white/20 dark:bg-gray-800/20 backdrop-blur-sm rounded-md border border-gray-600/60 dark:border-gray-700/20 shadow-sm card-hover-glow">
-                    {/* TOC Header - Draggable */}
-                    <div
-                      className="flex items-center justify-between px-3 py-2 bg-gray-50/10 dark:bg-gray-700/10 rounded-t-md cursor-move border-b border-gray-600/50 dark:border-gray-700/30"
-                      onMouseDown={(e) => {
-                        setIsDragging(true);
-                        setDragOffset({
-                          x: e.clientX - tocPosition.x,
-                          y: e.clientY - tocPosition.y
-                        });
-                      }}
-                    >
-                      <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400 flex items-center">
-                        <List className="w-3 h-3 mr-1 text-gray-500 dark:text-gray-500" />
-                        Contents
-                      </h3>
-                      <div className="flex items-center space-x-0.5">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-5 w-5 p-0 text-gray-500 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-300 hover:bg-transparent rounded-full"
-                          onClick={() => setIsMinimized(!isMinimized)}
-                          title={isMinimized ? "Expand" : "Minimize"}
-                        >
-                          {isMinimized ? <Maximize2 className="h-2.5 w-2.5" /> : <Minimize2 className="h-2.5 w-2.5" />}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-5 w-5 p-0 text-gray-500 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-300 hover:bg-transparent rounded-full"
-                          onClick={() => setShowTOC(false)}
-                          title="Close"
-                        >
-                          <X className="h-2.5 w-2.5" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* TOC Content */}
-                    {!isMinimized && (
-                      <div className="p-2 max-h-80 overflow-y-auto">
-                        <nav className="space-y-0.5">
-                          {headings.map((heading, index) => (
-                            <a
-                              key={index}
-                              href={`#${heading.id}`}
-                              className={`block text-xs transition-colors hover:text-blue-500 dark:hover:text-blue-400 cursor-pointer py-1 px-2 rounded hover:bg-blue-50/50 dark:hover:bg-blue-900/10 ${
-                                heading.level === 1 ? 'font-medium text-gray-700 dark:text-gray-300' :
-                                heading.level === 2 ? 'pl-3 text-gray-600 dark:text-gray-400' :
-                                heading.level === 3 ? 'pl-4 text-gray-500 dark:text-gray-500' :
-                                'pl-5 text-gray-400 dark:text-gray-600 text-xs'
-                              }`}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                const element = document.getElementById(heading.id);
-                                if (element) {
-                                  element.scrollIntoView({ behavior: 'smooth' });
-                                }
-                              }}
-                            >
-                              {heading.text}
-                            </a>
-                          ))}
-                        </nav>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })()}
           </div>
 
           {/* Local Graph View Component for Individual Notes */}
@@ -447,26 +393,28 @@ const Notes = () => {
         <TopControls title="Notes" />
         <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 py-8 pt-20">
           {/* Header Section */}
-          <div className="text-center mb-12">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Atomic Notes</h1>
-            <div className="flex justify-center items-center gap-2 mb-4">
-              <Button 
-                onClick={toggleGraphView}
-                variant="outline" 
-                className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400"
-              >
-                <Network className="w-4 h-4 mr-2" />
-                {showGraphView ? 'Hide Graph' : 'Show Graph'}
-              </Button>
-              <Button
-                onClick={() => setShowSearch((v) => !v)}
-                variant="outline"
-                aria-label="Toggle search"
-                className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400 p-2 h-9 w-9 rounded-full flex items-center justify-center"
-              >
-                <Search className="w-4 h-4" />
-              </Button>
-            </div>
+            <div className="text-center mb-12">
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Atomic Notes</h1>
+              <div className="flex justify-center items-center gap-2 mb-4">
+                <Button 
+                  onClick={toggleGraphView}
+                  variant="default" 
+                  size="sm"
+                  className="bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-500 text-white shadow-lg shadow-sky-500/30 hover:-translate-y-0.5 hover:shadow-sky-500/45 dark:from-indigo-500/40 dark:via-sky-500/40 dark:to-cyan-500/40"
+                >
+                  <Network className="w-4 h-4 mr-2" />
+                  {showGraphView ? 'Hide Graph' : 'Show Graph'}
+                </Button>
+                <Button
+                  onClick={() => setShowSearch((v) => !v)}
+                  variant="ghost"
+                  size="sm"
+                  aria-label="Toggle search"
+                  className="rounded-full border border-slate-900/10 bg-white/80 p-2 text-slate-600 shadow-sm hover:bg-white hover:text-slate-900 dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+                >
+                  <Search className="w-4 h-4" />
+                </Button>
+              </div>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               A collection of my thoughts, discoveries, and learnings in mathematics, physics, and computer science.
             </p>

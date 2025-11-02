@@ -21,7 +21,7 @@ const Footer = () => {
             className="transition-colors hover:text-slate-900 dark:hover:text-purple-200"
             aria-label="GitHub"
           >
-            <Github className="h-4 w-4" />
+            <Github className="h-6 w-6" />
           </a>
           <a 
             href="https://www.linkedin.com/in/jorgemunozlar/"
@@ -30,7 +30,7 @@ const Footer = () => {
             className="transition-colors hover:text-slate-900 dark:hover:text-purple-200"
             aria-label="LinkedIn"
           >
-            <Linkedin className="h-4 w-4" />
+            <Linkedin className="h-6 w-6" />
           </a>
           <a 
             href="https://x.com/jorgemunozla"
@@ -39,14 +39,14 @@ const Footer = () => {
             className="transition-colors hover:text-slate-900 dark:hover:text-purple-200"
             aria-label="X (Twitter)"
           >
-            <Twitter className="h-4 w-4" />
+            <Twitter className="h-6 w-6" />
           </a>
           <a 
             href="mailto:alvaro18ml@gmail.com"
             className="transition-colors hover:text-slate-900 dark:hover:text-purple-200"
             aria-label="Email"
           >
-            <Mail className="h-4 w-4" />
+            <Mail className="h-6 w-6" />
           </a>
         </div>
         <p

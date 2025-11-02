@@ -53,7 +53,8 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
       const data = buildGraphFromPosts(blogPosts.map(post => ({
         id: post.id,
         title: post.title,
-        content: post.content
+        content: post.content,
+        fileName: post.fileName
       })));
 
       setGraphData(data);
@@ -122,7 +123,8 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
       const data = buildGraphFromPosts(blogPosts.map(post => ({
         id: post.id,
         title: post.title,
-        content: post.content
+        content: post.content,
+        fileName: post.fileName
       })));
 
       setGraphData(data);

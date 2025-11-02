@@ -29,7 +29,7 @@ const Hero = () => {
   ];
 
   return (
-    <section className="relative py-24 overflow-hidden">
+    <section className="relative py-7 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-x-[-40%] top-[-55%] h-[420px] bg-gradient-to-br from-emerald-400/30 via-cyan-300/25 to-purple-400/25 blur-3xl dark:from-purple-600/30 dark:via-rose-500/25 dark:to-indigo-500/25" />
         <div className="absolute inset-0 opacity-40 dark:opacity-20 bg-[radial-gradient(circle_at_top,var(--tw-gradient-stops))] from-transparent via-black/5 to-transparent dark:from-transparent dark:via-white/5 dark:to-transparent" />
