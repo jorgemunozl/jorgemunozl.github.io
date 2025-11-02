@@ -7,7 +7,7 @@ import TopControls from '@/components/TopControls';
 
 const Index = () => {
   return (
-    <div className="min-h-screen relative overflow-hidden bg-background gradient-bg font-modern antialiased">
+    <div className="page-shell">
       {/* Relativity field lines background */}
       <RelativityFieldLines />
       
@@ -19,9 +19,9 @@ const Index = () => {
         <div className="w-48 h-48 rounded-full blur-2xl" style={{background: 'radial-gradient(circle, #9900000c, #01039b0c, #b902a005)'}}></div>
       </div>
       
-      <div className="relative z-10">
+      <div className="page-surface">
         <TopControls />
-        <div className="pt-20">
+        <div className="pt-32">
           <Hero />
           <BlogPreview />
         </div>
