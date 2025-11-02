@@ -2,102 +2,115 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Linkedin, Twitter, Github, Briefcase, BookOpen, Globe, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const Hero = () => {
-  return (
-    <section className="relative py-1 overflow-hidden">
-      <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="mb-8">
-          <div className="flex items-center justify-center mb-6">
-            <h1 className="text-5xl md:text-6xl font-bold text-foreground">
-              👋 welcome to mun{' '}
-              <span className="bg-gradient-to-r from-emerald-900 via-emerald-800 to-cyan-600 dark:from-purple-400 dark:via-pink-500 dark:to-purple-600 bg-clip-text text-transparent">
-                Blog
-              </span>
-            </h1>
-          </div>
-          <p className="text-xl text-muted-foreground max-w-xl mx-auto mb-8">
-            Hi there, this is jorge munoz. I'm documenting my learning notes in this blog since 2020. Based on the number of grammar mistakes in my posts, you can tell how much ChatGPT is involved 😉.
-          </p>
+  const contactLinks = [
+    { href: 'mailto:alvaro18ml@gmail.com', title: 'Email', icon: Mail },
+    { href: 'https://www.linkedin.com/in/jorgemunozlar/', title: 'LinkedIn', icon: Linkedin },
+    { href: 'https://x.com/jorgemunozla', title: 'X (Twitter)', icon: Twitter },
+    { href: 'https://github.com/jorgemunozl', title: 'GitHub', icon: Github },
+    { href: 'https://huggingface.co/jorgemunozl', title: 'Hugging Face', icon: Globe },
+  ];
 
-          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-10">
-            <Button
-              asChild
-              className="bg-gradient-to-r from-black-500 to-black-600 hover:from-black-600 hover:to-black-700 dark:from-purple-500 dark:to-purple-600 dark:hover:from-purple-600 dark:hover:to-purple-700 text-white"
-            >
-              <Link to="/portfolio">
-                <Briefcase className="w-5 h-5 mr-2" />
-                View Portfolio
-              </Link>
-            </Button>
-            <Button
-              variant="outline"
-              asChild
-              className="border-black text-black hover:bg-black/10 hover:text-black hover:border-black dark:border-purple-800 dark:text-purple-300 dark:hover:bg-purple-950 dark:hover:text-purple-200 dark:hover:border-purple-700"
-            >
-              <Link to="/notes">
-                <BookOpen className="w-5 h-5 mr-2" />
-                Read Notes
-              </Link>
-            </Button>
-            <Button
-              variant="ghost"
-              asChild
-              className="text-black hover:text-black/80 dark:text-purple-200 dark:hover:text-purple-100"
-            >
-              <Link to="/about">
-                <User className="w-5 h-5 mr-2" />
-                About Me
-              </Link>
-            </Button>
+  const highlights = [
+    {
+      eyebrow: 'Learning in public',
+      description: 'Long-form notes on AI research, scientific computing, and engineering craft.',
+    },
+    {
+      eyebrow: 'Building things that scale',
+      description: 'From GPUs and model tooling to infrastructure for ambitious teams.',
+    },
+    {
+      eyebrow: 'Community first',
+      description: 'Collaborating with researchers, builders, and founders across the globe.',
+    },
+  ];
+
+  return (
+    <section className="relative py-24 overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-x-[-40%] top-[-55%] h-[420px] bg-gradient-to-br from-emerald-400/30 via-cyan-300/25 to-purple-400/25 blur-3xl dark:from-purple-600/30 dark:via-rose-500/25 dark:to-indigo-500/25" />
+        <div className="absolute inset-0 opacity-40 dark:opacity-20 bg-[radial-gradient(circle_at_top,var(--tw-gradient-stops))] from-transparent via-black/5 to-transparent dark:from-transparent dark:via-white/5 dark:to-transparent" />
+      </div>
+      <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <Badge className="mb-6 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/90 px-4 py-1 text-xs font-medium uppercase tracking-[0.2em] text-slate-700 shadow-sm dark:border-white/10 dark:bg-white/10 dark:text-white/80">
+          Learning in public since 2020
+        </Badge>
+        <h1 className="text-4xl md:text-6xl font-semibold leading-tight text-slate-900 dark:text-white">
+          Curiosity-fueled notes on{' '}
+          <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500 bg-clip-text font-semibold text-transparent dark:from-purple-300 dark:via-pink-300 dark:to-sky-300">
+            AI, physics, and engineering craft
+          </span>
+        </h1>
+        <p className="mt-6 text-lg md:text-xl text-slate-600 dark:text-slate-200/80 max-w-3xl mx-auto">
+          I'm Jorge Muñoz — building tools, exploring research, and documenting the messy process along the way. Expect real experiments, lessons learned, and plenty of typos that prove a human is still behind the keyboard.
+        </p>
+
+        <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5">
+          <Button
+            asChild
+            className="h-12 rounded-full px-6 text-base font-medium shadow-sm shadow-emerald-500/20 transition hover:shadow-emerald-500/30 dark:shadow-purple-500/30 dark:hover:shadow-purple-500/40"
+          >
+            <Link to="/portfolio">
+              <Briefcase className="mr-2 h-5 w-5" />
+              View Portfolio
+            </Link>
+          </Button>
+          <Button
+            variant="outline"
+            asChild
+            className="h-12 rounded-full border border-slate-800/15 px-6 text-base font-medium text-slate-900 transition hover:border-slate-800/30 hover:bg-slate-900/5 dark:border-purple-400/30 dark:text-purple-100 dark:hover:border-purple-300/50 dark:hover:bg-purple-500/10"
+          >
+            <Link to="/notes">
+              <BookOpen className="mr-2 h-5 w-5" />
+              Read Notes
+            </Link>
+          </Button>
+          <Button
+            variant="ghost"
+            asChild
+            className="h-12 rounded-full px-6 text-base font-medium text-slate-600 hover:text-slate-900 dark:text-purple-200 dark:hover:text-white"
+          >
+            <Link to="/about">
+              <User className="mr-2 h-5 w-5" />
+              About Me
+            </Link>
+          </Button>
+        </div>
+
+        <div className="mt-12 flex items-center justify-center">
+          <div className="inline-flex items-center gap-4 rounded-full border border-slate-900/10 bg-white/80 px-6 py-3 text-slate-600 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-white/5 dark:text-white/70">
+            {contactLinks.map(({ href, title, icon: Icon }) => (
+              <a
+                key={title}
+                href={href}
+                target={href.startsWith('http') ? '_blank' : undefined}
+                rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                className="transition-colors hover:text-slate-900 dark:hover:text-purple-200"
+                title={title}
+              >
+                <Icon className="h-5 w-5" />
+              </a>
+            ))}
           </div>
         </div>
 
-        {/* Contact Links */}
-        <div className="flex justify-center space-x-6 sm:space-x-8 text-muted-foreground">
-          <a 
-            href="mailto:alvaro18ml@gmail.com" 
-            className="hover:text-black dark:hover:text-purple-400 transition-colors p-2"
-            title="Email"
-          >
-            <Mail className="w-6 h-6" />
-          </a>
-          <a 
-            href="https://www.linkedin.com/in/jorgemunozlar/"
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="hover:text-black dark:hover:text-purple-400 transition-colors p-2"
-            title="LinkedIn"
-          >
-            <Linkedin className="w-6 h-6" />
-          </a>
-          <a 
-            href="https://x.com/jorgemunozla" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="hover:text-black dark:hover:text-purple-400 transition-colors p-2"
-            title="X (Twitter)"
-          >
-            <Twitter className="w-6 h-6" />
-          </a>
-          <a 
-            href="https://github.com/jorgemunozl" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="hover:text-black dark:hover:text-purple-400 transition-colors p-2"
-            title="GitHub"
-          >
-            <Github className="w-6 h-6" />
-          </a>
-          <a 
-            href="https://huggingface.co/jorgemunozl"
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="hover:text-black dark:hover:text-purple-400 transition-colors p-2"
-            title="Hugging Face"
-          >
-            <Globe className="w-6 h-6" />
-          </a>
+        <div className="mt-16 grid gap-4 text-left sm:grid-cols-3">
+          {highlights.map((item) => (
+            <div
+              key={item.eyebrow}
+              className="rounded-2xl border border-slate-900/10 bg-white/80 p-6 shadow-sm backdrop-blur-md transition hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/15 dark:border-white/10 dark:bg-white/5 dark:hover:shadow-purple-500/20"
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500 dark:text-purple-200/70">
+                {item.eyebrow}
+              </p>
+              <p className="mt-3 text-base leading-relaxed text-slate-700 dark:text-slate-100">
+                {item.description}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

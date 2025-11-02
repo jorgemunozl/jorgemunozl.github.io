@@ -7,7 +7,7 @@ import TopControls from '@/components/TopControls';
 
 const Index = () => {
   return (
-    <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
+    <div className="min-h-screen relative overflow-hidden bg-background gradient-bg font-modern antialiased">
       {/* Relativity field lines background */}
       <RelativityFieldLines />
       
