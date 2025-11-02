@@ -5,7 +5,6 @@ author: Jorge
 date: 2023-06-28 11:29
 modified: 2025-10-25 11:24
 ---
-
 Building an Omnidirectional Mine‑Exploration Car with Arduino
 Introduction
 Ever wondered how to build a robot that can glide sideways, pivot on the spot, and creep through narrow corridors? In this guide we will design and build a small electric car capable of omnidirectional motion using Mecanum wheels, controlled by an Arduino microcontroller. Because the car is intended for exploring mines, we will equip it with a smoke/gas detector and other sensors. The emphasis will not simply be on following instructions; instead, the goal is to understand the physics and electronics behind each component. By the end you should be able to adapt the design for your own experiments and venture beyond the obvious.

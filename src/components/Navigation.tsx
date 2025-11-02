@@ -33,7 +33,6 @@ const Navigation = () => {
             onClick={handleLogoClick}
           >
             <BookOpen className="w-20 h-20 text-black dark:text-purple-500" />
-            <span className="text-2xl font-bold text-gray-900 dark:text-white">Learning Notes</span>
           </div>
           
           <div className="hidden md:flex items-center space-x-8">
