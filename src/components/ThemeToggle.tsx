@@ -14,9 +14,10 @@ const ThemeToggle: React.FC = () => {
       variant="ghost"
       size="icon"
       onClick={toggle}
-      className="h-10 w-10 text-emerald-700 hover:text-cyan-600 dark:text-emerald-300 dark:hover:text-cyan-300 transition-colors [&_svg]:size-10"
+      aria-label="Toggle theme"
+      className="h-11 w-11 border border-slate-900/10 bg-white/70 text-slate-600 shadow-inner shadow-emerald-300/20 hover:bg-slate-900/5 hover:text-slate-900 dark:border-white/10 dark:bg-white/10 dark:text-white/70 dark:shadow-purple-500/20 dark:hover:bg-white/15"
     >
-      {isDark ? <Sun /> : <Moon />}
+      {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
     </Button>
   )
 }

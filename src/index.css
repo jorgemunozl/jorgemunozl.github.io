@@ -117,7 +117,7 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-modern antialiased;
   }
 }
 
@@ -169,6 +169,35 @@
   }
 }
 
+@layer components {
+  .page-shell {
+    @apply relative flex min-h-screen flex-col overflow-hidden bg-background gradient-bg text-slate-900 dark:text-slate-100;
+  }
+
+  .page-surface {
+    @apply relative z-10 flex-1;
+  }
+
+  .page-header {
+    @apply relative mx-auto flex max-w-5xl flex-col items-center gap-6 px-4 pt-32 pb-12 text-center sm:px-6 lg:px-8;
+  }
+
+  .section-eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-slate-500 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5 dark:text-white/70;
+  }
+
+  .glass-panel {
+    @apply rounded-3xl border border-slate-900/10 bg-white/80 p-8 shadow-lg shadow-emerald-500/10 backdrop-blur-md transition hover:-translate-y-[2px] hover:shadow-emerald-500/20 dark:border-white/10 dark:bg-white/5 dark:shadow-purple-500/10 dark:hover:shadow-purple-500/20;
+  }
+
+  .glass-card {
+    @apply rounded-3xl border border-slate-900/10 bg-white/80 shadow-lg shadow-emerald-500/10 backdrop-blur-md transition duration-300 dark:border-white/10 dark:bg-white/5 dark:shadow-purple-500/10;
+  }
+
+  .glow-divider {
+    @apply h-px w-full bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent dark:via-purple-400/40;
+  }
+}
 /* Reusable glow for cards (light + dark variants) */
 .card-hover-glow {
   position: relative;

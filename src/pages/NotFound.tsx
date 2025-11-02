@@ -19,17 +19,20 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-background gradient-bg flex flex-col">
+    <div className="page-shell">
       <RelativityFieldLines />
-      <div className="relative z-10 flex-1">
+      <div className="page-surface">
         <TopControls />
-        <div className="flex items-center justify-center min-h-[80vh] pt-20">
-          <div className="text-center">
-            <h1 className="text-6xl font-bold mb-4 text-foreground">404</h1>
-            <p className="text-xl text-muted-foreground mb-8">Oops! The page you're looking for doesn't exist</p>
+        <div className="flex items-center justify-center min-h-[80vh] pt-40 pb-24">
+          <div className="glass-card px-12 py-16 text-center">
+            <span className="section-eyebrow mx-auto">Not found</span>
+            <h1 className="mt-6 text-6xl font-semibold text-slate-900 dark:text-white">404</h1>
+            <p className="mt-4 text-base text-slate-600 dark:text-slate-200/80">
+              Looks like that page drifted off the map. Let&apos;s get you back to the home base.
+            </p>
             <Button 
+              className="mx-auto mt-8"
               onClick={() => navigate('/')}
-              className="bg-purple-600 hover:bg-purple-700 text-white"
             >
               <Home className="w-4 h-4 mr-2" />
               Return to Home

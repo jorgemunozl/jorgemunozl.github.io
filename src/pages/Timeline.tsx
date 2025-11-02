@@ -112,7 +112,7 @@ const timelineSections = [
 
 const TimelinePage = () => {
   return (
-    <div className="min-h-screen relative overflow-hidden bg-background gradient-bg">
+    <div className="page-shell">
       <RelativityFieldLines />
 
       <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-0 hidden dark:block">
@@ -128,14 +128,15 @@ const TimelinePage = () => {
         ></div>
       </div>
 
-      <div className="relative z-10 pb-24">
+      <div className="page-surface pb-32">
         <TopControls title="Timeline" />
 
-        <main className="pt-28 pb-16">
+        <main className="pt-40 pb-24">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
             <header className="text-center space-y-4">
-              <h1 className="text-4xl sm:text-5xl font-bold text-foreground">Learning Timeline</h1>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <span className="section-eyebrow mx-auto">Milestones</span>
+              <h1 className="text-4xl sm:text-5xl font-semibold text-slate-900 dark:text-white">Learning Timeline</h1>
+              <p className="text-base text-slate-600 dark:text-slate-200/80 max-w-2xl mx-auto">
                 A snapshot of the projects, experiments, and themes that shaped my learning path so far. Each milestone
                 ties back to what you&apos;ll find in the notes and portfolio.
               </p>
@@ -156,13 +157,13 @@ const TimelinePage = () => {
                       {section.events.map((event) => (
                         <article
                           key={event.title}
-                          className="rounded-2xl border border-border/40 bg-background/60 p-6 space-y-4"
+                          className="glass-panel p-6 space-y-4"
                         >
                           <div className="space-y-2">
-                            <h3 className="text-xl font-semibold text-foreground">{event.title}</h3>
-                            <p className="text-muted-foreground leading-relaxed">{event.description}</p>
+                            <h3 className="text-xl font-semibold text-slate-900 dark:text-white">{event.title}</h3>
+                            <p className="text-slate-600 leading-relaxed dark:text-slate-200/80">{event.description}</p>
                           </div>
-                          <figure className="overflow-hidden rounded-2xl border border-border/60 bg-muted/40 shadow-inner">
+                          <figure className="overflow-hidden rounded-2xl border border-slate-900/10 bg-white/60 shadow-inner dark:border-white/15 dark:bg-white/10">
                             <img
                               src={event.image}
                               alt={event.imageAlt}

@@ -50,7 +50,7 @@ const pdfDocuments: PDFDocument[] = [
 
 const AdditionalContents = () => {
   return (
-    <div className="min-h-screen relative overflow-hidden bg-background gradient-bg flex flex-col">
+    <div className="page-shell">
       <RelativityFieldLines />
       {/* Dark mode glows */}
       <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-0 hidden dark:block pointer-events-none">
@@ -67,18 +67,19 @@ const AdditionalContents = () => {
         <div className="w-64 h-64 rounded-full blur-2xl opacity-70" style={{background: 'radial-gradient(circle, rgba(253,186,116,0.12), rgba(236,72,153,0.08), transparent)'}}></div>
       </div>
       
-      <div className="relative z-10 flex-1">
+      <div className="page-surface">
         <TopControls title="Additional Contents" />
         <main className="flex-1">
-          <div className="container mx-auto px-4 py-8 pt-20">
+          <div className="container mx-auto px-4 py-8 pt-40 pb-32">
             <div className="max-w-6xl mx-auto">
               {/* Header */}
               <div className="text-center mb-12">
-                <h1 className="text-4xl font-bold text-foreground mb-6">
-                  Some content that I consider interesting
+                <span className="section-eyebrow mx-auto">Library extras</span>
+                <h1 className="mt-6 text-4xl font-semibold text-slate-900 dark:text-white">
+                  Additional contents worth exploring
                 </h1>
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                    AI generated content that was curated, review it by myself.  
+                <p className="mt-4 text-base text-slate-600 dark:text-slate-200/80 max-w-2xl mx-auto">
+                  AI-generated material I found useful enough to curate and double-check. Treat these as launchpads for deeper dives.
                 </p>
               </div>
 

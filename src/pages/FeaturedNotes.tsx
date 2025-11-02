@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import RelativityFieldLines from '@/components/RelativityFieldLines';
 import TopControls from '@/components/TopControls';
 import Footer from '@/components/Footer';
-import { Calendar, Clock, Star, ArrowLeft } from 'lucide-react';
+import { Calendar, Clock, Star, ArrowLeft, ArrowRight } from 'lucide-react';
 import { blogPosts, BlogPost } from '@/components/data/notes';
 
 const POSTS_PER_PAGE = 10;
@@ -57,171 +57,147 @@ const FeaturedNotes = () => {
   const currentPosts = featuredPosts.slice(startIndex, endIndex);
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-background gradient-bg flex flex-col">
+    <div className="page-shell">
       <RelativityFieldLines />
-      <div className="relative z-10 flex-1 pb-24">
+      <div className="page-surface">
         <TopControls title="Featured Notes" />
-        <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-8 pt-20">
-          <div className="text-center mb-12">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+        <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-40 pb-32">
+          <header className="text-center">
+            <span className="section-eyebrow mx-auto">Curated picks</span>
+            <h1 className="mt-6 text-4xl sm:text-5xl font-semibold leading-tight text-slate-900 dark:text-white">
               Featured Notes
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Curated highlights from my knowledge base. Browse the full archive of
-              featured entries or jump into an individual note.
+            <p className="mt-4 mx-auto max-w-2xl text-base text-slate-600 dark:text-slate-200/80">
+              Hand-picked notes that capture meaningful breakthroughs, long-form experiments, and the explorations I revisit the most.
             </p>
-            <div className="flex justify-center gap-3 mt-6">
-              <Button
-                variant="outline"
-                className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400"
-                onClick={() => navigate('/notes')}
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                All Notes
+            <div className="mt-8 flex items-center justify-center gap-3">
+              <Button variant="outline" onClick={() => navigate('/notes')}>
+                <ArrowLeft className="h-4 w-4" />
+                All notes
               </Button>
-              <Button
-                className="bg-gradient-to-r from-black-500 to-black-600 hover:from-black-600 hover:to-black-700 dark:bg-gradient-to-r dark:from-purple-500 dark:to-purple-500 dark:hover:from-purple-600 dark:hover:to-purple-600 text-white"
-                onClick={() => navigate('/')}
-              >
-                Home
-              </Button>
+              <Button onClick={() => navigate('/')}>Home</Button>
             </div>
-          </div>
+          </header>
 
-          <div className="space-y-8">
+          <div className="mt-12 space-y-6">
             {currentPosts.length === 0 ? (
-              <div className="text-center py-16 border border-dashed border-black/60 dark:border-purple-800/40 rounded-lg bg-card/20">
-                <Star className="w-10 h-10 text-yellow-500 mx-auto mb-4" />
-                <h2 className="text-xl font-semibold text-foreground mb-2">No featured notes yet</h2>
-                <p className="text-muted-foreground">
-                  Flag a note as featured to have it appear here.
+              <div className="glass-card flex flex-col items-center gap-4 px-10 py-16 text-center">
+                <Star className="h-10 w-10 text-emerald-500 dark:text-purple-300" />
+                <h2 className="text-xl font-semibold text-slate-800 dark:text-white">No featured notes yet</h2>
+                <p className="max-w-sm text-sm text-slate-500 dark:text-slate-300">
+                  Flag a note as featured to spotlight it here once it&apos;s ready.
                 </p>
               </div>
             ) : (
-              currentPosts.map((post) => (
-                <Card
-                  key={post.id}
-                  className="bg-card/30 border-black dark:border-black backdrop-blur-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:border-black"
-                >
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start gap-2">
-                      <Star className="w-4 h-4 text-yellow-500 fill-current mt-1 flex-shrink-0" />
-                      <Link
-                        to={`/notes/${post.id}`}
-                        className="text-xl font-semibold text-foreground hover:text-purple-400 transition-colors"
-                      >
-                        {post.title}
-                      </Link>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-5 md:p-6 flex flex-col gap-4">
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      {post.excerpt || 'No excerpt available'}
-                    </p>
-                    <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground border-t border-black dark:border-black pt-3">
-                      <div className="flex items-center">
-                        <Calendar className="w-3 h-3 mr-1" />
-                        {new Date(post.uploadDate).toLocaleString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          hour12: false,
-                        })}
+              currentPosts.map((post) => {
+                const published = new Date(post.uploadDate).toLocaleString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                });
+
+                return (
+                  <Card
+                    key={post.id}
+                    className="group transition duration-300 hover:-translate-y-1 hover:shadow-emerald-500/25 dark:hover:shadow-purple-500/25"
+                  >
+                    <CardHeader className="space-y-3 pb-0">
+                      <div className="flex items-start gap-3">
+                        <Star className="h-5 w-5 flex-shrink-0 text-emerald-500 dark:text-purple-300" />
+                        <Link
+                          to={`/notes/${post.id}`}
+                          className="text-2xl font-semibold text-slate-900 transition-colors duration-300 group-hover:text-emerald-700 dark:text-white dark:group-hover:text-purple-300"
+                        >
+                          {post.title}
+                        </Link>
                       </div>
-                      <div className="flex items-center">
-                        <Clock className="w-3 h-3 mr-1" />
-                        {post.readTime}
+                      <div className="flex flex-wrap items-center gap-4 text-xs font-medium uppercase tracking-[0.3em] text-emerald-600/80 dark:text-purple-200/70">
+                        <div className="flex items-center gap-2 tracking-normal text-slate-500 dark:text-slate-200/70">
+                          <Calendar className="h-4 w-4" />
+                          {published}
+                        </div>
+                        <div className="flex items-center gap-2 tracking-normal text-slate-500 dark:text-slate-200/70">
+                          <Clock className="h-4 w-4" />
+                          {post.readTime}
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
+                    </CardHeader>
+                    <CardContent className="flex flex-col gap-6 pt-4">
+                      <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-200/80">
+                        {post.excerpt || 'No excerpt available'}
+                      </p>
+                      <div className="flex items-center justify-between pt-2">
+                        <Button
+                          variant="ghost"
+                          className="group inline-flex items-center gap-2 px-0 font-semibold text-emerald-700 hover:text-emerald-600 dark:text-purple-300 dark:hover:text-purple-200"
+                          onClick={() => navigate(`/notes/${post.id}`)}
+                        >
+                          Read the note
+                          <ArrowRight className="h-4 w-4 transition duration-300 group-hover:translate-x-1" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })
             )}
           </div>
 
           {featuredPosts.length > 0 && (
-            <div className="mt-12 space-y-6">
-              <div className="flex justify-center items-center gap-4">
+            <div className="mt-12 space-y-4">
+              <div className="flex flex-wrap items-center justify-center gap-4">
                 {currentPage === 1 ? (
-                  <Button
-                    variant="outline"
-                    disabled
-                    className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
+                  <Button variant="outline" disabled>
                     Previous
                   </Button>
                 ) : (
-                  <Button
-                    variant="outline"
-                    asChild
-                    className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400"
-                  >
-                    <Link to={getPagePath(currentPage - 1)}>
-                      Previous
-                    </Link>
+                  <Button variant="outline" asChild>
+                    <Link to={getPagePath(currentPage - 1)}>Previous</Link>
                   </Button>
                 )}
 
-                <div className="flex items-center gap-2 flex-wrap justify-center">
+                <div className="flex flex-wrap items-center gap-2">
                   {Array.from({ length: totalPages }, (_, index) => {
                     const pageNumber = index + 1;
                     const target = getPagePath(pageNumber);
 
-                    if (pageNumber === currentPage) {
-                      return (
-                        <Button
-                          key={pageNumber}
-                          variant="default"
-                          className="bg-transparent text-purple-400 border-black hover:bg-transparent hover:text-purple-300"
-                        >
-                          {pageNumber}
-                        </Button>
-                      );
-                    }
-
                     return (
                       <Button
                         key={pageNumber}
-                        variant="outline"
-                        asChild
-                        className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400"
+                        variant={pageNumber === currentPage ? 'default' : 'outline'}
+                        size="sm"
+                        asChild={pageNumber !== currentPage}
                       >
-                        <Link to={target}>{pageNumber}</Link>
+                        {pageNumber === currentPage ? (
+                          <span>{pageNumber}</span>
+                        ) : (
+                          <Link to={target}>{pageNumber}</Link>
+                        )}
                       </Button>
                     );
                   })}
                 </div>
 
                 {currentPage === totalPages && featuredPosts.length <= endIndex ? (
-                  <Button
-                    variant="outline"
-                    disabled
-                    className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
+                  <Button variant="outline" disabled>
                     Next
                   </Button>
                 ) : (
-                  <Button
-                    variant="outline"
-                    asChild
-                    className="text-purple-500 border-black bg-transparent hover:bg-transparent hover:text-purple-400"
-                  >
-                    <Link to={getPagePath(currentPage + 1)}>
-                      Next
-                    </Link>
+                  <Button variant="outline" asChild>
+                    <Link to={getPagePath(currentPage + 1)}>Next</Link>
                   </Button>
                 )}
               </div>
-              <div className="text-center text-sm text-muted-foreground">
-                Showing {startIndex + 1}-{endIndex} of {featuredPosts.length} featured notes
-              </div>
+
+              <p className="text-center text-sm text-slate-500 dark:text-slate-300">
+                Page {currentPage} of {totalPages} — Showing {startIndex + 1}-{endIndex} of {featuredPosts.length} notes
+              </p>
             </div>
           )}
+
+          <Footer />
         </div>
       </div>
-      <Footer />
     </div>
   );
 };
