@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated on: 2025-10-31T19:27:23.672Z
+// Generated on: 2025-11-02T02:06:54.227Z
 
 export interface BlogPost {
   id: string;
@@ -18,7 +18,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Feed Forward Neural Network",
     "excerpt": "No excerpt available",
     "content": "",
-    "uploadDate": "2025-10-31",
+    "uploadDate": "2025-11-02",
     "readTime": "1 min read",
     "fileName": "Feed-forward neural network.md",
     "featured": false
@@ -28,7 +28,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Hopfield Networks",
     "excerpt": "No excerpt available",
     "content": "",
-    "uploadDate": "2025-10-31",
+    "uploadDate": "2025-11-02",
     "readTime": "1 min read",
     "fileName": "Hopfield Networks.md",
     "featured": false
@@ -38,7 +38,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Neural Networks And Deep Learning",
     "excerpt": "No excerpt available",
     "content": "",
-    "uploadDate": "2025-10-31",
+    "uploadDate": "2025-11-02",
     "readTime": "1 min read",
     "fileName": "Neural Networks and Deep Learning.md",
     "featured": false
