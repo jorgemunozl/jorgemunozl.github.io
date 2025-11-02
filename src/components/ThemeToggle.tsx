@@ -15,9 +15,9 @@ const ThemeToggle: React.FC = () => {
       size="icon"
       onClick={toggle}
       aria-label="Toggle theme"
-      className="h-11 w-11 border border-slate-900/10 bg-white/70 text-slate-600 shadow-inner shadow-emerald-300/20 hover:bg-slate-900/5 hover:text-slate-900 dark:border-white/10 dark:bg-white/10 dark:text-white/70 dark:shadow-purple-500/20 dark:hover:bg-white/15"
+      className="h-12 w-12 border border-slate-900/10 bg-white/75 text-slate-600 shadow-inner shadow-emerald-300/20 hover:bg-slate-900/5 hover:text-slate-900 dark:border-white/10 dark:bg-white/10 dark:text-white/70 dark:shadow-purple-500/20 dark:hover:bg-white/20"
     >
-      {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+      {isDark ? <Sun className="h-20 w-20" /> : <Moon className="h-6 w-6" />}
     </Button>
   )
 }
