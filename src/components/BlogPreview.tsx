@@ -14,52 +14,9 @@ const BlogPreview = () => {
     .sort((a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime())
     .slice(0, 6);
 
-  const handleViewAllNotes = () => {
-    navigate('/notes');
-  };
-
   return (
     <section className="py-16">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 flex flex-col-reverse items-center gap-8 text-center md:flex-row md:items-end md:justify-between md:text-left">
-          <div className="space-y-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-600/80 dark:text-purple-200/70">
-              Latest highlights
-            </p>
-            <h2 className="text-3xl font-semibold text-slate-900 dark:text-white sm:text-4xl">
-              Featured explorations worth your time
-            </h2>
-            <p className="max-w-2xl text-base text-slate-600 dark:text-slate-200/80">
-              Hand-picked notes that blend experiments, research write-ups, and deep-dives into the technologies
-              shaping AI, computing, and engineering systems.
-            </p>
-          </div>
-
-          <div className="flex w-full justify-center gap-3 md:w-auto md:justify-end">
-            <Button 
-              onClick={() => navigate('/notes')}
-              className="h-11 rounded-full bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-5 text-sm font-medium text-white shadow-md shadow-emerald-500/20 transition hover:shadow-emerald-500/30 dark:from-purple-500 dark:via-purple-600 dark:to-purple-700 dark:shadow-purple-500/30 dark:hover:shadow-purple-500/40"
-            >
-              <BookOpen className="mr-2 h-5 w-5" />
-              View All Notes
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => navigate('/notes/featured')}
-              className="h-11 rounded-full border border-slate-900/15 px-5 text-sm font-medium text-slate-900 transition hover:border-slate-900/35 hover:bg-slate-900/5 dark:border-purple-300/30 dark:text-purple-100 dark:hover:border-purple-200/50 dark:hover:bg-purple-500/10"
-            >
-              Featured Notes
-            </Button>
-            <Button 
-              onClick={() => navigate('/additional-contents')}
-              variant="ghost"
-              className="h-11 rounded-full px-5 text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-purple-200 dark:hover:text-white"
-            >
-              Additional Contents
-            </Button>
-          </div>
-        </div>
-
         <div className="grid gap-6 md:grid-cols-2">
           {recentPosts.map((post) => (
             <Card
@@ -107,6 +64,30 @@ const BlogPreview = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        <div className="mt-12 flex w-full flex-col gap-3 text-center sm:flex-row sm:justify-center">
+          <Button 
+            onClick={() => navigate('/notes')}
+            className="h-11 rounded-full bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-5 text-sm font-medium text-white shadow-md shadow-emerald-500/20 transition hover:shadow-emerald-500/30 dark:from-purple-500 dark:via-purple-600 dark:to-purple-700 dark:shadow-purple-500/30 dark:hover:shadow-purple-500/40"
+          >
+            <BookOpen className="mr-2 h-5 w-5" />
+            View All Notes
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => navigate('/notes/featured')}
+            className="h-11 rounded-full border border-slate-900/15 px-5 text-sm font-medium text-slate-900 transition hover:border-slate-900/35 hover:bg-slate-900/5 dark:border-purple-300/30 dark:text-purple-100 dark:hover:border-purple-200/50 dark:hover:bg-purple-500/10"
+          >
+            Featured Notes
+          </Button>
+          <Button 
+            onClick={() => navigate('/additional-contents')}
+            variant="ghost"
+            className="h-11 rounded-full px-5 text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-purple-200 dark:hover:text-white"
+          >
+            Additional Contents
+          </Button>
         </div>
       </div>
     </section>

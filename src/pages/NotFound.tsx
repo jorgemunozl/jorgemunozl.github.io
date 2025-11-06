@@ -13,7 +13,7 @@ const NotFound = () => {
 
   useEffect(() => {
     console.error(
-      "404 Error: User attempted to access non-existent route:",
+      "404 Error: User attempted to access non-existent route (Jajaja) My Bad:",
       location.pathname
     );
   }, [location.pathname]);
@@ -35,7 +35,7 @@ const NotFound = () => {
               onClick={() => navigate('/')}
             >
               <Home className="w-4 h-4 mr-2" />
-              Return to Home
+              Return to Home Guy
             </Button>
           </div>
         </div>

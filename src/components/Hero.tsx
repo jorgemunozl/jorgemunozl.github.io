@@ -13,21 +13,6 @@ const Hero = () => {
     { href: 'https://huggingface.co/jorgemunozl', title: 'Hugging Face', icon: Globe },
   ];
 
-  const highlights = [
-    {
-      eyebrow: 'Learning in public',
-      description: 'Long-form notes on AI research, scientific computing, and engineering craft.',
-    },
-    {
-      eyebrow: 'Building things that scale',
-      description: 'From GPUs and model tooling to infrastructure for ambitious teams.',
-    },
-    {
-      eyebrow: 'Community first',
-      description: 'Collaborating with researchers, builders, and founders across the globe.',
-    },
-  ];
-
   return (
     <section className="relative py-0 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
@@ -38,13 +23,13 @@ const Hero = () => {
           Learning in public since 2020
         </Badge>
         <h1 className="text-4xl md:text-6xl font-semibold leading-tight text-slate-900 dark:text-white">
-          Curiosity-fueled notes on{' '}
+          Hi there! 👋 <p></p> {' '}
           <span className="bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500 bg-clip-text font-semibold text-transparent dark:from-purple-300 dark:via-pink-300 dark:to-sky-300">
-            AI, physics, and engineering craft
+             Welcome to Mun'log
           </span>
         </h1>
         <p className="mt-6 text-lg md:text-xl text-slate-600 dark:text-slate-200/80 max-w-3xl mx-auto">
-          I'm Jorge Muñoz — building tools, exploring research, and documenting the messy process along the way. Expect real experiments, lessons learned, and plenty of typos that prove a human is still behind the keyboard.
+        Hi, this is Jorge. I’m documenting my learning notes in this blog since 2020. Based on the number of grammar mistakes in my posts, you can tell how much ChatGPT is involved 😉.  
         </p>
 
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5">
@@ -94,22 +79,6 @@ const Hero = () => {
               </a>
             ))}
           </div>
-        </div>
-
-        <div className="mt-16 grid gap-4 text-left sm:grid-cols-3">
-          {highlights.map((item) => (
-            <div
-              key={item.eyebrow}
-              className="rounded-2xl border border-slate-900/10 bg-white/80 p-6 shadow-sm backdrop-blur-md transition hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/15 dark:border-white/10 dark:bg-white/5 dark:hover:shadow-purple-500/20"
-            >
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500 dark:text-purple-200/70">
-                {item.eyebrow}
-              </p>
-              <p className="mt-3 text-base leading-relaxed text-slate-700 dark:text-slate-100">
-                {item.description}
-              </p>
-            </div>
-          ))}
         </div>
       </div>
     </section>
