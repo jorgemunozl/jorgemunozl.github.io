@@ -29,8 +29,17 @@ const Hero = () => {
           </span>
         </h1>
         <p className="mt-6 text-lg md:text-xl text-slate-600 dark:text-slate-200/80 max-w-3xl mx-auto">
-        Hi, this is Jorge. I’m documenting my learning notes in this blog since 2020. Based on the number of grammar mistakes in my posts, you can tell how much ChatGPT is involved 😉.  
+        <a
+          href="https://lilianweng.github.io/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-semibold text-emerald-600 underline underline-offset-4 transition-colors hover:text-emerald-500 dark:text-emerald-300 dark:hover:text-emerald-200"
+        >
+          Hi, this is Jorge
+        </a>
+        . I’m documenting my learning notes in this blog since 2020. Based on the number of grammar mistakes in my posts, you can tell how much ChatGPT is involved 😉.  
         </p>
+        
 
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5">
           <Button
