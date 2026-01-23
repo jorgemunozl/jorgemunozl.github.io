@@ -8,6 +8,7 @@
     "dev": "npm run generate-notes && vite",
     "build": "npm run generate-notes && vite build",
     "build:dev": "npm run generate-notes && vite build --mode development",
+    "postbuild": "node scripts/create-404.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "generate-notes": "node scripts/generate-notes.js",
