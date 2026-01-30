@@ -62,16 +62,19 @@ const Hero = () => {
               Read Notes
             </Link>
           </Button>
-          <Button
-            variant="ghost"
-            asChild
-            className="h-12 rounded-full px-6 text-base font-medium text-slate-600 hover:text-slate-900 dark:text-purple-200 dark:hover:text-white"
-          >
-            <Link to="/about">
-              <User className="mr-2 h-5 w-5" />
-              About Me
-            </Link>
-          </Button>
+          <div className="group relative">
+            <div className="absolute -inset-0.5 rounded-full bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500 opacity-0 blur transition-opacity duration-300 group-hover:opacity-70 dark:from-purple-400 dark:via-pink-400 dark:to-sky-400" />
+            <Button
+              variant="ghost"
+              asChild
+              className="relative h-12 rounded-full border-2 border-transparent bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-blue-500/10 px-6 text-base font-medium text-slate-600 backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/30 hover:bg-gradient-to-r hover:from-emerald-500/20 hover:via-teal-500/20 hover:to-blue-500/20 hover:text-slate-900 hover:shadow-lg hover:shadow-emerald-500/20 dark:from-purple-500/10 dark:via-pink-500/10 dark:to-sky-500/10 dark:text-purple-200 dark:hover:border-purple-400/30 dark:hover:from-purple-500/20 dark:hover:via-pink-500/20 dark:hover:to-sky-500/20 dark:hover:text-white dark:hover:shadow-purple-500/20"
+            >
+              <Link to="/about" className="flex items-center">
+                <User className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
+                About Me
+              </Link>
+            </Button>
+          </div>
         </div>
 
         <div className="mt-12 flex items-center justify-center">
