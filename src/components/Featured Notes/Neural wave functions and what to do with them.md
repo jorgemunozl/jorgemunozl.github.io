@@ -5,8 +5,6 @@ author: Jorge
 date: 2025-10-13 11:29
 modified: 2025-10-25 11:24
 ---
-# Abstract
-
 With accurate solutions to the many electron Schrodinger equation all the chemistry could derived from first principles. Try to find analytical is prohibitively hard due the intrinsic relations between each component on a molecule. In this work I develop the use of a architecture based on the Transformer architecture to tackle this problem.
 
 # Introduction
