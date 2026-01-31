@@ -72,7 +72,7 @@ const Notes = () => {
   const { theme } = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
   const [posts, setPosts] = useState<ExtendedBlogPost[]>([]);
-  const [showGraphView, setShowGraphView] = useState(false); // Default to hidden
+  const [showGraphView, setShowGraphView] = useState(true); // Default to visible
   const [showSearch, setShowSearch] = useState(false);
   const [selectedNodeInGraph, setSelectedNodeInGraph] = useState<string | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
@@ -112,7 +112,7 @@ const Notes = () => {
     if (!noteId) {
       // Clear any selected state when going back to list view
       setSelectedNodeInGraph(undefined);
-      setShowGraphView(false);
+      // Graph remains visible
     }
   }, [noteId]);
 
@@ -573,6 +573,7 @@ const Notes = () => {
             isVisible={showGraphView}
             onClose={() => setShowGraphView(false)}
             onNodeClick={handleGraphNodeClick}
+            inline={false}
           />
         </div>
       </div>

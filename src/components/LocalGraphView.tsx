@@ -275,6 +275,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
     minZoom: 0.25,
     maxZoom: 6,
     sensitivity: 0.0012,
+    smoothing: 0.04,
+    momentum: 0.97,
   });
 
   if (!isVisible) return null;
@@ -489,7 +491,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                 d3VelocityDecay={0.3}
                 d3AlphaMin={0.001}
                 enablePanInteraction={true}
-                enableZoomInteraction={false}
+                enableZoomInteraction={true}
                 minZoom={0.25}
                 maxZoom={6}
               />
