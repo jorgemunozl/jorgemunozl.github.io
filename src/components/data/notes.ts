@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated on: 2026-01-30T23:59:21.322Z
+// Generated on: 2026-01-31T02:14:12.318Z
 
 export interface BlogPost {
   id: string;
@@ -18,7 +18,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Physical AI And The Pi Models",
     "excerpt": "No excerpt available",
     "content": "",
-    "uploadDate": "2026-01-30",
+    "uploadDate": "2026-01-31",
     "readTime": "1 min read",
     "fileName": "Physical AI and the pi models.md",
     "featured": true

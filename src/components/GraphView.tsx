@@ -102,6 +102,8 @@ const GraphView: React.FC<GraphViewProps> = ({
     minZoom: 0.25,
     maxZoom: 6,
     sensitivity: 0.0012,
+    smoothing: 0.04,
+    momentum: 0.97,
   });
 
   if (!isVisible) return null;

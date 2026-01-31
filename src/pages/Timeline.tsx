@@ -39,42 +39,49 @@ const timelineSections: TimelineSection[] = [
     year: '2026',
     events: [
       {
-        title: 'Join ACECOM',
+        title: 'Academic computing association',
         description:
-          'Description of ACECOM',
+          'Joined ACECOM (Asociación Científica de Computación). Entry into an organized scientific community. Work shifted toward collective technical initiatives and peer exchange.',
         image: '/images/acecom.jpg',
-        imageAlt: 'Prototype multimodal AI interface preview',
+        imageAlt: 'ACECOM association',
         date: '2026-01-15',
       },
-       
     ],
   },
   {
     year: '2025',
     events: [
       {
-        title: 'Prototype assistants for research sprints',
+        title: 'Research poster presentation',
         description:
-          'Launched small agent workflows that convert raw papers into structured study plans, speeding up how I explore new ideas.',
-        image: '/images/deep.png',
-        imageAlt: 'Prototype multimodal AI interface preview',
-        date: '2025-03-15',
+          'Presented a poster at a project competition on Neural Wave Functions (Pisformer, DeepMind line of work). First experience formalizing and communicating research ideas publicly. Focus moved toward reproducibility and explanation.',
+        image: '/images/uni.jpeg',
+        imageAlt: 'Neural Wave Functions poster presentation',
+        date: '2025-12-15',
       },
       {
-        title: 'Multimodal physics tutor demo',
+        title: 'Independent research group',
         description:
-          'Connected vision models with symbolic solvers to walk through many-electron problems and explain each reasoning step.',
-        image: '/images/project-external.svg',
-        imageAlt: 'Interface mockup highlighting collaborative tutoring flow',
-        date: '2025-02-20',
+          'Joined NONHUMAN as a Deep Learning Researcher. Daily activity centered on experiments, model behavior, and iteration. Research became a primary mode of work.',
+        image: '/images/nonhuman_2.jpg',
+        imageAlt: 'NONHUMAN research group',
+        date: '2025-11-01',
       },
       {
-        title: 'Community learning sessions',
+        title: 'External administrative constraint',
         description:
-          'Kicked off weekly livestreams to share progress, answer questions, and build an open learning roadmap around advanced AI topics.',
-        image: '/images/project-university.svg',
-        imageAlt: 'Group of people studying around a large display',
-        date: '2025-01-10',
+          'United States visa application denied. Academic trajectory redirected toward local and remote paths. Increased emphasis on autonomy and long-term planning.',
+        image: '/images/uni.jpeg',
+        imageAlt: 'Academic redirection',
+        date: '2025-10-15',
+      },
+      {
+        title: 'Industry-oriented technical training',
+        description:
+          'Internship at PyMut on Deep Learning fundamentals. Acquired practical understanding of neural networks, training loops, and tooling.',
+        image: '/images/pymut.png',
+        imageAlt: 'PyMut internship',
+        date: '2025-01-20',
       },
     ],
   },
@@ -82,28 +89,12 @@ const timelineSections: TimelineSection[] = [
     year: '2024',
     events: [
       {
-        title: 'Graph powered knowledge base',
+        title: 'Public university admission exam',
         description:
-          'Rolled out an interactive graph for my notes, letting me cluster concepts and surface context while writing.',
-        image: '/images/project-university.svg',
-        imageAlt: 'Graph illustration representing connected research notes',
-        date: '2024-11-05',
-      },
-      {
-        title: 'Built note-to-video scripts',
-        description:
-          'Experimented with scripts that transform blog posts into narrated videos, mixing AI voiceovers with rendered diagrams.',
-        image: '/images/deep.png',
-        imageAlt: 'Storyboard preview for note-driven video script',
-        date: '2024-08-22',
-      },
-      {
-        title: 'Monthly research digest',
-        description:
-          'Started shipping a short email that curates breakthroughs, personal experiments, and upcoming ideas to explore next.',
-        image: '/images/project-external.svg',
-        imageAlt: 'Newsletter preview with highlighted research headlines',
-        date: '2024-06-01',
+          'Entered National University of Engineering (UNI), Physics program. Ranked first in national admission for the faculty. Consolidation of academic focus on physics, mathematics, and theoretical foundations.',
+        image: '/images/uni.jpeg',
+        imageAlt: 'UNI Physics program admission',
+        date: '2024-02-15',
       },
     ],
   },
@@ -111,28 +102,20 @@ const timelineSections: TimelineSection[] = [
     year: '2023',
     events: [
       {
-        title: 'Transformers study marathon',
+        title: 'Engineering program enrollment',
         description:
-          'Recreated core transformer blocks from scratch and published long-form writeups to cement intuition.',
-        image: '/images/project-external.svg',
-        imageAlt: 'Code diagram referencing transformer internals',
-        date: '2023-09-18',
+          'Entered UNSMN as a Telecommunications Engineering student. Exposure to signals, communication systems, and network-oriented thinking.',
+        image: '/images/unsm.png',
+        imageAlt: 'UNSMN Telecommunications Engineering',
+        date: '2023-12-01',
       },
       {
-        title: 'Hugging Face contributions',
+        title: 'Interdisciplinary engineering curriculum',
         description:
-          'Shared datasets and sample notebooks on Hugging Face to document my experiments and invite feedback.',
-        image: '/images/project-university.svg',
-        imageAlt: 'Hugging Face themed illustration for community sharing',
-        date: '2023-07-12',
-      },
-      {
-        title: 'Local inference pipeline',
-        description:
-          'Assembled a reproducible setup for running open models locally with custom tooling, enabling faster experimentation loops.',
-        image: '/images/deep.png',
-        imageAlt: 'Laptop running local inference dashboards',
-        date: '2023-04-30',
+          'Entered UTEC as a Mechatronics Engineering student. Completed capstone project using omnidirectional wheels. Initial contact with system-level thinking across mechanical, electrical, and computational domains. Integration of mechanics, control, and system implementation in a working prototype.',
+        image: '/images/utec.png',
+        imageAlt: 'UTEC Mechatronics program and capstone project',
+        date: '2023-03-15',
       },
     ],
   },
@@ -140,28 +123,20 @@ const timelineSections: TimelineSection[] = [
     year: '2022',
     events: [
       {
-        title: 'Robotics control refresh',
+        title: 'First university enrollment',
         description:
-          'Updated my mecanum wheel robot with better sensor fusion, bridging the gap between hardware and simulation.',
-        image: '/images/deep.png',
-        imageAlt: 'Hardware schematic representing robotics experimentation',
-        date: '2022-10-15',
+          'Entered National University of the Center of Peru. Transition from secondary education to formal higher education.',
+        image: '/images/uncp.jpg',
+        imageAlt: 'UNCP enrollment',
+        date: '2022-12-01',
       },
       {
-        title: 'Started personal tooling stack',
+        title: 'Academic selection program',
         description:
-          'Began building the internal tools that now power this blog: markdown workflows, note generators, and visual debuggers.',
-        image: '/images/project-external.svg',
-        imageAlt: 'Screens showcasing early personal tooling interfaces',
-        date: '2022-07-08',
-      },
-      {
-        title: 'Documented PC builds',
-        description:
-          'Captured every iteration of my desktop builds, linking parts, benchmarks, and lessons learned for future upgrades.',
-        image: '/images/project-university.svg',
-        imageAlt: 'Custom PC build on a desk with components laid out',
-        date: '2022-03-20',
+          'Selected for an advanced high school group. Early orientation toward structured learning and problem-focused study.',
+        image: '/images/ingeneria_college.jpg',
+        imageAlt: 'Advanced high school program',
+        date: '2022-03-15',
       },
     ],
   },

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import ForceGraph2D, { type NodeObject } from 'react-force-graph-2d';
 import * as d3 from 'd3';
 import type { ForceLink, ForceManyBody } from 'd3';
@@ -15,12 +15,14 @@ interface GlobalGraphViewProps {
   isVisible: boolean;
   onClose: () => void;
   onNodeClick?: (nodeId: string) => void;
+  inline?: boolean; // New prop for inline/centered display
 }
 
 const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({ 
   isVisible, 
   onClose, 
-  onNodeClick
+  onNodeClick,
+  inline = false
 }) => {
   const graphRef = useRef<ForceGraphInstance<GraphNode, GraphLink> | null>(null);
   const graphContainerRef = useRef<HTMLDivElement | null>(null);
@@ -44,6 +46,8 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
   
   // Drag rearrangement timer
   const rearrangeTimeoutRef = useRef<number | null>(null);
+  const middlePanStateRef = useRef<{ x: number; y: number } | null>(null);
+  const isMiddlePanningRef = useRef(false);
 
   useEffect(() => {
     if (isVisible) {
@@ -62,22 +66,45 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     }
   }, [isVisible]);
 
-  useEffect(() => {
-    const updateDimensions = () => {
-      if (isFullscreen) {
-        setDimensions({
-          width: window.innerWidth - 100,
-          height: window.innerHeight - 100
-        });
-      } else {
-        setDimensions({ width: 450, height: 400 });
-      }
+  useLayoutEffect(() => {
+    if (!inline) {
+      const updateDimensions = () => {
+        if (isFullscreen) {
+          setDimensions({
+            width: window.innerWidth - 100,
+            height: window.innerHeight - 100
+          });
+        } else {
+          setDimensions({ width: 500, height: 500 });
+        }
+      };
+
+      updateDimensions();
+      window.addEventListener('resize', updateDimensions);
+      return () => window.removeEventListener('resize', updateDimensions);
+    }
+
+    const element = graphContainerRef.current;
+    if (!element) return;
+
+    const updateInlineDimensions = () => {
+      const width = element.clientWidth;
+      if (width <= 0) return;
+      const height = Math.max(360, Math.min(600, Math.round(width * 0.65)));
+      setDimensions({ width, height });
     };
 
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions);
-  }, [isFullscreen]);
+    updateInlineDimensions();
+
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', updateInlineDimensions);
+      return () => window.removeEventListener('resize', updateInlineDimensions);
+    }
+
+    const resizeObserver = new ResizeObserver(updateInlineDimensions);
+    resizeObserver.observe(element);
+    return () => resizeObserver.disconnect();
+  }, [isFullscreen, inline]);
 
   // Update graph forces when parameters change
   useEffect(() => {
@@ -151,19 +178,93 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     minZoom: 0.25,
     maxZoom: 6,
     sensitivity: 0.0012,
+    smoothing: 0.04,
+    momentum: 0.97,
   });
+
+  // Enable middle-mouse panning (prevents browser auto-scroll)
+  useEffect(() => {
+    const container = graphContainerRef.current;
+    if (!container) return;
+
+    const startMiddlePan = (event: MouseEvent) => {
+      if (event.button !== 1) return;
+      event.preventDefault();
+      isMiddlePanningRef.current = true;
+      middlePanStateRef.current = { x: event.clientX, y: event.clientY };
+    };
+
+    const handleMouseMove = (event: MouseEvent) => {
+      if (!isMiddlePanningRef.current || !graphRef.current) return;
+      const last = middlePanStateRef.current;
+      if (!last) return;
+
+      const dx = event.clientX - last.x;
+      const dy = event.clientY - last.y;
+      middlePanStateRef.current = { x: event.clientX, y: event.clientY };
+
+      const zoom = graphRef.current.zoom?.();
+      const center = graphRef.current.centerAt?.();
+      if (typeof zoom !== 'number' || !center || typeof center.x !== 'number' || typeof center.y !== 'number') {
+        return;
+      }
+
+      graphRef.current.centerAt(center.x - dx / zoom, center.y - dy / zoom);
+    };
+
+    const stopMiddlePan = (event?: MouseEvent) => {
+      if (event && event.button !== 1) return;
+      isMiddlePanningRef.current = false;
+      middlePanStateRef.current = null;
+    };
+
+    const preventAuxClick = (event: MouseEvent) => {
+      if (event.button === 1) {
+        event.preventDefault();
+      }
+    };
+
+    container.addEventListener('mousedown', startMiddlePan, { passive: false });
+    container.addEventListener('auxclick', preventAuxClick);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', stopMiddlePan);
+    container.addEventListener('mouseleave', stopMiddlePan);
+
+    return () => {
+      container.removeEventListener('mousedown', startMiddlePan);
+      container.removeEventListener('auxclick', preventAuxClick);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', stopMiddlePan);
+      container.removeEventListener('mouseleave', stopMiddlePan);
+    };
+  }, []);
+
+  // Auto-fit graph to visible area when in inline mode
+  useEffect(() => {
+    if (inline && !isLoading && graphData.nodes.length > 0 && graphRef.current) {
+      // Wait a bit for the graph to stabilize, then fit to view with less padding for more zoom
+      const timer = setTimeout(() => {
+        if (graphRef.current) {
+          graphRef.current.zoomToFit(400, 20); // Reduced padding from 50 to 20 for closer zoom
+        }
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [inline, isLoading, graphData.nodes.length]);
 
   if (!isVisible) return null;
 
-  const containerClasses = isFullscreen
-    ? 'fixed inset-0 z-50 bg-black/90 dark:bg-black/90 flex items-center justify-center'
-    : 'fixed bottom-20 right-4 z-40';
+  const containerClasses = inline 
+    ? 'relative w-full'
+    : isFullscreen
+      ? 'fixed inset-0 z-50 bg-black/90 dark:bg-black/90 flex items-center justify-center'
+      : 'fixed bottom-20 right-4 z-40';
 
   return (
     <div className={containerClasses}>
-      <Card className={`group graph-card-light card-hover-glow border border-gray-400/60 dark:border-gray-700/30 shadow-sm rounded-lg ${isFullscreen ? 'w-full h-full max-w-none' : ''} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : '')}`} style={!isFullscreen ? { width: dimensions.width } : undefined}>
+      <Card className={`group graph-card-light card-hover-glow ${inline ? 'border-transparent bg-transparent shadow-none' : 'border border-gray-400/60 dark:border-gray-700/30 shadow-sm'} rounded-lg ${inline ? 'w-full' : ''} ${isFullscreen ? 'w-full h-full max-w-none' : ''} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : '')}`} style={!isFullscreen && !inline ? { width: dimensions.width } : undefined}>
         
-        {/* Detachable Controls Arrow - appears on hover */}
+        {/* Detachable Controls Arrow - appears on hover (hide close button if inline) */}
         <div className="absolute -top-2 -right-2 opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300 z-50">
           <div className="flex items-center space-x-1 bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-1 border border-gray-400/60 dark:border-gray-700/50 shadow-sm">
             <Button
@@ -175,15 +276,17 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
             >
               <Settings className="w-3 h-3" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="text-gray-600 hover:text-red-700 dark:text-gray-400 dark:hover:text-red-400 p-1 h-6 w-6 rounded-full"
-              title="Close"
-            >
-              <X className="w-3 h-3" />
-            </Button>
+            {!inline && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onClose}
+                className="text-gray-600 hover:text-red-700 dark:text-gray-400 dark:hover:text-red-400 p-1 h-6 w-6 rounded-full"
+                title="Close"
+              >
+                <X className="w-3 h-3" />
+              </Button>
+            )}
           </div>
         </div>
 
@@ -306,8 +409,8 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
         <CardContent className="p-0 bg-transparent">
           <div
             ref={graphContainerRef}
-            className={`relative overflow-hidden touch-none overscroll-contain bg-transparent ${isFullscreen ? 'h-full' : ''}`}
-            style={!isFullscreen ? { height: dimensions.height } : undefined}
+            className={`relative overflow-hidden touch-none overscroll-contain bg-transparent ${isFullscreen || inline ? 'h-full' : ''}`}
+            style={!isFullscreen && !inline ? { height: dimensions.height } : inline ? { height: dimensions.height } : undefined}
           >
             {isLoading ? (
               <div className="flex items-center justify-center h-full bg-transparent">
@@ -365,7 +468,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 d3VelocityDecay={0.3}
                 d3AlphaMin={0.001}
                 enablePanInteraction={true}
-                enableZoomInteraction={false}
+                enableZoomInteraction={true}
                 minZoom={0.25}
                 maxZoom={6}
               />
