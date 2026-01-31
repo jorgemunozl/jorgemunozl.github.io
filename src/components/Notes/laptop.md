@@ -12,6 +12,6 @@ First you need to choose the if (money is not a worry) use Linux, Windows or Mac
 
 Linux for developers and hard skill, Mac for creative workers, and windows for casual users. Here the Mac have the best performance in general but they are stupidly expensive for my use, I don't like creative work or visual stuff.
 
-In this cases we are going to talk only on [[Linux]] for me the best kernel, and with "awesome" community. 
+In this cases we are going to talk only on [[Linux change your view about software]] for me the best kernel, and with "awesome" community. 
 
 Then natural questions appears, what is the best laptop for use [[Distributions]], There is always the think pad of Lenovo, and well that is , pretty simple now what are my [[My specific use of electronic devices]] 

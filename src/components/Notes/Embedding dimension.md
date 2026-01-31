@@ -3,7 +3,8 @@ tags:
   - baby
   - ml
 author: Jorge
-date: "2025-04-29 14:05"
+date: 2025-04-29 14:05
+modified: 2025-12-22 12:12
 ---
 The **embedding dimension** defines how many parameters a token will have.
 

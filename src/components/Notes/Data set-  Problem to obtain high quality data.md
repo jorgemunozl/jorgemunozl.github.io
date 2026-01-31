@@ -5,16 +5,13 @@ tags:
 author: Jorge
 date: "2025-03-26 23:57"
 ---
-I mean now that I have to make something the question that have a high quality data set is a problem but first you have to be very clear what are going to make,
-and for a single person it's a lot of work to recolectate huge amount of high quality data. 
-
-Exist several techniques to collect data one that I heard a lot is about Scrapping.
+Exist several techniques to collect data one that I heard a lot is about [[scrapping]], data banks like [[Hugging Face]] or **Kaggle**, the problem relies if you are hyper specific on a topic, if that were the case then you would need to use another techniques like [[Data Augmentation to increase the volume and generalization]]
 
 And exist a lot of ways to make a model learn the data that we have, 
 one that the most know are.
 
-- [[Fine Tune]]
-- [[RAG]]
+- [[Fine-tune on large language models]]
+	- [[RAG]]
 
 and specifically talking there is this thing of _verl_ tambien esta DPO que le enseñamos a preferir ciertas respuestas,RLHF RL with human feedback and a lot of things.
 

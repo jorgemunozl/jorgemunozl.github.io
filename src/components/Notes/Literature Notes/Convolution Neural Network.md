@@ -4,7 +4,12 @@ tags:
   - ml
 author: Jorge
 date: 2025-01-13 21:17
+modified: 2025-12-05 14:22
 ---
+So here we learn the values of the [[kernel convolution]].
+
+Think on a one dimensional input, you learn a one dimensional kernel, which maps your one dimensional vector to another, practical use of this? They are pretty similar to NN in that cases of it. [^1]
+
 Here the main type of input data are images and of course the output are also images.
 When we talk of images on programming we are referencing a array with height, width and three channel to colors, or we can use only gay to black and white images.
 
@@ -17,16 +22,6 @@ I mean this open a huge set of questions, how the I.A knows what a rabbit is?
 
 How relate token with images. 
 
-[[Convolution Idea]]
-[[Neural Network Idea]]
 
-
-📖 @goodfellowDeepLearning2016 Chapter nine
-📖 @nielsenNeuralNetworksDeep2015 Convolutional Part
-📖 @kroseIntroductionNeuralNetworks (Image recognition problem)
-
-# YouTube Video
-
- ![](https://youtu.be/4sWhhQwHqug)
-
-![](https://youtu.be/UZDiGooFs54)
+[^1]: [[Deep Learning]] pp. 359.
+[[Neural Networks and Deep Learning]]

@@ -3,7 +3,8 @@ tags:
   - baby
   - ml
 author: Jorge
-date: "2025-04-29 14:35"
+date: 2025-04-29 14:35
+modified: 2025-09-25 10:59
 ---
 Allows token attend each others in parallel.
 

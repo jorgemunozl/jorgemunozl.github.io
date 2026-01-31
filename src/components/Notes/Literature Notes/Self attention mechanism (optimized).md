@@ -10,7 +10,7 @@ date: "2025-02-07 14:22"
 >$$Attention(Q,K,V)=softmax\left(\frac{Q\cdot K^T}{\sqrt{ d_{k} }} \right)V$$
 
 - The [[SoftMax Function]] 
-- This is a upgraded version of the [[attention mechanism]], the is the reason of the self.
+- This is a upgraded version of the [[Attention mechanism]], the is the reason of the self.
 - This is the optimized version, when for a reason you introduce the $\sqrt{ d_{k} }$. 
 
 
@@ -24,10 +24,7 @@ Basically (_inference_), give it a set of words in its vector form, apply this m
 
 This is vector that change the meaning of the words is obtained by **Attention Formula**. 
 
-The $Q$ and $K$ are the [[Query and key]], $V$ are the [[Values LLM]] and $d_{k}$ is the [[Context size LLM]], and the [[SoftMax Activation-LLM Idea abstraccion|Softmax function]] to bring it into a workable form.
-
-$$
-$$
+The $Q$ and $K$ are the [[Query and Key on Attention]], $V$ are the [[Values LLM]] and $d_{k}$ is the [[Context size LLM]], and the [[Soft-Max Activation peaks or smooth|Softmax function]] to bring it into a workable form.
 
 Thus the change would be (represented very fuzzy) $\vec{E_{i}}'=\vec{E}_{i}+Attention(Q,K,V)$
 
@@ -37,17 +34,3 @@ Thus the change would be (represented very fuzzy) $\vec{E_{i}}'=\vec{E}_{i}+Atte
 # YouTube
 
 ![](https://youtu.be/eMlx5fFNoYc)
-
-
-
-
-
-
-
-
-
-
-
-
-
-After this vector go to the section of [[layer LLM use]] and what happen to the vector here?

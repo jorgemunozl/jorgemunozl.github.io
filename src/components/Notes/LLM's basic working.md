@@ -10,7 +10,7 @@ What it would be a beauty definition of LLM, then is important differentiate I t
 So a function multilinear stochastic predictive token I need to be very cautious.
 
 We could understand **LLMs** like functions but for words, we can give it a uncompleted sentence as input and the output will be the missing word. If we iterate this process we could obtain sentences.
-So we could say that the function depends on: before words, the message intention, the context/place, the receptors, and a ton of variables. How we integrate that amount information? Let's give the first step, and that is grasp the follow [[Architecture of a transform|architecture]] of course is not the unique architecture but is the most efficient.
+So we could say that the function depends on: before words, the message intention, the context/place, the receptors, and a ton of variables. How we integrate that amount information? Let's give the first step, and that is grasp the follow [[Transform Architecture|architecture]] of course is not the unique architecture but is the most efficient.
 ![[transformerArchitecture.png|343x463]]
 
 Once that you understand all, to have your own model follow the next steps.
