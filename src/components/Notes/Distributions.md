@@ -5,7 +5,7 @@ tags:
 author: Jorge
 date: "2025-04-12 10:17"
 ---
-This is only available when we talk respect [[Linux]] the people could create it's on distro because Linux is open source, of course if you want to create your own distro is not easy. 
+This is only available when we talk respect [[Linux change your view about software]] the people could create it's on distro because Linux is open source, of course if you want to create your own distro is not easy. 
 For *Linux* we have: Ubuntu, Arch, Debian, Red Hat ,etc.
 And for apple products we have 
 

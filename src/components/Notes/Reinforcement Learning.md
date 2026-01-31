@@ -4,12 +4,12 @@ tags:
   - ml
 author: Jorge
 date: 2025-02-24 18:36
+modified: 2026-01-15 21:51
 ---
->Is full trial and error with feedback.
+Reinforcement learning is no a field of Artificial Intelligence. 
 
-Reinforcement learning is a field of Artificial Intelligence, where an abstract object (an agent) learns.
 
-[[State of the art agents]]
+, where an abstract object (an agent) learns. Here is such a nice excuse to [[Markov theory]]
 
 It's like a student looking for his way to solve a problem, he has certain tools, examples and theory (_environment_).
 
@@ -18,13 +18,16 @@ He would take different actions depending on whether he is able to resolve it or
 If we want to take it to the world of computing there exists three things to consider, _the sensation or stimuli , the action or answer to that sensation and the feedback or reward._
 
 Introducing terminology used in this field:
-- **Agent** it's the student, in this case the one who is going to learn, we use it to refer to a model.
+- **Agent** it's the student, in this case the one who is going to learn, we use it to refer to a model. [[Policy RL]]
 - **Policy** it's the way of behaving, it's a function that takes a state and turns it into an action.
 - **Reward** A real number that tells us how good the agent is doing. or if it is doing bad things/actions we don't reward them, instead we penalize them.
-- **Value Function** Thinking in a long term, change the way we see the rewards, therefore the actions also. -> [[value function]]
+- **Value Function** Thinking in a long term, change the way we see the rewards, therefore the actions also. -> [[Value Function]]
+- **Trajectory** [[Trajectory RL]]
 - _Model_ of the environment: where our agent is located.
+>Is full trial and error with feedback.
 
 [[reinforcement learning from human feedback]]
+[[State of the art agents]]
 
 Approach to machine learn
 - No value functions -> evolutionary methods

@@ -20,11 +20,11 @@ Actually nobody uses seriously Boltzmann Machines, its study is only educational
 
 Okay think it like follow you give it a batch of data, and that recall of that data relies on the parameters, easy.
 
-. They sey to me that this is physical statistics. [[statistics]]
+. They sey to me that this is physical statistics. [[Statistics like the path for approach the chaotic of life]]
 
 
 [[Neural Network Idea]]
-[[Relation IA physics]]
+[[IA on my field]]
 
 **Ref**.
 

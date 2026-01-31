@@ -22,4 +22,4 @@ They say that for servers NVlink and Nvidia Infiniband, or more rustic with PCIe
 
 And was thinking on a miner (cryptocurrency) that needs knows pretty well, because they need to use many GPUS.
 
-[[Cryptocurrency]]
+[[Cryptocurrency decentralism]]

@@ -5,7 +5,7 @@ tags:
 author: Jorge
 date: "2025-04-12 21:32"
 ---
-Maybe I retiring from the machine learning field. But I'm pretty sure that [[satelite]] have something to do with this. More realted of 5G technology.
+Maybe I retiring from the machine learning field. But I'm pretty sure that [[Artificial Natural Satellites]] have something to do with this. More realted of 5G technology.
 I mean If I would be a backend developer I would say that this is important.
 But ok I give up respect curiosity. 
 I mean it's very complex, all these I will skip it, it has to be with id, servers, and more stuff.
