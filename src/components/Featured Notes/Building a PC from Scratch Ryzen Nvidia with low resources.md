@@ -107,12 +107,3 @@ Tips and Troubleshooting
     • High temperatures: Recheck the thermal paste application and ensure the CPU cooler is secure. Improve airflow by repositioning fans or tidying cables.
 Conclusion
 Building a PC is a gratifying way to blend hands‑on skills with theoretical knowledge. Each component—from the CPU that executes instructions[1] to the NVMe drive that streams data through PCIe lanes[7]—plays a specific role. By understanding these roles and methodically assembling your hardware, you can create a system tailored to your needs. The Ryzen 3×1000, GT 730, 8 GB of DDR4 RAM and an NVMe SSD form a modest yet functional computer suited for everyday tasks, light gaming and learning projects. As Feynman might remind us, curiosity doesn’t end with success; instead, let this build serve as a launching point for deeper questions about how computing hardware works and how you might improve your system in the future.
-
-[1] [2] [3] [4] [5] [6] [8] [9] [10] [16] [29] Computer Basics: Inside a Computer
-https://edu.gcfglobal.org/en/computerbasics/inside-a-computer/1/
-[7] [13] [14] NVMe vs. SATA: Storage Comparison & Differences
-https://phoenixnap.com/kb/nvme-vs-sata
-[11] [12] DDR3 vs DDR4 - Difference and Comparison | Diffen
-https://www.diffen.com/difference/DDR3_vs_DDR4
-[15] [17] [18] [19] [20] [21] [22] [23] [24] [25] [26] [27] [28] How to Build a Gaming PC from Scratch: Complete Guide
-https://ibertronica.es/blog/en/news-en/step-by-step-guide-to-building-your-own-gaming-pc-from-scratch/
