@@ -3,9 +3,10 @@ tags:
   - baby
   - ml
 author: Jorge
-date: "2025-04-12 10:14"
+date: 2025-04-12 10:14
+modified: 2025-08-10 11:28
 ---
-This is the most important thing between the communication between [[Hardware]] and [[Operative System OS]]
+This is the most important thing between the communication between [[Hardware]] and [[Operative System OS]].
 
 |        | Linux [[Distributions]] | MacOS | Windows    |
 | ------ | ----------------------- | ----- | ---------- |
@@ -23,6 +24,5 @@ Of course the most normal is use a intel/amd processator and gpu of nvidia, and 
 
 [[laptop]]
 [[PC]]
-[[Phone and tablet]]
 
 Well the Kernel most used (but people don't know) are from _Microsoft_, practically all the people who are not developers use it,  

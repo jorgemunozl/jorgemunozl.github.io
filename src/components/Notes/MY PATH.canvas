@@ -1,0 +1,15 @@
+{
+	"nodes":[
+		{"id":"b8d703ab9e7ef255","type":"text","text":"# MY PATH","x":-240,"y":-40,"width":200,"height":60},
+		{"id":"86d793538e1e64a6","type":"text","text":"## Variational Monte Carlo","x":63,"y":-10,"width":317,"height":70},
+		{"id":"2f8f2a9a2d032003","type":"text","text":"## Tensor Networks","x":67,"y":120,"width":277,"height":60},
+		{"id":"9247318cb3753637","type":"text","text":"## Quantum Monte Carlo\n","x":59,"y":-140,"width":285,"height":60},
+		{"id":"c8e27f7f933512d5","type":"text","text":"## Quantum Mechanics","x":-405,"y":-140,"width":305,"height":60},
+		{"id":"65b592537669a421","type":"text","text":"## Quantum Computing","x":-175,"y":-260,"width":270,"height":60},
+		{"id":"52bbc2e9c18be0ca","type":"text","text":"## Lie Algebras","x":-405,"y":90,"width":250,"height":60},
+		{"id":"ffa3857aed0ab414","type":"text","text":"## Neural Networks","x":222,"y":-260,"width":278,"height":60},
+		{"id":"0ce4f922ad92597b","type":"text","text":"## Deep Learning","x":369,"y":-341,"width":250,"height":60},
+		{"id":"3222edb2136db2a7","x":-1120,"y":-960,"width":250,"height":60,"type":"text","text":"## VLA Models\n"}
+	],
+	"edges":[]
+}

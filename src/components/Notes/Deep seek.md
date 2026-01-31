@@ -7,7 +7,7 @@ date: 2025-02-12 17:26
 ---
 
 And is not only Deep Seek is also ChatGTP, Gemini, Claude, and more LLM's. That we could use wisely. 
-And If I put it money I think  and integrate, use agents I guess for personal use. And that is what [[Linux]] open. There are a lot of things to do.
+And If I put it money I think  and integrate, use agents I guess for personal use. And that is what [[Linux change your view about software]] open. There are a lot of things to do.
 
 When you pay a lot of gates open, the first steps are use cursor and claude. how they could integrate to our work?
 
