@@ -19,6 +19,6 @@ We are talking in the most general case, the word **artificial** refers non natu
 [[Machine Learning Classification]]
 
 And talking respect the overall purpose
-- [[ANI]] (Narrow)
+- [[Artificial Narrow Intelligence]] (Narrow)
 - [[ASI]] (Super)
 - [[AGI]] (Generative)

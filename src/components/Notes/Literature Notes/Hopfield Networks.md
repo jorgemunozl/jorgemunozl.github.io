@@ -4,6 +4,7 @@ tags:
   - ml
 author: Jorge
 date: 2025-01-09 14:23
+modified: 2025-09-10 08:52
 ---
 >[!definition]
 >A **Hopfield Network** is a machine that transforms your input?
@@ -22,7 +23,7 @@ And is a function?, what is?
 
 **Foundational Paper**
 [[Neural Networks and physical systems with emergent collective computational abilities]]
-[[Relation IA physics]]
+[[IA on my field]]
 We we talk of [[Neural Network Idea]] we refer to basically Hopfield network
 
 

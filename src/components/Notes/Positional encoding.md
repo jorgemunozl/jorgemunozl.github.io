@@ -4,6 +4,7 @@ tags:
   - ml
 author: Jorge
 date: 2025-02-25 23:57
+modified: 2025-12-22 12:12
 ---
 But no matter, all what at the end cares is the [[positional embedding matrix]].
 

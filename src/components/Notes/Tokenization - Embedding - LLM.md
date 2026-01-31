@@ -31,9 +31,9 @@ And I think that thinking it isolate is something that everyone could think.
 
 How did it not occur to me before.?
 
-How we could measure the similarity between two vector? [[Dot Product]]
+How we could measure the similarity between two vector? [[Dot Product, why define it like that?]]
 
 [[Tokenization - Unembedding - LLM]]
 
 
-[[Positional encoding - Sinuidal]]
+[[Sinuidal Encoding]]

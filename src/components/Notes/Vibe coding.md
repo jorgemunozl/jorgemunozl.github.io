@@ -5,7 +5,7 @@ tags:
 author: Jorge
 date: "2025-04-12 16:06"
 ---
->This note refers how the AI affect or upgrade our process of learning, specially code. One field where [[Model]] are quite better than humans.
+>This note refers how the AI affect or upgrade our process of learning, specially code. One field where [[Model for predicting new data]] are quite better than humans.
 
 This make programming more accesible to the common user. Now you don't need hard skills on programming to make simples scripts,  Nietzche hates the masses, practically it's a no brainer, now the problem is evident you are not thinking, you are not learning, for the long run is more a problem, well that depends for the specifical use, I think that for science is bad.
 But if you are not engaged, well is the best thing that ever happens.

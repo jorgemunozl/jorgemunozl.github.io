@@ -5,12 +5,11 @@ tags:
   - ml
 author: Jorge
 date: 2025-01-13 20:21
+modified: 2025-10-08 10:09
 ---
-[definition]
-
-A perceptrion is a function $f:\mathbb{R}-\{ 0,1 \}$ , ref? naturals maybe?
-
-[[perceptron idea]]The most simple take _integers_ inputs and gives binary outputs. 
+>[!definition]
+>A perceptrion is a function $f:\mathbb{R}-\{ 0,1 \}$ .
+>[[perceptron encapsulates well linear decision]]The most simple take _integers_ inputs and gives binary outputs. 
 What decide the output of the neuron. Although it seems easy if you see well this are the basis of [[Neural Network Idea]].
 
 
@@ -30,6 +29,6 @@ linearity
 For that reason we have the [[Sigmoid Neurons]].
 
 **Perceptron Convergence Theorem** If there was a solution for a given problem, then a perceptron would be able to find a solution to the problem.
-
+[[Perceptron using matrix notation]]
 
 **Ref**. [[Neural Networks and Deep Learning]]
