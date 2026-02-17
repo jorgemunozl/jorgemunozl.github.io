@@ -5,8 +5,6 @@ author: Jorge
 date: 2025-08-12 11:29
 modified: 2025-11-01 23:20
 ---
-
-
 # Vision modeling with Transformers and a fine tunning
 
 ## Table of Contents
@@ -28,7 +26,6 @@ modified: 2025-11-01 23:20
 13. [References](#References)
 
 ---
-
 >Special thanks to [Joel Timana](https://github.com/joevidev) for a lot of super valuable feedback during the process of this project.
 
 # Motivation

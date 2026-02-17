@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated on: 2026-01-31T14:10:25.314Z
+// Generated on: 2026-02-17T03:22:47.428Z
 
 export interface BlogPost {
   id: string;
@@ -16,9 +16,9 @@ export const blogPosts: BlogPost[] = [
   {
     "id": "1",
     "title": "Physical AI And The Pi Models",
-    "excerpt": "No excerpt available",
-    "content": "",
-    "uploadDate": "2026-01-31",
+    "excerpt": "Physical AI is a new field of study that explores the relationship between physics and artificial intelligence. It is a interdisciplinary field that c...",
+    "content": "# Physical AI and the pi models\n\n## Abstract\n\nPhysical AI is a new field of study that explores the relationship between physics and artificial intelligence. It is a interdisciplinary field that combines ideas from physics, computer science, and mathematics to understand the nature of intelligence and how it can be achieved in physical systems.\n\n## Introduction\n\nPhysical AI is a new field of study that explores the relationship between physics and artificial intelligence. It is a interdisciplinary field that combines ideas from physics, computer science, and mathematics to understand the nature of intelligence and how it can be achieved in physical systems.\n\n## Main Content\n\n### The pi models",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "Physical AI and the pi models.md",
     "featured": true
@@ -28,7 +28,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Cross Attention Adapter",
     "excerpt": "So how this works, is related with [[Cross attention]].",
     "content": "---\nmodified: 2025-08-14 16:40\n---\nSo how this works, is related with [[Cross attention]].\n",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "Cross attention adapter.md",
     "featured": false
@@ -38,7 +38,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Data Set Index Matter",
     "excerpt": "So it's such a problem.",
     "content": "So it's such a problem.",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "Data Set Index Matter.md",
     "featured": false
@@ -48,7 +48,7 @@ export const blogPosts: BlogPost[] = [
     "title": "David Hilbert",
     "excerpt": "No excerpt available",
     "content": "",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "David Hilbert.md",
     "featured": false
@@ -58,7 +58,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Differential Equation Describing The Nature",
     "excerpt": "So yeah this the reason of why we like [[Differential Equation]]",
     "content": "---\nmodified: 2025-10-25 15:14\n---\n\n\nSo yeah this the reason of why we like [[Differential Equation]]",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "Differential Equation describing the nature.md",
     "featured": false
@@ -68,7 +68,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Fisher Information Matrix Ab Initio",
     "excerpt": "K-FAC is basically **“natural gradient you can actually run on a GPU”**.",
     "content": "K-FAC is basically **“natural gradient you can actually run on a GPU”**.\n\nIt takes the gigantic Fisher matrix that natural gradient needs, notices a hidden Kronecker structure layer-by-layer, and uses that to make the inverse cheap.\n\nLet’s build it from the ground up.\n\n---\n\n## 1. Where K-FAC lives: natural gradient\n\nNatural gradient wants to update parameters by\n\n[\n\\theta_{\\text{new}} = \\theta - \\eta, F^{-1} g\n]\n\n* (g = \\nabla_\\theta L): usual gradient of the loss\n* (F): Fisher information matrix (expectation of score outer products)\n\nThe Fisher is huge:\n\n* If you have (n) parameters, (F) is (n \\times n).\n* Inverting that directly is (O(n^3)) → hopeless for deep nets.\n\nSo the game is: **approximate (F^{-1})** in a way that’s:\n\n* cheap,\n* still “kind of” respects the geometry.\n\nK-FAC (Kronecker-Factored Approximate Curvature) is one clever way.\n\n---\n\n## 2. Look at one layer: where the Kronecker shows up\n\nTake a fully-connected layer:\n\n[\ns = W a + b,\\quad y = \\phi(s)\n]\n\n* (a): input activations (vector of size (n_{\\text{in}}))\n* (W): weight matrix ((n_{\\text{out}} \\times n_{\\text{in}}))\n* (s): pre-activations\n* (g_s = \\frac{\\partial L}{\\partial s}): backprop signal flowing into that layer (size (n_{\\text{out}}))\n\nGradient w.r.t. weights:\n\n[\n\\frac{\\partial L}{\\partial W} = g_s, a^{\\top}\n]\n\nThat’s already interesting: gradient is an **outer product** of backprop signal and activations.\n\nNow vectorize the weights:\n(\\mathrm{vec}(W)) is a long vector of size (n_{\\text{out}} n_{\\text{in}}).\n\nThen\n\n[\n\\mathrm{vec}!\\left(\\frac{\\partial L}{\\partial W}\\right)\n= \\mathrm{vec}(g_s a^{\\top})\n]\n\nUsing standard identity:\n\n[\n\\mathrm{vec}(g_s a^{\\top}) = (a \\otimes I), g_s\n]\n\nor equivalently ((I \\otimes g_s) a), depending how you write it. The key is: **Kronecker product appears naturally when you vectorize outer products.**\n\n---\n\n## 3. The Fisher block for one layer\n\nThe Fisher is the expectation of score outer products. For that layer’s weights, the block of the Fisher corresponding to (\\mathrm{vec}(W)) is roughly:\n\n[\nF_W = \\mathbb{E}\\Big[\n\\mathrm{vec}!\\left(\\frac{\\partial L}{\\partial W}\\right)\n\\mathrm{vec}!\\left(\\frac{\\partial L}{\\partial W}\\right)^{\\top}\n\\Big]\n]\n\nPlug in the expression:\n\n[\n\\mathrm{vec}!\\left(\\frac{\\partial L}{\\partial W}\\right)\n= \\mathrm{vec}(g_s a^{\\top})\n]\n\nSo:\n\n[\nF_W\n= \\mathbb{E}\\big[ \\mathrm{vec}(g_s a^{\\top}), \\mathrm{vec}(g_s a^{\\top})^{\\top} \\big]\n]\n\nNow comes the **K-FAC approximation:**\n\n1. Use the Kronecker identity:\n   (\\mathrm{vec}(g_s a^{\\top}) = (a \\otimes I), g_s), etc.\n2. Assume **statistical independence** between (a) and (g_s) under the model’s distribution.\n3. Pull expectations apart.\n\nAfter a bit of algebra, you get the famous approximation:\n\n[\nF_W \\approx A \\otimes G\n]\n\nwhere\n\n* (A = \\mathbb{E}[a a^{\\top}]): covariance (really 2nd moment) of activations\n* (G = \\mathbb{E}[g_s g_s^{\\top}]): covariance of backprop signals\n\nSo instead of a huge Fisher block of size ((n_{\\text{out}} n_{\\text{in}}) \\times (n_{\\text{out}} n_{\\text{in}})), we approximate it as a **Kronecker product of two small matrices**:\n\n* (A): (n_{\\text{in}} \\times n_{\\text{in}})\n* (G): (n_{\\text{out}} \\times n_{\\text{out}})\n\nThis is the core K-FAC idea.\n\n---\n\n## 4. Why Kronecker form is golden: inversion\n\nWe want the natural-gradient direction:\n\n[\n\\Delta \\theta \\approx F^{-1} g\n]\n\nFor the weights of one layer:\n\n[\n\\Delta w = F_W^{-1} , \\mathrm{vec}!\\left(\\frac{\\partial L}{\\partial W}\\right)\n]\n\nK-FAC says: use\n\n[\nF_W \\approx A \\otimes G\n]\n\nProperty of Kronecker products:\n\n[\n(A \\otimes G)^{-1} = A^{-1} \\otimes G^{-1}\n]\n\nSo:\n\n[\n\\Delta w\n\\approx (A^{-1} \\otimes G^{-1})\n\\mathrm{vec}!\\left(\\frac{\\partial L}{\\partial W}\\right)\n]\n\nNow use another Kronecker identity:\n\n[\n(A^{-1} \\otimes G^{-1}) \\mathrm{vec}(M)\n= \\mathrm{vec}\\big( G^{-1} M A^{-1} \\big)\n]\n\nTherefore we can implement the natural-gradient update for that layer as:\n\n[\n\\Delta W \\approx G^{-1}\n\\left(\\frac{\\partial L}{\\partial W}\\right)\nA^{-1}\n]\n\nNo explicit Kronecker, no giant Fisher. Just:\n\n* compute two small inverses (or solves): (G^{-1}) and (A^{-1})\n* sandwich the gradient.\n\nThat’s the magic trick.\n\n---\n\n## 5. What K-FAC does in practice (per training step-ish)\n\nFor each layer:\n\n1. **Forward pass**: get activations (a).\n   Accumulate (A = \\mathbb{E}[a a^{\\top}]) using an exponential moving average.\n\n2. **Backward pass**: get backprop signals (g_s).\n   Accumulate (G = \\mathbb{E}[g_s g_s^{\\top}]) similarly.\n\n3. **Damping**:\n   To make things stable, use\n\n   [\n   \\tilde{A} = A + \\lambda I,\\quad \\tilde{G} = G + \\lambda I\n   ]\n\n   where (\\lambda) is a damping parameter (like Tikhonov regularization).\n\n4. **Compute inverses (or Cholesky solves)** of (\\tilde{A}) and (\\tilde{G}).\n   This can be done every few steps, not necessarily every step.\n\n5. **Precondition gradients**:\n\n   [\n   \\Delta W = \\tilde{G}^{-1}\n   \\left(\\frac{\\partial L}{\\partial W}\\right)\n   \\tilde{A}^{-1}\n   ]\n\n6. **Update parameters**:\n\n   [\n   W \\leftarrow W - \\eta, \\Delta W\n   ]\n\nFor biases, there’s a similar but simpler story; for conv layers, you adapt the definitions of (A) and (G) using “unfolded” patches or appropriate spatial averaging (that’s conv-K-FAC variants).\n\n---\n\n## 6. Geometric / “physicsy” intuition\n\nNatural gradient wants to make steps that are “unit length” in the **Fisher metric**, not in the naïve Euclidean metric in parameter space. Rough analogy:\n\n* Plain SGD: measure distance in parameter space → step size means “how far weights moved”.\n* Natural gradient: measure distance in **function space** → step size means “how much the distribution (p(y\\mid x,\\theta)) changed”.\n\nK-FAC’s layerwise Kronecker approximation roughly corresponds to:\n\n* “Whitening” the activations by (A^{-1/2})\n* “Whitening” the backprop signals by (G^{-1/2})\n\nThen the gradient in that whitened space is more isotropic, so a simple step is closer to a true natural gradient step.\n\nIn other words, K-FAC is like **second-order preconditioning** tailored to the network’s statistics, not just elementwise scaling like Adam.\n\n---\n\n## 7. Where it shines and where it hurts\n\nNice parts:\n\n* Much closer to natural gradient than Adam/SGD.\n* Often **faster convergence in number of steps** (especially for smaller nets, RNNs, some vision models).\n* Has a clear theoretical grounding in information geometry.\n\nAnnoying parts:\n\n* Still heavier than Adam per step (you invert small matrices per layer, keep stats, tune damping).\n* Assumes independence of (a) and (g_s), and block-diagonal Fisher across layers. Not exact.\n* For massive modern transformers, people often use variants/approximations or go back to AdamW because engineering is simpler.\n\n---\n\n## 8. Quick “executive summary” in equations\n\nFor a linear/affine layer:\n\n[\n\\frac{\\partial L}{\\partial W} = g_s a^{\\top}\n]\n\nK-FAC approximates the Fisher block as\n\n[\nF_W \\approx A \\otimes G,\\quad A = \\mathbb{E}[a a^{\\top}],\\quad G = \\mathbb{E}[g_s g_s^{\\top}]\n]\n\nThen the natural gradient step for that layer is approximated by\n\n[\n\\Delta W \\approx G^{-1}\\left(\\frac{\\partial L}{\\partial W}\\right)A^{-1}\n]\n\nand that’s the whole show.\n\n---\n\nIf you want to go one level deeper next, we can derive the Kronecker form **explicitly** from the Fisher definition and the vec–Kronecker identities, or look at how K-FAC is modified for convolutional layers and recurrent nets, where the structure gets richer but the same spirit survives.\n",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "5 min read",
     "fileName": "Fisher Information Matrix ab initio.md",
     "featured": false
@@ -78,7 +78,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Home Work",
     "excerpt": "No excerpt available",
     "content": "[[Home Work 1]]",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "Home Work.md",
     "featured": false
@@ -88,7 +88,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Our Model",
     "excerpt": "In two weeks the data: Which only work on the Piper.",
     "content": "In two weeks the data: Which only work on the Piper.\n\n- A form to charge all the parameters and scripts into the piper using the Thor and well a laptop, we are in that stage now.\n- The training loop defined and working.\n- The code for the inference.\n\n[[Pi 05 Implementation]]\n\nWe are going to make pre-training? The",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "Our Model.md",
     "featured": false
@@ -98,7 +98,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Pi 05 Implementation",
     "excerpt": "We are going to make pre training, but pre training here what does it mean? No, so expensive.",
     "content": "We are going to make pre training, but pre training here what does it mean? No, so expensive.\n\nIn the training loop we are going to use the knowledge insulating code.\nWe are going to",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "Pi 05 Implementation.md",
     "featured": false
@@ -108,7 +108,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Principios De Bohr.Png",
     "excerpt": "No excerpt available",
     "content": "",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "Principios de Bohr.png.md",
     "featured": false
@@ -118,7 +118,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Prove Natural Gradient Descent Explication",
     "excerpt": "As we mentioned, there are many ways to update the parameters of a neural network: Gradient Descent, Stochastic Gradient Descent, [[Adaptive Moment Es...",
     "content": "---\nmodified: 2025-11-19 18:45\n---\n### Natural gradient Descent\n\nAs we mentioned, there are many ways to update the parameters of a neural network: Gradient Descent, Stochastic Gradient Descent, [[Adaptive Moment Estimation]] (ADAM), etc. All of them implicitly assume that the parameter space $\\Theta \\subset \\mathbb{R}^d$ is equipped with the standard Euclidean metric, so that “length” and “steepest descent” are measured with respect to $\\|\\Delta\\theta\\|_2$.\n\nIn our case the loss $\\mathcal{L}(\\theta)$ depends on a probability distribution $p_\\theta$, not just on $\\theta$ directly. For example, in variational Monte Carlo we take\n$$\np_\\theta(x)\n= \\frac{|\\psi_\\theta(x)|^2}{\\displaystyle \\int |\\psi_\\theta(x')|^2\\,dx'} ,\n$$\nso $\\theta$ parametrizes an entire family of probability densities over configurations $x$. It is therefore more natural to measure distances between *distributions* $p_\\theta$ and $p_{\\theta+\\Delta\\theta}$, rather than between the parameter vectors themselves.\n\nA canonical way to measure the distance between nearby probability distributions is the Kullback–Leibler (KL) divergence\n$$\n\\mathrm{KL}\\big(p_\\theta \\,\\|\\, p_{\\theta+\\Delta\\theta}\\big)\n= \\mathbb{E}_{x\\sim p_\\theta}\\!\\left[\\log\\frac{p_\\theta(x)}{p_{\\theta+\\Delta\\theta}(x)}\\right].\n$$\nFor small steps $\\Delta\\theta$ one can show that a second–order Taylor expansion of the KL gives\n$$\n\\mathrm{KL}\\big(p_\\theta \\,\\|\\, p_{\\theta+\\Delta\\theta}\\big)\n= \\tfrac12\\,\\Delta\\theta^\\top \\mathcal{F}(\\theta)\\,\\Delta\\theta + \\mathcal{O}(\\|\\Delta\\theta\\|^3),\n$$\nwhere $\\mathcal{F}(\\theta)$ is the Fisher Information Matrix (FIM). To define it, introduce the **score function**\n$$\ns_\\theta(x) \\in \\mathbb{R}^d, \\qquad\ns_\\theta(x) = \\nabla_\\theta \\log p(x\\mid \\theta),\n$$\nthen the FIM is\n$$\n\\mathcal{F}(\\theta)\n= \\mathbb{E}_{x\\sim p(\\cdot\\mid\\theta)}\\!\\big[\\,s_\\theta(x)\\,s_\\theta(x)^{\\mathsf T}\\big].\n$$\n\nThe set of distributions\n$$\n\\mathcal{M} = \\{\\, p_\\theta(z)\\;|\\; \\theta \\in \\Theta \\subset \\mathbb{R}^d \\,\\}\n$$\ncan be viewed as a differentiable manifold, and $\\mathcal{F}(\\theta)$ defines a Riemannian metric on its tangent space. Concretely, for tangent vectors $u,v \\in \\mathbb{R}^d$ at $\\theta$ we define the inner product\n$$\n\\langle u,v \\rangle_\\theta\n= u^{\\mathsf T}\\,\\mathcal{F}(\\theta)\\,v.\n$$\nThis metric says: two parameter directions are “close” if they induce similar infinitesimal changes in the *distribution* $p_\\theta$.\n\nNow ask the usual steepest–descent question, but with this non-Euclidean metric:\n\nFind the direction $\\Delta\\theta$ that decreases $\\mathcal{L}(\\theta)$ the fastest, among all directions with fixed “length” $\\|\\Delta\\theta\\|_\\theta^2 = \\Delta\\theta^\\top \\mathcal{F}(\\theta)\\,\\Delta\\theta$.\n\nSolving this constrained optimization problem (e.g. with Lagrange multipliers) yields the **natural gradient** direction\n$$\n\\Delta\\theta_{\\text{nat}} \\;\\propto\\; -\\,\\mathcal{F}(\\theta)^{-1}\\,\\nabla_\\theta \\mathcal{L}(\\theta).\n$$\nThus the natural gradient descent update is\n$$\n\\Delta\\theta_{\\text{nat}}\n= -\\,\\eta\\,\\mathcal{F}(\\theta)^{-1}\\,\\nabla_\\theta \\mathcal{L}(\\theta),\n$$\nwhere $\\eta>0$ is a step size. Compared with the usual gradient $\\nabla_\\theta \\mathcal{L}$, the factor $\\mathcal{F}^{-1}$ “preconditions” the gradient by the local geometry of the model’s probability distribution: directions that barely change $p_\\theta$ are amplified, directions that change it a lot are damped.\n\nNatural gradient descent is therefore meaningful exactly in the situation we care about: when the loss depends on the parameters *through* a probability model $p_\\theta$ (e.g. likelihood, cross-entropy, KL, variational objectives, variational Monte Carlo energy, etc.).\n\n### Kronecker Factored Approximate Curvature\n\nDirectly computing and inverting the full Fisher matrix $\\mathcal{F}(\\theta)$ is infeasible for modern neural networks, since $\\theta$ can have millions of components. Kronecker Factored Approximate Curvature (KFAC) is an efficient approximation that makes natural gradient updates practical for layered networks.\n\nWe sketch the construction for a fully connected layer $\\ell$ with weight matrix $W_\\ell$ and (for simplicity) no bias. Bias terms can be included by augmenting the activations with a constant $1$; we comment on this below.\n#### Forward definition of $\\mathbf{a}_\\ell$\n\nConsider a standard MLP. For a single input sample $x$, the forward pass at layer $\\ell$ is\n\n- **Input (activation) to layer $\\ell$**:\n$$\n\\mathbf{a}_\\ell \\in \\mathbb{R}^{n_\\ell}\n$$\n This is the column vector of activations coming into layer $\\ell$. For the first hidden layer, $\\mathbf{a}_1$ is just the (possibly preprocessed) input. For deeper layers it is the nonlinearity output from the previous layer.\n\n- **Pre-activation at layer $\\ell$**:\n  $$\n  \\mathbf{h}_\\ell = W_\\ell \\,\\mathbf{a}_\\ell,\n  $$\n  where $W_\\ell \\in \\mathbb{R}^{m_\\ell \\times n_\\ell}$.\n- **Output activation of layer $\\ell$**:\n  $$\n  \\tilde{\\mathbf{a}}_\\ell = \\phi(\\mathbf{h}_\\ell),\n  $$\n  where $\\phi$ is applied element-wise. In many notations $\\tilde{\\mathbf{a}}_\\ell$ would become the input to the next layer, but to keep notation consistent with the Fisher block for $W_\\ell$, we explicitly distinguish:\n  - $\\mathbf{a}_\\ell$: input to $W_\\ell$,\n  - $\\mathbf{h}_\\ell$: pre-activation,\n  - $\\tilde{\\mathbf{a}}_\\ell$: output activation of layer $\\ell$.\n\nIn KFAC, when we talk about $\\mathbf{a}_\\ell$ for the Fisher block of $W_\\ell$, we always mean “the vector that $W_\\ell$ multiplies on the right”.\n#### Backward definition of $\\mathbf{e}_\\ell$\nLet the loss for a single sample be $\\mathcal{L}(\\theta)$ (for example, negative log-likelihood or negative log of the wave-function probability). Define the **backward sensitivity** (or error signal) at layer $\\ell$ as\n$$\n\\mathbf{e}_\\ell\n= \\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{h}_\\ell} \\in \\mathbb{R}^{m_\\ell}.\n$$\nThis is computed via backpropagation:\n- At the output layer $L$:\n  $$\n  \\mathbf{e}_L\n  = \\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{h}_L}\n  = \\left(\\frac{\\partial \\mathcal{L}}{\\partial \\tilde{\\mathbf{a}}_L}\\right) \\odot \\phi'(\\mathbf{h}_L),\n  $$\n  where $\\odot$ is the element-wise product or also Hadamard product.\n- For hidden layers $\\ell < L$:\n$$\n  \\mathbf{e}_\\ell\n  = \\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{h}_\\ell}\n  = \\left(W_{\\ell+1}^{\\mathsf T} \\mathbf{e}_{\\ell+1}\\right) \\odot \\phi'(\\mathbf{h}_\\ell).\n$$\nIn the context of natural gradient for probabilistic models, $\\mathcal{L}$ is often chosen as $-\\log p(X\\mid\\theta)$, so up to a sign we can also think of $\\mathbf{e}_\\ell$ as\n$$\n\\mathbf{e}_\\ell = \\frac{\\partial \\log p(X\\mid\\theta)}{\\partial \\mathbf{h}_\\ell}.\n$$\n#### Gradient w.r.t. $W_\\ell$ and the form $\\mathbf{a}_\\ell \\otimes \\mathbf{e}_\\ell$\n\nFor a single sample, using the chain rule,\n$$\n\\frac{\\partial \\mathcal{L}}{\\partial W_\\ell}\n= \\frac{\\partial \\mathcal{L}}{\\partial \\mathbf{h}_\\ell}\n  \\frac{\\partial \\mathbf{h}_\\ell}{\\partial W_\\ell}\n= \\mathbf{e}_\\ell\\, \\mathbf{a}_\\ell^{\\mathsf T}.\n$$\n\nIf instead of $\\mathcal{L}$ we use $\\log p(X\\mid\\theta)$ (as in the Fisher definition), we get\n$$\n\\frac{\\partial \\log p(X\\mid\\theta)}{\\partial W_\\ell}\n= \\mathbf{e}_\\ell\\, \\mathbf{a}_\\ell^{\\mathsf T},\n$$\nwith $\\mathbf{e}_\\ell = \\partial \\log p / \\partial \\mathbf{h}_\\ell$.\n\nNow vectorize the gradient. Using the standard identity\n$$\n\\mathrm{vec}(uv^{\\mathsf T}) = v \\otimes u,\n$$\nwith $u = \\mathbf{e}_\\ell$ and $v = \\mathbf{a}_\\ell$, we obtain\n$$\n\\frac{\\partial \\log p(X\\mid\\theta)}{\\partial \\mathrm{vec}(W_\\ell)}\n= \\mathrm{vec}\\!\\left(\\frac{\\partial \\log p}{\\partial W_\\ell}\\right)\n= \\mathrm{vec}(\\mathbf{e}_\\ell\\,\\mathbf{a}_\\ell^{\\mathsf T})\n= \\mathbf{a}_\\ell \\otimes \\mathbf{e}_\\ell.\n$$\n\nThis gives the key structural form used by KFAC.\n\n#### Fisher block for a single layer\n\nThe Fisher block associated with the parameters $W_\\ell$ is\n$$\n\\mathcal{F}_\\ell\n= \\mathbb{E}_{p(\\mathbf{X})}\\!\\left[\n\\frac{\\partial \\log p(X\\mid\\theta)}{\\partial \\mathrm{vec}(W_\\ell)}\n\\frac{\\partial \\log p(X\\mid\\theta)}{\\partial \\mathrm{vec}(W_\\ell)}^{\\mathsf T}\n\\right].\n$$\n\nPlugging in the expression above,\n$$\n\\mathcal{F}_\\ell\n= \\mathbb{E}_{p(\\mathbf{X})}\\!\\big[\n(\\mathbf{a}_\\ell \\otimes \\mathbf{e}_\\ell)\n(\\mathbf{a}_\\ell \\otimes \\mathbf{e}_\\ell)^{\\mathsf T}\n\\big].\n$$\n\nHere $p(\\mathbf{X})$ denotes the distribution over inputs and labels (or configurations, in the VMC case). In practice this expectation is approximated by averaging over a mini-batch of samples $X$ and the corresponding forward/backward passes that produce $\\mathbf{a}_\\ell$ and $\\mathbf{e}_\\ell$.\n\nComputing and inverting $\\mathcal{F}_\\ell$ directly is still expensive, because its dimension is\n$$\n(\\text{dim}(\\mathbf{a}_\\ell)\\,\\text{dim}(\\mathbf{e}_\\ell))\n\\times\n(\\text{dim}(\\mathbf{a}_\\ell)\\,\\text{dim}(\\mathbf{e}_\\ell)).\n$$\nKFAC makes two key approximations to make this tractable.\n\n1. **Block–diagonal across layers.**  \n   Off–diagonal blocks $\\mathcal{F}_{ij}$ are assumed negligible when $\\theta_i$ and $\\theta_j$ belong to different layers. This makes the Fisher approximately block–diagonal, with one block per layer.\n\n2. **Kronecker factorization within each layer.**  \n   Inside a layer, KFAC assumes that the correlation between activations and errors factorizes:\n   $$\n   \\mathcal{F}_\\ell\n   = \\mathbb{E}_{p(\\mathbf{X})}\\!\\big[\n   (\\mathbf{a}_\\ell \\otimes \\mathbf{e}_\\ell)\n   (\\mathbf{a}_\\ell \\otimes \\mathbf{e}_\\ell)^{\\mathsf T}\n   \\big]\n   = \\mathbb{E}_{p(\\mathbf{X})}\\!\\big[\n   (\\mathbf{a}_\\ell\\mathbf{a}_\\ell^{\\mathsf T}) \\otimes\n   (\\mathbf{e}_\\ell\\mathbf{e}_\\ell^{\\mathsf T})\n   \\big]\n   \\;\\approx\\;\n   \\mathbb{E}_{p(\\mathbf{X})}[\\mathbf{a}_\\ell\\mathbf{a}_\\ell^{\\mathsf T}]\n   \\;\\otimes\\;\n   \\mathbb{E}_{p(\\mathbf{X})}[\\mathbf{e}_\\ell\\mathbf{e}_\\ell^{\\mathsf T}].\n   $$\n\nDefine the *activation covariance* and *error covariance*:\n$$\nA_\\ell = \\mathbb{E}_{p(\\mathbf{X})}[\\mathbf{a}_\\ell\\mathbf{a}_\\ell^{\\mathsf T}],\n\\qquad\nS_\\ell = \\mathbb{E}_{p(\\mathbf{X})}[\\mathbf{e}_\\ell\\mathbf{e}_\\ell^{\\mathsf T}].\n$$\nIn practice these expectations are updated as running averages over mini-batches:\n$$\nA_\\ell \\approx \\frac{1}{B}\\sum_{b=1}^B \\mathbf{a}_\\ell^{(b)} \\mathbf{a}_\\ell^{(b)\\mathsf T},\n\\qquad\nS_\\ell \\approx \\frac{1}{B}\\sum_{b=1}^B \\mathbf{e}_\\ell^{(b)} \\mathbf{e}_\\ell^{(b)\\mathsf T},\n$$\nwhere $b$ indexes samples in the batch and $\\mathbf{a}_\\ell^{(b)}, \\mathbf{e}_\\ell^{(b)}$ are obtained by a standard forward and backward pass for that sample.\nWith this approximation we have\n$$\n\\mathcal{F}_\\ell \\approx A_\\ell \\otimes S_\\ell.\n$$\n\nThe crucial property of the Kronecker product is that\n$$\n(A_\\ell \\otimes S_\\ell)^{-1}\n= A_\\ell^{-1} \\otimes S_\\ell^{-1},\n$$\nso the inverse of the (huge) layer–Fisher block can be obtained by inverting the much smaller matrices $A_\\ell$ and $S_\\ell$. Thus the natural gradient update for the weights of layer $\\ell$ becomes\n$$\n\\Delta\\theta_{\\text{nat},\\ell}\n\\approx -\\,\\eta\\,\\big(A_\\ell^{-1} \\otimes S_\\ell^{-1}\\big)\\,\n\\nabla_{\\mathrm{vec}(W_\\ell)} \\mathcal{L}.\n$$\n\nIn summary, KFAC replaces the intractable inverse\n$$\n\\mathbb{E}_{p(\\mathbf{X})}\\big[ (\\mathbf{a}_\\ell\\otimes \\mathbf{e}_\\ell)\n(\\mathbf{a}_\\ell\\otimes \\mathbf{e}_\\ell)^{\\mathsf T} \\big]^{-1}\n$$\nby the efficiently computable approximation\n$$\n\\mathbb{E}_{p(\\mathbf{X})}\\big[(\\mathbf{a}_\\ell\\otimes \\mathbf{e}_\\ell)\n(\\mathbf{a}_\\ell\\otimes \\mathbf{e}_\\ell)^{\\mathsf T}\\big]^{-1}\n\\;\\approx\\;\n\\mathbb{E}_{p(\\mathbf{X})}[\\mathbf{a}_\\ell\\mathbf{a}_\\ell^{\\mathsf T}]^{-1}\n\\otimes\n\\mathbb{E}_{p(\\mathbf{X})}[\\mathbf{e}_\\ell\\mathbf{e}_\\ell^{\\mathsf T}]^{-1},\n$$\nwhich captures the dominant curvature structure while keeping the cost of natural gradient descent comparable to standard first–order methods.\nWe have ignored biases above for clarity. In practice one can either (i) augment $\\mathbf{a}_\\ell$ with a constant $1$ to absorb biases into $W_\\ell$, or (ii) maintain separate smaller KFAC factors for biases; both approaches preserve the same Kronecker structure.\n\n\n---\n## Fermi Net\n\nA very important work for us is FermiNet (Pfau et al. 2020). It uses deep neural networks to represent **orbitals** and then combines them into a sum of Slater determinants. At the top level, the ansatz is a linear combination of $K$ determinant products\n$$\n\\psi(\\mathbf{x}_1,\\dots,\\mathbf{x}_n)\n= \\sum_{k=1}^K \\omega_k \\,\\det[\\Phi^{k}],\n$$\nwhere $\\omega_k$ are learnable coefficients and $\\Phi^k$ is a matrix of single-particle orbitals. For a system without explicit spin separation one can write\n$$\n\\det[\\Phi^k] =\n\\begin{vmatrix}\n\\phi_{1}^{k}(\\mathbf{x}_{1})  & \\dots  &  \\phi_{1}^{k}(\\mathbf{x}_{n}) \\\\\n\\vdots   &  & \\vdots  \\\\\n\\phi_{n}^{k}(\\mathbf{x}_{1}) & \\dots & \\phi_{n}^{k}(\\mathbf{x}_{n})\n\\end{vmatrix}\n= \\det[\\phi_i^k(\\mathbf{x}_j)].\n$$\nHere $\\phi_i^k$ is the $i$-th orbital in determinant $k$, and we evaluate it on the coordinates of electron $j$.\n\nHowever, in FermiNet we are dealing with electrons with spin, so things are slightly more structured, and the orbitals depend on **all** electron coordinates, not only on the one being “plugged in”. That is why we write the orbitals as\n$$\n\\phi^{k\\alpha}_i\\big(\\mathbf{r}^\\alpha_j;\\{\\mathbf{r}^\\alpha_{/j}\\};\\{\\mathbf{r}^{\\bar{\\alpha}}\\}\\big),\n$$\nwhere:\n- $\\alpha \\in \\{\\uparrow,\\downarrow\\}$ is the spin sector,\n- $\\mathbf{r}^\\alpha_j$ is the position of electron $j$ with spin $\\alpha$,\n- $\\{\\mathbf{r}^\\alpha_{/j}\\}$ denotes the positions of all **other** electrons with spin $\\alpha$,\n- $\\{\\mathbf{r}^{\\bar{\\alpha}}\\}$ denotes the positions of electrons with the opposite spin.\n\nSo the orbital evaluated on electron $j$ “knows” about all other electrons. The indices:\n- $i$ = orbital index (row of the determinant),\n- $j$ = electron index (column of the determinant),\n- $\\alpha,\\beta$ = spin labels ($\\uparrow$ or $\\downarrow$),\n- $k$ = determinant index in the sum.\n\n---\n\n### Input coordinates and features\n\nWe denote by\n- $\\mathbf{r}^\\uparrow_1,\\dots,\\mathbf{r}^\\uparrow_{n^\\uparrow}$ the coordinates of spin-up electrons,\n- $\\mathbf{r}^\\downarrow_1,\\dots,\\mathbf{r}^\\downarrow_{n^\\downarrow}$ the coordinates of spin-down electrons,\n- $\\mathbf{R}_I$ the positions of nuclei, $I=1,\\dots,N_\\text{nuc}$.\n\nThe network builds two types of features:\n\n1. **Electron–nucleus features** for each electron $i$ with spin $\\alpha$:\n   $$\n   \\mathbf{h}^{0,\\alpha}_i\n   = \\text{concatenate}\\Big(\n       \\mathbf{r}^\\alpha_i - \\mathbf{R}_I,\\;\n       \\big|\\mathbf{r}^\\alpha_i - \\mathbf{R}_I\\big|\n       \\ \\forall\\, I\n     \\Big).\n   $$\n   This produces a feature vector that contains, for electron $(i,\\alpha)$, all its relative position vectors to each nucleus, plus their distances.\n\n2. **Electron–electron features** for each pair of electrons $(i,\\alpha)$ and $(j,\\beta)$:\n   $$\n   \\mathbf{h}^{0,\\alpha\\beta}_{ij}\n   = \\text{concatenate}\\Big(\n       \\mathbf{r}^\\alpha_i - \\mathbf{r}^\\beta_j,\\;\n       \\big|\\mathbf{r}^\\alpha_i - \\mathbf{r}^\\beta_j\\big|\n       \\ \\forall\\, j,\\beta\n     \\Big).\n   $$\n   For fixed $(i,\\alpha)$, we build such features for all other electrons $(j,\\beta)$, capturing their relative positions and distances.\n\nThe superscript $0$ indicates that these are the features at layer $\\ell=0$ (input to the deep network). At deeper layers we will keep updating\n- $\\mathbf{h}^{\\ell\\alpha}_i$ (single-electron features),\n- $\\mathbf{h}^{\\ell\\alpha\\beta}_{ij}$ (pairwise features),\nfor $\\ell = 0,1,\\dots,L-1$.\n\n---\n\n### Mixing and updating features across layers\n\nAt each hidden layer $\\ell$, we want each electron’s features to depend on *all* other electrons, in a permutation-symmetric way. To do this, we form **averages** over electrons of the same or opposite spin.\n\nFirst, define global spin-averaged single-electron features\n$$\n\\mathbf{g}^{\\ell\\uparrow} =\n\\frac{1}{n^\\uparrow}\\sum_{j=1}^{n^\\uparrow}\\mathbf{h}^{\\ell\\uparrow}_j,\n\\qquad\n\\mathbf{g}^{\\ell\\downarrow} =\n\\frac{1}{n^\\downarrow}\\sum_{j=1}^{n^\\downarrow}\\mathbf{h}^{\\ell\\downarrow}_j.\n$$\n\nNext, for each electron $(i,\\alpha)$, define averaged pairwise features:\n$$\n\\mathbf{g}^{\\ell\\alpha\\uparrow}_i\n= \\frac{1}{n^\\uparrow}\\sum_{j=1}^{n^\\uparrow}\\mathbf{h}^{\\ell\\alpha\\uparrow}_{ij},\n\\qquad\n\\mathbf{g}^{\\ell\\alpha\\downarrow}_i\n= \\frac{1}{n^\\downarrow}\\sum_{j=1}^{n^\\downarrow}\\mathbf{h}^{\\ell\\alpha\\downarrow}_{ij}.\n$$\n\nNow we *concatenate* all this information into a single feature vector for electron $(i,\\alpha)$:\n$$\n\\begin{aligned}\n\\big(\n\\mathbf{h}^{\\ell\\alpha}_i,\n\\frac{1}{n^\\uparrow}\\sum_{j=1}^{n^\\uparrow}\\mathbf{h}^{\\ell\\uparrow}_j,\n\\frac{1}{n^\\downarrow}\\sum_{j=1}^{n^\\downarrow}\\mathbf{h}^{\\ell\\downarrow}_j,\n\\frac{1}{n^\\uparrow}\\sum_{j=1}^{n^\\uparrow}\\mathbf{h}^{\\ell\\alpha\\uparrow}_{ij},\n\\frac{1}{n^\\downarrow}\\sum_{j=1}^{n^\\downarrow}\\mathbf{h}^{\\ell\\alpha\\downarrow}_{ij}\n\\big)\n&=\n\\big(\\mathbf{h}^{\\ell\\alpha}_i, \\mathbf{g}^{\\ell\\uparrow}, \\mathbf{g}^{\\ell\\downarrow},\n\\mathbf{g}^{\\ell\\alpha\\uparrow}_i, \\mathbf{g}^{\\ell\\alpha\\downarrow}_i \\big) \\\\\n&= \\mathbf{f}^{\\ell\\alpha}_i.\n\\end{aligned}\n$$\n\nThis $\\mathbf{f}^{\\ell\\alpha}_i$ is what enters the **single-electron MLP** at layer $\\ell$. The update is\n$$\n\\mathbf{h}^{\\ell+1,\\alpha}_i\n= \\tanh\\big(\\mathbf{V}^\\ell \\mathbf{f}^{\\ell\\alpha}_i + \\mathbf{b}^\\ell\\big) + \\mathbf{h}^{\\ell\\alpha}_i,\n$$\nwhere $\\mathbf{V}^\\ell$ and $\\mathbf{b}^\\ell$ are learnable weights and biases, shared between electrons (for the given spin sector). The residual connection $+\\mathbf{h}^{\\ell\\alpha}_i$ stabilizes training.\n\nIn parallel, the pairwise features are updated with a **pairwise MLP**:\n$$\n\\mathbf{h}^{\\ell+1,\\alpha\\beta}_{ij}\n= \\tanh\\big(\\mathbf{W}^\\ell \\mathbf{h}^{\\ell\\alpha\\beta}_{ij} + \\mathbf{c}^\\ell\\big)\n+ \\mathbf{h}^{\\ell\\alpha\\beta}_{ij},\n$$\nwith weights $\\mathbf{W}^\\ell$ and biases $\\mathbf{c}^\\ell$, again shared over all pairs $(i,j,\\alpha,\\beta)$.\n\nBy repeating these updates for $\\ell = 0,\\dots,L-1$, we eventually obtain **final single-electron features**\n$$\n\\mathbf{h}^{L\\alpha}_j \\quad \\text{for each electron } j \\text{ of spin } \\alpha.\n$$\nNotice how the indices work:\n- $\\ell$ runs over layers and disappears at the end,\n- $i$ or $j$ always refer to a specific electron within a spin sector,\n- $\\alpha,\\beta$ tell you which spin sector that electron belongs to.\n\n---\n\n### From final features to orbitals\n\nThe final orbitals are built as a function of the last-layer features $\\mathbf{h}^{L\\alpha}_j$, plus some additional “envelope” factors that handle the long-range decay and cusp conditions. For each determinant index $k$, spin $\\alpha$, orbital index $i$, and electron $j$ we define\n$$\n\\begin{aligned}\n\\phi^{k\\alpha}_i\\big(\\mathbf{r}^\\alpha_j; \\{\\mathbf{r}^\\alpha_{/j}\\}; \\{\\mathbf{r}^{\\bar{\\alpha}}\\}\\big)\n&= \\left(\\mathbf{w}^{k\\alpha}_i \\cdot \\mathbf{h}^{L\\alpha}_j + g^{k\\alpha}_i\\right) \\\\\n&\\quad\\times \\sum_{m} \\pi^{k\\alpha}_{im}\n\\exp\\Big(\n- \\big|\\mathbf{\\Sigma}_{im}^{k\\alpha} \\big(\\mathbf{r}^{\\alpha}_j - \\mathbf{R}_m\\big)\\big|\n\\Big).\n\\end{aligned}\n$$\nHere:\n- $\\mathbf{w}^{k\\alpha}_i$ and $g^{k\\alpha}_i$ are learnable linear parameters for the “MLP part” of the orbital,\n- the sum over $m$ is an “envelope” over nuclei (or centers),\n- $\\pi^{k\\alpha}_{im}$ and $\\mathbf{\\Sigma}^{k\\alpha}_{im}$ are learnable coefficients and matrices controlling the exponential decay around nucleus $m$.\n\nAll these parameters depend on the indices:\n- $k$ selects which determinant in the sum,\n- $i$ selects which orbital (row in the determinant),\n- $\\alpha$ selects the spin sector,\n- $m$ selects which nuclear center in the envelope.\n\nThe dependence on all other electrons is hidden inside $\\mathbf{h}^{L\\alpha}_j$, which was built from the full set of positions $\\{\\mathbf{r}^\\uparrow\\},\\{\\mathbf{r}^\\downarrow\\}$ through the deep network.\n\n---\n\n### Assembling the spin-separated determinants\n\nFor each determinant index $k$ and spin sector $\\alpha\\in\\{\\uparrow,\\downarrow\\}$, we build a matrix\n$$\nD^{k\\alpha}_{ij}\n= \\phi^{k\\alpha}_i\\big( \\mathbf{r}^\\alpha_j; \\{\\mathbf{r}^\\alpha_{/j}\\}; \\{\\mathbf{r}^{\\bar{\\alpha}}\\}\\big),\n$$\nwith:\n- rows indexed by the orbital label $i = 1,\\dots,n^\\alpha$,\n- columns indexed by the electron label $j = 1,\\dots,n^\\alpha$ (with that spin).\n\nTaking the determinant gives a properly antisymmetric function of the positions of electrons **with that spin**:\n$$\n\\det\\big[D^{k\\alpha}\\big]\n= \\det\\left[\\phi^{k\\alpha}_i(\\mathbf{r}^\\alpha_j; \\{\\mathbf{r}^\\alpha_{/j}\\}; \\{\\mathbf{r}^{\\bar{\\alpha}}\\})\\right].\n$$\n\nFor the full wavefunction, we combine spin-up and spin-down blocks:\n$$\n\\begin{aligned}\n\\psi(\\mathbf{r}^\\uparrow_1,\\ldots,\\mathbf{r}^\\uparrow_{n^\\uparrow},\n     \\mathbf{r}^\\downarrow_1,\\ldots,\\mathbf{r}^\\downarrow_{n^\\downarrow})\n= \\sum_{k} \\omega_k \\;&\n\\det\\left[\\phi^{k \\uparrow}_i(\\mathbf{r}^\\uparrow_j; \\{\\mathbf{r}^\\uparrow_{/j}\\}; \\{\\mathbf{r}^\\downarrow\\})\\right] \\\\\n&\\times\n\\det\\left[\\phi^{k \\downarrow}_i(\\mathbf{r}^\\downarrow_j; \\{\\mathbf{r}^\\downarrow_{/j}\\}; \\{\\mathbf{r}^\\uparrow\\})\\right].\n\\end{aligned}\n$$\n\n**Why are there two determinants?**  \n\nIn electronic structure, when we separate spin and spatial parts using spin-orbitals, the full Slater determinant over all electrons factorizes into the product of:\n- one determinant involving only spin-up electrons,\n- another determinant involving only spin-down electrons.\n\nEach of these determinants is antisymmetric under exchange of two electrons **with the same spin**. The overall wavefunction constructed as the product of a spin-up determinant and a spin-down determinant is antisymmetric under exchange of any two electrons (when you take into account the spin labels). FermiNet keeps this structure and lets each block be represented by a powerful neural network ansatz for the orbitals.\n\nUp to this point the building blocks are just MLP layers (with residual connections and special feature mixing), but the careful indexing\n- $(i,\\alpha)$ for “which electron/spin”,\n- $j$ for summation over electrons,\n- $\\ell$ for layers,\n- $k$ for determinant index,\nis what guarantees that the final object has the correct permutation symmetry and antisymmetry required for a fermionic wavefunction.\n\n---\n## Jastrow Factor for Psi Former\n\n[[Psi Former Ansatz]]. @vonglehn2023selfattentionansatzabinitioquantum\n\nThe Psiformer wavefunction has the usual Slater–Jastrow structure\n$$\n\\Psi_{\\theta}(\\mathbf{x})\n=\n\\exp\\big(\\mathcal{J}_{\\theta}(\\mathbf{x})\\big)\\,\n\\sum_{k=1}^{N_{\\det}}\\det[\\boldsymbol{\\Phi}^{k}_{\\theta}(\\mathbf{x})],\n$$\nwhere $\\mathbf{x} = (x_1,\\dots,x_N)$ is the collection of all $N$ electron states \n$$\nx_i = (\\mathbf{r}_i,\\sigma_i), \\qquad \\mathbf{r}_i \\in \\mathbb{R}^3,\\;\\sigma_i \\in \\{\\uparrow,\\downarrow\\}.\n$$\n\n- $\\mathcal{J}_\\theta:(\\mathbb{R}^{3}\\times \\{\\uparrow,\\downarrow\\})^{N}\\to \\mathbb{R}$ is the **Jastrow factor**, encoding (here) only electron–electron cusp information.\n- $\\boldsymbol{\\Phi}^k_\\theta$ is the matrix of (spin-)orbitals for determinant $k$.\n\nIn Psiformer, the Jastrow factor is *very* simple: it has only two learnable parameters, one for parallel-spin pairs and one for antiparallel-spin pairs:\n$$\n\\mathcal{J}_{\\theta}(\\mathbf{x})\n=\n\\sum_{i<j;\\,\\sigma_{i}=\\sigma_{j}}\n-\\frac{1}{4}\\frac{\\alpha^{2}_{\\mathrm{par}}}{\\alpha_{\\mathrm{par}}+\\lvert \\mathbf{r}_{i}-\\mathbf{r}_{j} \\rvert }\n\\;+\\;\n\\sum_{i,j;\\,\\sigma_{i}\\neq \\sigma_{j}}\n-\\frac{1}{2}\\frac{\\alpha^{2}_{\\mathrm{anti}}}{\\alpha_{\\mathrm{anti}}+\\lvert \\mathbf{r}_{i}-\\mathbf{r}_{j} \\rvert }.\n$$\n\n- $\\alpha_{\\mathrm{par}}$ controls the strength of the Jastrow for **same-spin** electron pairs.\n- $\\alpha_{\\mathrm{anti}}$ does the same for **opposite-spin** pairs.\n\nThis Jastrow is responsible for enforcing the electron–electron cusp conditions. The neural network itself (the Psiformer) only sees **electron–nucleus** information in its attention stream; all explicit $|\\mathbf{r}_i-\\mathbf{r}_j|$ dependence lives in $\\mathcal{J}_\\theta$.\n\n---\n\n## Applying Attention to Fermi Net (Psiformer-style)\n\nConceptually, Psiformer is “FermiNet with the two-electron stream replaced by self-attention”, we can see it clearly doing.\n\n- FermiNet: separate one-electron and two-electron feature streams, then mix.\n- Psiformer: a **single stream** of self-attention layers on electron–nuclear features only; electron–electron features enter only via the Jastrow.\n\nWe now explain the indices and equations carefully.\n### Indices\n\nWe will use:\n\n- $i,j = 1,\\dots,N$: electron indices.\n- $I = 1,\\dots,N_{\\text{nuc}}$: nucleus index.\n- $\\sigma_i \\in \\{\\uparrow,\\downarrow\\}$: spin of electron $i$.\n- $\\ell = 0,\\dots,L-1$: layer index in the Psiformer.\n- $h = 1,\\dots,H$: attention head index.\n- $k = 1,\\dots,N_{\\det}$: determinant index.\n- $d$: hidden dimension of the per-electron feature vectors.\nSo at each layer $\\ell$, each electron $i$ carries a feature (hidden state)\n$$\n\\mathbf{h}_i^{\\ell} \\in \\mathbb{R}^{d}.\n$$\n### Input features and initial hidden states\n\nPsiformer only uses **electron–nuclear** features (plus spin) as input to the attention stack.\nFor each electron $i$:\n1. Let $\\mathbf{R}_I$ be nuclear positions.\n2. Build raw features by concatenating for all $I$:\n   - some function of $\\mathbf{r}_i - \\mathbf{R}_I$ (relative position),\n   - $|\\mathbf{r}_i - \\mathbf{R}_I|$ (distance),\n   - and the spin as a scalar (e.g. $\\sigma_i = +1$ for $\\uparrow$, $-1$ for $\\downarrow$).\n\nIn the paper they rescale the electron–nucleus vectors so that large distances grow only logarithmically, but at the level of notation we can just write\n$$\n\\mathbf{f}_i^{0} \\in \\mathbb{R}^{d_{\\text{in}}}\n\\quad\\text{(electron–nucleus features + spin)}.\n$$\nThese are then mapped into the model hidden dimension by a linear layer\n$$\n\\mathbf{h}_{i}^{0} = \\mathbf{W}^{0}\\,\\mathbf{f}_{i}^{0},\n$$\nwhere $\\mathbf{W}^0 \\in \\mathbb{R}^{d \\times d_{\\text{in}}}$ is learned.\nSo:\n- index $i$ is “which electron”,\n- superscript $0$ means “before any attention layers.”\n### One self-attention layer\n\nAt layer $\\ell$, we have all electron hidden states\n$$\n\\mathbf{h}_1^{\\ell},\\dots,\\mathbf{h}_N^{\\ell}.\n$$\n\nFor each **head** $h$ and electron $i$, we compute:\n\n- Query:\n  $$\n  \\mathbf{q}^{\\ell h}_i = \\mathbf{W}^{\\ell h}_q \\mathbf{h}^{\\ell}_i\n  $$\n- Key:\n  $$\n  \\mathbf{k}^{\\ell h}_i = \\mathbf{W}^{\\ell h}_k \\mathbf{h}^{\\ell}_i\n  $$\n- Value:\n  $$\n  \\mathbf{v}^{\\ell h}_i = \\mathbf{W}^{\\ell h}_v \\mathbf{h}^{\\ell}_i\n  $$\n\nHere each $\\mathbf{W}^{\\ell h}_q,\\mathbf{W}^{\\ell h}_k,\\mathbf{W}^{\\ell h}_v$ is a learned matrix, shared across all electrons $i$, but specific to layer $\\ell$ and head $h$.\n\nThen the **self-attention output for electron $i$, head $h$** is\n$$\n\\mathbf{A}^{\\ell h}_i\n=\n\\sum_{j=1}^{N}\n\\underbrace{\n\\frac{\\exp\\big((\\mathbf{q}^{\\ell h}_i)^{\\mathsf T}\\mathbf{k}^{\\ell h}_j / \\sqrt{d_k}\\big)}\n     {\\sum_{j'=1}^N \\exp\\big((\\mathbf{q}^{\\ell h}_i)^{\\mathsf T}\\mathbf{k}^{\\ell h}_{j'} / \\sqrt{d_k}\\big)}\n}_{\\text{attention weight from } i \\text{ to } j}\n\\mathbf{v}^{\\ell h}_j.\n$$\n\n- $j$ runs over “all other electrons,” so electron $i$ “looks” at all others via attention.\n- $d_k$ is the key/query dimension (usually $d_k = d/H$ or similar).\n\nThis is exactly your\n$$\nA^{\\ell}_{h} = [\\text{SelfAttn}(\\mathbf{h}_1^\\ell,\\dots,\\mathbf{h}_N^\\ell;\\mathbf{W}^{\\ell h}_q,\\mathbf{W}^{\\ell h}_k,\\mathbf{W}^{\\ell h}_v)],\n$$\nbut now written explicitly with indices $i$ and $j$.\n\nNext, we **concatenate over heads** for each electron:\n$$\n\\mathbf{A}^{\\ell}_i = \\text{concat}_{h=1}^H\\big[\\mathbf{A}^{\\ell h}_i\\big]\n\\in \\mathbb{R}^{Hd_v},\n$$\nwhere $d_v$ is the value dimension of each head.\n\nThis is your\n$$\nA^{\\ell} = \\text{concat}_{h}[A_{h}],\n$$\nbut again with the electron index $i$ made explicit.\n\n### Residual projection and MLP\n\nWe then map the concatenated attention output back to the hidden dimension and add a residual connection:\n$$\n\\mathbf{f}_{i}^{\\ell+1}\n=\n\\mathbf{h}_{i}^{\\ell}\n+\n\\mathbf{W}_{o}^{\\ell}\\,\\mathbf{A}^{\\ell}_i,\n$$\nwhere $\\mathbf{W}_{o}^{\\ell}$ is a learned matrix.\n\nThen we pass this through a small MLP (just a linear + $\\tanh$ here), again with a residual:\n$$\n\\mathbf{h}_{i}^{\\ell+1}\n=\n\\mathbf{f}_{i}^{\\ell+1}\n+\n\\tanh\\big(\\mathbf{W}^{\\ell+1}\\mathbf{f}_{i}^{\\ell+1} + \\mathbf{b}^{\\ell+1}\\big).\n$$\n\nSo a full Psiformer layer $\\ell$ is:\n\n1. Self-attention: $\\{\\mathbf{h}_i^\\ell\\} \\to \\{\\mathbf{A}^\\ell_i\\}$.\n2. Linear + residual: $\\{\\mathbf{A}^\\ell_i\\} \\to \\{\\mathbf{f}_i^{\\ell+1}\\}$.\n3. MLP + residual: $\\{\\mathbf{f}_i^{\\ell+1}\\} \\to \\{\\mathbf{h}_i^{\\ell+1}\\}$.\n\nRepeat this for $\\ell=0,\\dots,L-1$ and you get **final hidden states**\n$$\n\\mathbf{h}_j^{L} \\quad \\text{for each electron } j.\n$$\n\nHere:\n\n- $L$ = number of layers in the Psiformer.\n- For each layer, $i$ indexes the electron the output belongs to, $j$ indexes electrons we attend over.\n- $h$ indexes different heads in multi-head attention.\n\n### From hidden states to orbitals and determinants\n\nFrom the final hidden states $\\mathbf{h}_j^L$, we build the spin-orbital matrix for each determinant $k$.\n\nFor each determinant index $k$ and orbital index $i$, define a **linear “orbital head”**:\n$$\n\\tilde{\\phi}^{k}_i(x_j)\n=\n\\mathbf{w}^{k}_i \\cdot \\mathbf{h}^{L}_j\n+\ng^{k}_i,\n$$\nwhere $\\mathbf{w}^{k}_i$ and $g^{k}_i$ are learned. The dependence on spin $\\sigma_j$ and all other electrons is implicit in $\\mathbf{h}_j^L$: the self-attention layers have already mixed that information in.\n\nThen we multiply by an **envelope** to enforce the correct asymptotic decay:\n$$\n\\Omega^{k}_{ij}\n=\n\\sum_{m}\n\\pi^{k}_{im}\n\\exp\\big(\n- \\big|\\mathbf{\\Sigma}^{k}_{im}(\\mathbf{r}_j - \\mathbf{R}_m)\\big|\n\\big),\n$$\nwhere\n- $m$ indexes nuclei (or “envelope centers”),\n- $\\pi^{k}_{im}$ and $\\mathbf{\\Sigma}^{k}_{im}$ are learned parameters.\n\nThe final spin-orbital entries are\n$$\n\\Phi^{k}_{ij}\n=\n\\Omega^{k}_{ij}\\,\n\\tilde{\\phi}^{k}_i(x_j).\n$$\n\nCollecting these into the matrix\n$$\n\\boldsymbol{\\Phi}^k(\\mathbf{x}) = \n\\big[\\Phi^{k}_{ij}\\big]_{i,j=1}^N,\n$$\nwe form the determinant\n$$\n\\det[\\boldsymbol{\\Phi}^k(\\mathbf{x})]\n=\n\\det\\big[\\Phi^{k}_{ij}\\big]\n=\n\\det\\big[\\phi^{k}_i(x_j)\\big],\n$$\nand finally the full Psiformer wavefunction\n$$\n\\Psi_{\\theta}(\\mathbf{x})\n=\n\\exp(\\mathcal{J}_{\\theta}(\\mathbf{x}))\n\\sum_{k=1}^{N_{\\det}}\\det[\\boldsymbol{\\Phi}^{k}_{\\theta}(\\mathbf{x})].\n$$\n\nSo the story in terms of indices is:\n\n- $i$ = which **orbital** (row of the determinant).\n- $j$ = which **electron** the orbital is evaluated on (column of the determinant).\n- $k$ = which **determinant** in the sum.\n- $\\ell$ = which **layer** of the attention/MLP stack produced the hidden states.\n- $h$ = which **attention head** participated in mixing information across electrons.\n- $I,m$ = which **nucleus/center** is used for the envelope.\n\nThe self-attention layers are what let $\\mathbf{h}_j^L$ depend on all other electrons in a flexible, learned way, while the determinant over $i,j$ and the Jastrow over $i,j$ enforce fermionic antisymmetry and cusp conditions.\n\n",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "168 min read",
     "fileName": "Prove Natural Gradient Descent Explication.md",
     "featured": false
@@ -128,7 +128,7 @@ export const blogPosts: BlogPost[] = [
     "title": "ReLu Activation Function",
     "excerpt": "date: \"2025-10-07 19:28\"",
     "content": "---\nmodified: 2025-10-10 08:07\n---\n---\ntags:\n  - baby\ndate: \"2025-10-07 19:28\"\nmodified: 2025-08-06T23:12:25-05:00\n--- \nOne of the most famous [[Activation function]].\n\nThink of like: Take a vector and replace all the negative values for zeros.\n\n $ReLU$ - (Rectified Linear Unit) - $max(0,x)$\n\nThe derivative is:\n\n$$\nf'=\\begin{cases}\n1 & x>0 \\\\\n0 & x<0 \n\\end{cases}\n$$\n",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "2 min read",
     "fileName": "ReLu Activation Function.md",
     "featured": false
@@ -138,7 +138,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Spherical Capacitors",
     "excerpt": "So if inside is $+$ and outside of the sphere have [[Charge]] $-$ then you obtain the $\\Delta V$ using the definition [[Potential Difference]] that th...",
     "content": "---\nmodified: 2025-10-01 09:04\n---\nSo if inside is $+$ and outside of the sphere have [[Charge]] $-$ then you obtain the $\\Delta V$ using the definition [[Potential Difference]] that the capacitance which only depends on the geometry. And I guess of the material, what no that is resistance is:\n\n$$\nC=\\left( \\frac{ab}{b-a} \\right)4\\pi\\varepsilon_{0} \n$$\n\nAnd if $b\\to \\infty$ it only depends on the intern radio $a$ and have the form:\n$$\nC=4\\pi\\varepsilon_{0}a\n$$\nWith $\\varepsilon_{0}$ the [[Electrical Permittivity on the Vaccum]].",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "5 min read",
     "fileName": "Spherical Capacitors.md",
     "featured": false
@@ -148,7 +148,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Tasks Development",
     "excerpt": " - [x] Abstract 150-200 words",
     "content": "---\nmodified: 2025-11-21 21:21\n---\n **Introduction**\n - [x] Abstract 150-200 words\n - [x] Introduction: talk about 450 - 500\n - [x] Objectives: 3-4 Subobjetcives\n - [x] Overview\n--- \n**Theoretical Framework: Quantum Mechanics**\n - [x] Wave Function\n - [x] Conditions of the solution\n - [x] Approximation for solutions,\n - [x] Solutions with Variational Principle and Quantum MonteCarlo\n---\n**Theoretical Framework: Deep Learning**\n - [x] MLPs\n - [x] Natural Gradient Descent and KFCA\n - [x] Attention and transformers\n---\n**Psiformer Model**\n- [x] FermiNet\n- [x] Psiformer\n---\n**Additionals**\n- [x] **Methodology** Brief\n- [x] Beamer\n- [ ] Visuals for the presentation\n- [ ] Video\n--- \n**Paper format and correction**\n\n- [x] Add references, from zotero.\n- [x] Fix abstract\n- [x] Add hyperlinks\n- [x] Redaction, slight improvements\n- [x] 40 references\n- [x] Fix images, and label them properly.\n- [x] Fix number equations\n- [ ] Title fancy format\n---\n**Revision**\n\n- [x] Abstract; Almost\n- [x] Introduction; Almost\n- [x] Theoretical Framework Quantum\n- [x] Theoretical F. Deep Learning\n- [x] Psi Former\n--- \n**Dates**\n- 23 November Dead line\n- I can dedicate three days to the Deep Learning Part 15  November. Well that doesn't work to well.\n- And two days to finish it. Fermi Net and Psi 17\n- Today 19 Nov we pass to the latex! Yep\n- Well my plan don't work! I engaged too much with Pi Zero.\n- We need a date for pass to latex. 20 I think is good. And then put the references nice and that's it.\n- The methodology part is easy.\n- And the video part one day. And that it\n---\n\n**Observations**\n\n- I should to work better with the References when reading, not at the week of the deadline. Slow and steady.",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "Tasks Development.md",
     "featured": false
@@ -158,7 +158,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Techniques To Improve The Performance From Neural Network",
     "excerpt": "Exist a good family of of these techniques one that I am thinking lately is **regularization**.",
     "content": "---\nmodified: 2025-08-14 09:53\n---\nExist a good family of of these techniques one that I am thinking lately is **regularization**.",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "Techniques to improve the performance From Neural Network.md",
     "featured": false
@@ -168,7 +168,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Two Qubits",
     "excerpt": "So the computational base is: (From the [[Qubits, main piece of Quantum Computing|qubit definition]]). But wait this come from the [[Direct Kronecker ...",
     "content": "---\nmodified: 2025-10-11 11:37\n---\nSo the computational base is: (From the [[Qubits, main piece of Quantum Computing|qubit definition]]). But wait this come from the [[Direct Kronecker Product]].\n$$ \\ket{00} =\\begin{bmatrix} 1 \\\\ 0 \\\\ 0 \\\\ 0 \\end{bmatrix} ,\\ket{01} =\\begin{bmatrix} 0 \\\\ 1 \\\\ 0 \\\\ 0 \\end{bmatrix}, \\ket{11} =\\begin{bmatrix} 0 \\\\ 0 \\\\ 0 \\\\ 1 \\end{bmatrix}, \\ket{10} =\\begin{bmatrix} 0 \\\\ 0 \\\\ 1 \\\\ 0 \\end{bmatrix} $$\n\nOr also:\n\n$$\n\\begin{align}\n\\ket{00} = \\ket{0} \\otimes \\ket{0}  \\\\\n\\ket{01} = \\ket{0} \\otimes \\ket{1}  \\\\\n\\ket{11} = \\ket{1} \\otimes \\ket{1}  \\\\\n\\ket{10} =\\ket{1} \\otimes \\ket{0} \n\\end{align}\n$$\n",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "Two Qubits.md",
     "featured": false
@@ -178,7 +178,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Asd",
     "excerpt": "No excerpt available",
     "content": "",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "asd.md",
     "featured": false
@@ -188,7 +188,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Bosons",
     "excerpt": "No excerpt available",
     "content": "",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "bosons.md",
     "featured": false
@@ -198,7 +198,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Eigenvalues Hamiltonian Matrix",
     "excerpt": ">  En otras palabras, la energía E es el valor propio (autovalor) de la función hamiltoniana.",
     "content": "---\nmodified: 2025-09-13 19:21\n---\n >  En otras palabras, la energía E es el valor propio (autovalor) de la función hamiltoniana.\n > Atrevámonos a bucear un poco más profundo para averiguar cómo resolvía cada mecánica cuántica el problema de hallar los diferentes niveles energéticos del electrón del átomo de hidrógeno . En la mecánica matricial había que «diagonalizar» la matriz hamiltoniana H , que mide la energía total del sistema, esto es, determinar una matriz 5 de manera que la matriz W= S$^{-1}$HS sea una matriz diagonal; puesto que así los elementos diagonales En son los valores energéticos del electrón:\n\n[[EigenValues]]",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "eigenvalues hamiltonian matrix.md",
     "featured": false
@@ -208,7 +208,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Electrostatic Arrangments",
     "excerpt": "modified: 2025-09-29 10:53",
     "content": "---\nmodified: 2025-09-29 14:59\n---\nmodified: 2025-09-29 10:53\n\n\n\nI have always talk about it, but never wonder about it,\nAnd how it changes when you begin to move the charges.",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "electrostatic arrangments.md",
     "featured": false
@@ -218,7 +218,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Energy For Schrodinger Equation",
     "excerpt": "No excerpt available",
     "content": "",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "energy for schrodinger equation.md",
     "featured": false
@@ -228,7 +228,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Fundamental Metric",
     "excerpt": "So is basically the matrix that brief the relation between the two basis.",
     "content": "---\nmodified: 2025-08-23 10:22\n---\nSo is basically the matrix that brief the relation between the two basis.\n\n[[An introduction to Tensors for students of Physics and Engineering]]\n",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "fundamental metric.md",
     "featured": false
@@ -238,7 +238,7 @@ export const blogPosts: BlogPost[] = [
     "title": "How Threat To The Information",
     "excerpt": "No excerpt available",
     "content": "",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "how threat to the information.md",
     "featured": false
@@ -248,7 +248,7 @@ export const blogPosts: BlogPost[] = [
     "title": "How We Choose A Loss Function",
     "excerpt": "but exactly how the function do it depends on the **task** that our model want to perform.",
     "content": "---\nmodified: 2025-08-16 16:17\n---\n\nbut exactly how the function do it depends on the **task** that our model want to perform.",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "how we choose a loss function.md",
     "featured": false
@@ -258,7 +258,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Information Theory Like The First Peek To The New Era",
     "excerpt": "No excerpt available",
     "content": "---\nmodified: 2025-08-18 11:36\n---\nI mean is its",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "information theory like the first peek to the new era.md",
     "featured": false
@@ -268,7 +268,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Initial Condition",
     "excerpt": "This one is easy, When you solve differential equations when integrating indefinitely you are going to have a constant. Now how we define such constan...",
     "content": "---\nmodified: 2025-09-12 16:01\n---\nThis one is easy, When you solve differential equations when integrating indefinitely you are going to have a constant. Now how we define such constant. Using a initial condition, I think that this comes from the natural case. \n\nBut way this can be a function, also which is pretty.",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "initial condition.md",
     "featured": false
@@ -278,7 +278,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Mixture Gaussian Distribution",
     "excerpt": "What about this? [[gaussian distribution]]",
     "content": "---\nmodified: 2025-08-12 16:30\n---\nWhat about this? [[gaussian distribution]]\n\n\n[^1]: [[Mathematics for Machine Learning]] pp. 208\n",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "mixture gaussian distribution.md",
     "featured": false
@@ -288,7 +288,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Parameters Of Freedom",
     "excerpt": "I think that referencing to the generalized coordinates is possible to use the numbers of coordinates,",
     "content": "---\nmodified: 2025-08-27 19:59\n---\nI think that referencing to the generalized coordinates is possible to use the numbers of coordinates,\n\nBasically is a relation between g. cordinates, and how many integrals you need to use in a physics problem.",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "parameters of freedom.md",
     "featured": false
@@ -298,7 +298,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Potential Energy On Electrostatic Arrangments",
     "excerpt": "But wait you can obtain in another way which is using the;![[Density Energy Electrostatic]].",
     "content": "$$U=1/2 \\int Vdq$$\n\nBut wait you can obtain in another way which is using the;![Density Energy Electrostatic](Density Energy Electrostatic).\n\nAnd don't forget when you don't care about the 1/2\n\nNow the case when you care about the conductors the question becomes straight forward \n\nYou obtain that when you want to charge the conductor with [[Charge]] the energy fpr that matter is simply.\n\n$$\nU=1/2QV\n$$\n\n",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "2 min read",
     "fileName": "potential energy on electrostatic arrangments.md",
     "featured": false
@@ -308,7 +308,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Quantum Circuits Single Line",
     "excerpt": "Here things becomes quite easy:",
     "content": "---\nmodified: 2025-10-03 22:35\n---\n\n\nHere things becomes quite easy:\n\nYou have one [[Quantum states]] and just apply some [[Quantum Gates]] and you that it is.\n\nLife goes pretty smoothly.\n\nThere is the thing that [[Quantum Computer]] just can compute certain operators and you need to compose, that is called **transcompilation**.\n",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "quantum circuits single line.md",
     "featured": false
@@ -318,7 +318,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Quantum Information Theory",
     "excerpt": "Yeah, is true that this is a change of mindset about the [[Binary system]]",
     "content": "---\nmodified: 2025-08-22 09:17\n---\nYeah, is true that this is a change of mindset about the [[Binary system]]",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "quantum information theory.md",
     "featured": false
@@ -328,7 +328,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Stochastic   Gradient Descent Comparation",
     "excerpt": "modified: 2025-08-17 11:20",
     "content": "modified: 2025-08-17 11:20\n\nThink of like gradient descent pretty calm, doing the procedure nice.\n\nAnd stochastic do it more noisy but faster.\n\n[[Stochastic Gradient Descent]]\n[[Gradient Descent for Neural Networks]]",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "stochastic - gradient descent comparation.md",
     "featured": false
@@ -338,7 +338,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Superdense Coding",
     "excerpt": "Superdense coding is a quantum trick that sounds like cheating:",
     "content": "Superdense coding is a quantum trick that sounds like cheating:\n\n> You use **one qubit** to send **two classical bits** of information…\n> as long as you and your friend already share an entangled pair.\n\nNo faster-than-light magic, no breaking physics — just clever use of entanglement.\n\n---\n\n## The basic story\n\nImagine Alice and Bob (of course).\n\n1. **Bob creates an entangled pair** of qubits in the Bell state\n   [\n   \\lvert\\Phi^+\\rangle = \\frac{1}{\\sqrt{2}}\\big(\\lvert 00\\rangle + \\lvert 11\\rangle\\big).\n   ]\n\n2. Bob keeps one qubit (call it B) and **sends the other** (A) to Alice.\n\n3. Now *later*, Alice wants to send **2 classical bits** of information to Bob:\n   one of: 00, 01, 10, 11.\n\n4. Alice **doesn’t send 2 classical bits.** She only sends **her one qubit A back** to Bob…\n   but **before** sending, she applies a unitary (a reversible quantum operation) depending on which 2-bit message she wants to encode.\n\n   The mapping is:\n\n   | Message | Operation on A            |\n   | ------- | ------------------------- |\n   | 00      | Identity (I) (do nothing) |\n   | 01      | Pauli (X) (bit flip)      |\n   | 10      | Pauli (Z) (phase flip)    |\n   | 11      | (X Z) (bit + phase flip)  |\n\n   These four operations transform the shared Bell pair into **four different Bell states**:\n\n   [\n   \\begin{aligned}\n   00 &\\rightarrow \\lvert\\Phi^+\\rangle = \\tfrac{1}{\\sqrt{2}}(\\lvert 00\\rangle + \\lvert 11\\rangle) \\\n   01 &\\rightarrow \\lvert\\Psi^+\\rangle = \\tfrac{1}{\\sqrt{2}}(\\lvert 01\\rangle + \\lvert 10\\rangle) \\\n   10 &\\rightarrow \\lvert\\Phi^-\\rangle = \\tfrac{1}{\\sqrt{2}}(\\lvert 00\\rangle - \\lvert 11\\rangle) \\\n   11 &\\rightarrow \\lvert\\Psi^-\\rangle = \\tfrac{1}{\\sqrt{2}}(\\lvert 01\\rangle - \\lvert 10\\rangle)\n   \\end{aligned}\n   ]\n\n5. Alice then **sends qubit A** (with the applied operation) to Bob.\n\n6. Now Bob has **both** qubits. He performs a **Bell measurement**: a measurement that distinguishes the four Bell states.\n\n   * Each Bell state corresponds to one of the four possible 2-bit messages.\n   * So Bob recovers **2 classical bits** from **one received qubit**.\n\nBoom: 2 bits / 1 qubit sent.\n\n---\n\n## Where’s the catch? Why isn’t this illegal?\n\nAt first glance it looks like we’re packing extra information into a qubit beyond the usual “1 qubit ≈ 1 classical bit” intuition.\n\nThe catch is:\n\n* To make it work, **entanglement must already be shared** between Alice and Bob.\n* That entanglement had to be created earlier by Bob **sending a qubit to Alice**.\n* So if you count *all* the communication:\n\n  * To set up: Bob sends 1 qubit to Alice (creating shared entanglement).\n  * Later: Alice sends 1 qubit back, and that lets her send 2 bits.\n\nOver many uses, what’s really happening is:\n\n* You **spend quantum communication in advance** to create entanglement.\n* Entanglement + one future qubit = two classical bits.\n\nSo no physical laws are broken. The “extra capacity” comes from the **resource of entanglement**, not from a single qubit magically carrying more than is allowed.\n\n---\n\n## Why it works (conceptual view)\n\nClassically, if you and I share random correlated bits, they’re just… correlated. They don’t let you send *more* bits later.\n\nQuantumly:\n\n* Entangled states live in a **bigger configuration space** than product states.\n* The four Bell states form an **orthonormal basis** of the 2-qubit space.\n* By acting only on *her* qubit, Alice can rotate the joint 2-qubit state between those four Bell basis states.\n* Each Bell state is distinguishable by a joint measurement on both qubits.\n\nThink of it like this:\n\n* The “message space” isn’t on Alice’s qubit alone.\n* The message is written into the **correlations between Alice’s and Bob’s qubit**.\n* When Bob gets Alice’s qubit, those correlations become accessible to him, and he can read which correlation pattern (which Bell state) they have.\n\nSo instead of “stuffing extra bits inside a tiny qubit suitcase,” you’re editing the **relationship** between two systems that were already quantum-linked.\n\n---\n\n## Relation to quantum teleportation\n\nSuperdense coding and quantum teleportation are like dual tricks:\n\n* **Superdense coding**:\n\n  * Uses **pre-shared entanglement** + **1 qubit sent forward**\n  * To send **2 classical bits**.\n\n* **Teleportation**:\n\n  * Uses **pre-shared entanglement** + **2 classical bits sent forward**\n  * To send **1 unknown qubit state** (without sending the qubit itself).\n\nThey’re mirror images:\n\n* Superdense coding: “More classical info per qubit using entanglement.”\n* Teleportation: “Send a qubit using only classical info, given entanglement.”\n\nBoth are saying: *entanglement is a resource* you can trade for different things — like trading coins for different combinations of bread and cheese.\n\n---\n\n## How you’d implement it on a quantum circuit\n\nAt circuit level (very schematic):\n\n1. **Prepare entanglement (Bell pair)**\n\n   * Start with (\\lvert 00\\rangle).\n   * Apply Hadamard (H) to qubit A.\n   * Apply CNOT (A = control, B = target).\n   * You now have (\\lvert \\Phi^+ \\rangle).\n\n2. **Encoding (Alice)**\n\n   * Depending on the desired 2-bit message:\n\n     * Apply (I, X, Z,) or (XZ) to qubit A.\n\n3. **Send qubit A to Bob.**\n\n4. **Decoding (Bob)**\n\n   To do a Bell measurement:\n\n   * Apply CNOT (A = control, B = target).\n   * Apply Hadamard on A.\n   * Measure both qubits in the computational basis.\n   * The measurement results (two classical bits) directly give the original message.\n\n---\n\n## Where to think deeper\n\nSome directions to poke at, as a physics/comp-phys brain:\n\n* **Channel capacity**:\n  How does superdense coding relate to the *classical capacity* of a quantum channel with entanglement assistance? (There’s a formal theorem: entanglement-assisted capacity doubles.)\n\n* **Resource theory**:\n  View entanglement as a resource, like free energy. You can *spend* it to enhance communication. How would you quantify “how much superdense coding” you can do with a noisy entangled resource?\n\n* **Noise and decoherence**:\n  What happens to superdense coding if the entangled pair passes through a noisy channel? How does capacity drop as a function of fidelity of the Bell state?\n\n* **Simulation**:\n  As a computational physicist, you can simulate the entire protocol with a simple Python + NumPy / qiskit notebook: explicitly build the Bell basis, apply the unitaries, and see the measurement statistics. It’s a good warm-up for more serious quantum simulation.\n\nSuperdense coding is a tiny protocol, but it forces you to stop thinking of “information = stuff in a box” and start thinking of “information = structure in correlations.” That shift is the real upgrade.\n",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "5 min read",
     "fileName": "superdense coding.md",
     "featured": false
@@ -348,7 +348,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Superposition",
     "excerpt": "this is ? good matematichs intuition, mathematically",
     "content": "this is ? good matematichs intuition, mathematically \n",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "superposition.md",
     "featured": false
@@ -358,7 +358,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Techniques To Improve The Performance From Neural Network",
     "excerpt": "Exist a good family of of these techniques one that I am thinking lately is **regularization**.",
     "content": "---\nmodified: 2025-08-14 09:53\n---\nExist a good family of of these techniques one that I am thinking lately is **regularization**.",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "techniques to improve the performance from neural network.md",
     "featured": false
@@ -368,7 +368,7 @@ export const blogPosts: BlogPost[] = [
     "title": "Understand Llms",
     "excerpt": "It doesn't have much sense",
     "content": "---\nmodified: 2025-08-17 10:51\n---\nIt doesn't have much sense ",
-    "uploadDate": "2026-01-31",
+    "uploadDate": "2026-02-17",
     "readTime": "1 min read",
     "fileName": "understand llms.md",
     "featured": false
@@ -4235,16 +4235,6 @@ export const blogPosts: BlogPost[] = [
   },
   {
     "id": "423",
-    "title": "CLIP Model Vision, How The Dot Product Is Everywhere",
-    "excerpt": "So once that you understand how LLM's works and how improve them now you want to visualize them but at that scale, not by using just freak CNN's.",
-    "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-25 11:29\nmodified: 2025-10-25 11:24\n---\n\nSo once that you understand how LLM's works and how improve them now you want to visualize them but at that scale, not by using just freak CNN's.\n\nHow that happen, ",
-    "uploadDate": "2025-08-25 11:29",
-    "readTime": "1 min read",
-    "fileName": "CLIP model vision, how the dot product is everywhere.md",
-    "featured": true
-  },
-  {
-    "id": "424",
     "title": "Reasons To Define The Tensors",
     "excerpt": "Each mathematical object has a reason, of course that some comes naturally, but ones need the human hand.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-24 20:07\nmodified: 2025-09-09 13:14\n---\nEach mathematical object has a reason, of course that some comes naturally, but ones need the human hand.\n\nAnd such tensors are defined in many ways, find one meaning is bored,\n\nI think that one beauty way is presented by **Axler**, going one step further about [[Operations over a vector space]]\n\n[[tensor propierties]]",
@@ -4254,7 +4244,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "425",
+    "id": "424",
     "title": "Tensor Product",
     "excerpt": ">The tensor product of $V$ and $W$ is $V\\otimes W$, such that:",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-24 20:04\nmodified: 2025-11-10 20:29\n---\n>[!definition]\n>The tensor product of $V$ and $W$ is $V\\otimes W$, such that:\n>$$ v\\otimes w $$\n\n- [[Tensor product Inner Product]]\n- Take in account that we are talking on the **multilinear case** to introduce seameasly tensors.\n- And also in necessary to differentiate between the word tensor it [[Tensor formal definition]]\n- First [[reasons to define the tensors]], Axler beauty, you need two [[Vector Space]], and his [[Dual Space]].\n- [[product tensors such as a universal way to linearize]]\n- So the dual are here[^1], via Axler without mention any basis, in the finite dimensional case.\nExample!\n[^1]: [[Linear Algebra Done Right]] pp.386\n[^2]: [[Linear Algebra and Geometry Manim]] pp. 270\n",
@@ -4264,7 +4254,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "426",
+    "id": "425",
     "title": "Tensors Like Generalization Of Matrices",
     "excerpt": "I mean this the most similar to [[Tensor - Computation]], think it like a cube!",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-23 10:13\nmodified: 2025-08-26 11:46\n---\n\nI mean this the most similar to [[Tensor - Computation]], think it like a cube!",
@@ -4274,7 +4264,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "427",
+    "id": "426",
     "title": "Quantum Computing A Gentle Introduction",
     "excerpt": ">One-sentence summary of the work's central argument.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-19 17:48\nmodified: 2025-08-19 17:54\n---\n>[!reference]\n>One-sentence summary of the work's central argument.\n\n- Main arguments:\n- Key findings:\n\nOriginality, evidence, etc.\nMethodological flaws, biases\n\n> *Why important:* Relevance to your work\n\n**Reference**: @rieffel2011quantum",
@@ -4284,7 +4274,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "428",
+    "id": "427",
     "title": "Understand Neural Networks",
     "excerpt": ">If that were the case then I should to ask everything what they teach, but think it like an elective! That decide what are you gonna to do after the ...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-17 10:51\nmodified: 2025-09-12 09:58\n---\n\n>If that were the case then I should to ask everything what they teach, but think it like an elective! That decide what are you gonna to do after the carrer, is quite different that understand llms. [[understand llms]]\n\nI think that understand [[Neural Network]] deeply worth a lot, programming it, there is a ton of reasearch of it. you don't need a lot of knowledges to fully understand it. Is a good inversion, there [[understand neural networks]]",
@@ -4294,7 +4284,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "429",
+    "id": "428",
     "title": "Back Propagation For Avoid Problems",
     "excerpt": "Yeah, you are able to understand the why of the working of your [[Neural Network]], instances [^1].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-17 10:32\nmodified: 2025-08-17 11:02\n---\nYeah, you are able to understand the why of the working of your [[Neural Network]], instances [^1].\n\n\n\n[^1]: @karpathyYesYouShould2016\n",
@@ -4304,7 +4294,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "430",
+    "id": "429",
     "title": "Weight Decay",
     "excerpt": "It have sense that when more value on weights then is more tendency to change, this talks about the sensibility to change [^1], so we punish high valu...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-17 10:14\nmodified: 2025-09-09 13:09\n---\nIt have sense that when more value on weights then is more tendency to change, this talks about the sensibility to change [^1], so we punish high values on the weights, and I guess that we can make the same for bias. This is the $L^{2}$ reguralization.\n\n\n[^1]: [[Deep Learning]] pp. 97\n",
@@ -4314,7 +4304,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "431",
+    "id": "430",
     "title": "Overfitting Problem",
     "excerpt": "Train neural networks is not that trivial, I mean generalization is not a trivial task",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-16 18:50\nmodified: 2025-08-31 15:32\n---\n\nTrain neural networks is not that trivial, I mean generalization is not a trivial task\n\nSo you [[Neural Network]] is amazing good predicting seen data, but sucks on new data, he could generalize. \n\nFor instance a good reason of this is because you train a ton of epochs.\n\n\n[[neural network problems]]",
@@ -4324,7 +4314,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "432",
+    "id": "431",
     "title": "Minimazing The Loss Function Neural Nets",
     "excerpt": "modified: 2025-08-16 16:27",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-16 16:27\nmodified: 2025-09-12 09:59\n---\nmodified: 2025-08-16 16:27\n\nTo achieve that we can't \"take derivatives\", the output (of a [[Feed Forward Neural Network]]) depends uniquely on the bias, weights and [[Activation function|functions]] used, this are practically independent values, we can say that is a function with thousand of variables, and obvious the function is discrete (is not continuous).",
@@ -4334,7 +4324,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "433",
+    "id": "432",
     "title": "Minimazing The Loss Function",
     "excerpt": "Is clear that this a [[optimization problem]], in calculus you search a value inside the domain of a function.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-16 16:22\nmodified: 2025-08-16 18:06\n---\nIs clear that this a [[optimization problem]], in calculus you search a value inside the domain of a function.\n\nSo we need partial derivatives of the \n\n\nIn machine learning you tweak the learnable parameters following a method that minimize the loss function\n\n[[minimazing the loss function neural nets]]\n",
@@ -4344,7 +4334,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "434",
+    "id": "433",
     "title": "Computer Vision Evolution",
     "excerpt": "The idea that machines can seen is super interesting, if we look back we could see tries until 1970 with edges detectors, around the 2000 with the use...",
     "content": "---\ntags:\n  - zettelkasten\nauthor: Jorge\ndate: 2025-08-15 16:00\nmodified: 2025-08-16 10:51\n---\nThe idea that machines can seen is super interesting, if we look back we could see tries until 1970 with edges detectors, around the 2000 with the uses of datasets like PASCAL VOC formalized benchmarks, and then in 2012 AlexNet with ImageNet slam the door, scaling use of GPUS. and a dropout won. by using [[Convolution Neural Network]],\n\nthen by using the [[Vision transformer like encoder]]\n\n[[computer vision]] \nThe first begins we find it \n",
@@ -4354,7 +4344,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "435",
+    "id": "434",
     "title": "Linear Projection Visual Tokens",
     "excerpt": "No excerpt available",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-15 15:33\nmodified: 2025-10-31 22:01\n---\nSo is like:\n$$\nZ=WB\n$$\nLinear ",
@@ -4364,7 +4354,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "436",
+    "id": "435",
     "title": "Regularizations Neural Networks",
     "excerpt": "By the need of tackle the [[overfitting problem]] there exist certain techniques",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-14 18:37\nmodified: 2025-08-17 08:49\n---\n\nBy the need of tackle the [[overfitting problem]] there exist certain techniques\n\nThe [[weight decay]]:\n$L1$ regularization\n\n\n[^1]\n[^2]\n[^3]\n\n[^1]: [[Neural Networks and Deep Learning]]  pp. 87, 91\n\n[^2]: [[Deep Learning]] pp. 228\n\n[^3]: [[Pattern recognition and machine learning]] pp. 271\n",
@@ -4374,7 +4364,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "437",
+    "id": "436",
     "title": "Fluids",
     "excerpt": "No excerpt available",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-13 17:47\nmodified: 2025-08-13 17:49\n---\n\nconnection note",
@@ -4384,7 +4374,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "438",
+    "id": "437",
     "title": "Energy Conservation Principle",
     "excerpt": "The most important and general principle that exist. I mean it's so general!",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-13 14:30\nmodified: 2025-12-12 09:42\n---\nThe most important and general principle that exist. I mean it's so general!\n\nFrom where it comes from? It's pure empirical math. ",
@@ -4394,7 +4384,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "439",
+    "id": "438",
     "title": "Large Dataset To Train Classification",
     "excerpt": "The more obvious are the datasets to train [[large language model]], but the word [[Model for predicting new data]] is extremely general. Machine lear...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-13 12:48\nmodified: 2026-01-20 07:54\n---\n\nThe more obvious are the datasets to train [[large language model]], but the word [[Model for predicting new data]] is extremely general. Machine learning models, [[Vision Language Model VLM]], voice models, diffusion models, modeling models, etc.\n\nThere exist a ton of types: Cot, Visual. Some examples:\n* *Visual Genome*: 108K imágenes / 1.7M VQA. Relaciones semántico-espaciales, atributos y segmentación regional.\n* *COCO*: 330K imágenes / 1.5M objetos. Segmentación de instancias y topología de keypoints.\n* *VSI-590K*: 590K pares QA. Primitivas geométricas 3D, vectores direccionales y métricas de distancia euclidiana.\n* *Visual-CoT*: >363K muestras. Inferencia por cadena de pensamiento (Chain-of-Thought) y anclaje regional (region grounding).\n* *CLEVR*: 82K imágenes / 443K preguntas. Lógica composicional y relaciones espaciales en entornos sintéticos controlados.\n* *MindCube*: 3K imágenes / 21K preguntas. Representación de modelos mentales y proyecciones de perspectiva (viewpoint transformation).\n* *SIBench*: 8.8K puntos de datos. Consistencia multivista y correlación de marcas temporales.\n* *Spatial-DISE*: 12K imágenes / 559 preguntas. Operadores de transformación afín (rotación) y deformaciones topológicas (plegado).\n* *VSR Random*: 10K registros. Semántica preposicional y marcos de referencia coordenados.\n* *VQAv2*: 82K imágenes / 443K preguntas. Consultas estocásticas de propósito general sobre el dominio visual.",
@@ -4404,7 +4394,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "440",
+    "id": "439",
     "title": "Connector Between Vision And LLm",
     "excerpt": "We need to connect the visual tokens, from the [[Vision Encoder Main Function|vision encoder]] output with the [[large language model]]. ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-13 10:47\nmodified: 2025-08-15 15:35\n---\nWe need to connect the visual tokens, from the [[Vision Encoder Main Function|vision encoder]] output with the [[large language model]]. \n\nThe fact is that exist a good examples of this:\n- A simple [[linear projection visual tokens|linear projection]]\n- The [[MLP projector]] scaled by Llava.\n- The [[Cross attention adapter]] from the [[Llama Vision Instruct 3.2]] model.\n- And the BIP one.",
@@ -4414,7 +4404,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "441",
+    "id": "440",
     "title": "Contrastive Based Vlms",
     "excerpt": "We web scrap pairs of images and caption text, then we use the [[Cosine Similarity]] between those and create a loss function of it [^1] [^2].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-13 09:46\nmodified: 2025-10-31 22:01\n---\nWe web scrap pairs of images and caption text, then we use the [[Cosine Similarity]] between those and create a loss function of it [^1] [^2].\n\nThink of a like a matrix where the diagonal have elevated values and depend of the nature of the images the another entries.\n\n![Screenshot From 2025-10-31 21-57-29.png](Screenshot From 2025-10-31 21-57-29.png)\n\nGive it a batch of captions and images, we create a matrix of numbers using the [[Cosine Similarity]], we use the [[SoftMax Function]] with the columns and arrows, and create the a [[Loss function]] with [[Cross entropy]].  \n\n[^1]: [[An introduction to Visual Language Modeling]] pp. 6\n\n[^2]: [[Learning Transferable Visual Models From Natural Language Supervision]] pp. 5\n",
@@ -4424,7 +4414,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "442",
+    "id": "441",
     "title": "Borel σ Algebra",
     "excerpt": "Well is an [[Algebra Over A Field]] that contain all the all the open sets from an [[Topological Space]].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-12 17:14\nmodified: 2025-09-09 12:58\n---\n\nWell is an [[Algebra Over A Field]] that contain all the all the open sets from an [[Topological Space]].\n\nNow if you want to get depth on in you need a really strong base on **Real Analysis** which I am not care that much. But is good have an intuitive idea of it since is references in different place",
@@ -4434,7 +4424,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "443",
+    "id": "442",
     "title": "Binomial Distribution",
     "excerpt": "So is clear that this belongs to the [[exponential family]] [^1]:",
     "content": "---\ntags:\n  - baby\ndate: \"2025-08-12 14:56\"\nmodified: 2025-08-06T23:12:25-05:00\n---\nSo is clear that this belongs to the [[exponential family]] [^1]:\n\n$$ p(m|N,\\mu)=\\binom{N}{m}\\mu ^{m}(1-\\mu)^{N-m} $$\n\nWhich is related to the [[beta distribution]]\n\n[^1]: [[Mathematics for Machine Learning]] pp.213\n",
@@ -4444,7 +4434,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "444",
+    "id": "443",
     "title": "Gaussian Distribution",
     "excerpt": "So this is one of the most important topics of statistics.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-12 14:12\nmodified: \"{{2amt2:2025-12-02}} {{2amt2:06:47}}\"\n---\nSo this is one of the most important topics of statistics.\nIn a $n$ dimension:\n\n$$\np(\\mathbf{x})=\\frac{1}{\\sqrt{ (2\\pi)^{n}\\det \\Sigma }}\\exp\\left( -\\frac{1}{2}(\\mathbf{x}-\\boldsymbol{\\mu})^{\\mathsf{\\top}}\\Sigma ^{-1}(\\mathbf{x}-\\boldsymbol{\\mu}) \\right)\n$$\n\nIf $\\boldsymbol{\\mu}=0$ and $\\Sigma=\\sigma^{2} I$ then you have a Symmetric Gaussian. And $\\sigma=1$, let's called Normal. [^1]\n\n[^1]: [[Mathematics for Machine Learning]] pp. 204\n",
@@ -4454,7 +4444,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "445",
+    "id": "444",
     "title": "Types Of Probability, Operators",
     "excerpt": "We could talk about joint prability and those matters, the operation when using $\\bigcap$ or $\\bigcup$, multiplication sum. Those matters.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-12 14:10\nmodified: 2025-08-12 14:13\n---\n\nWe could talk about joint prability and those matters, the operation when using $\\bigcap$ or $\\bigcup$, multiplication sum. Those matters.",
@@ -4464,7 +4454,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "446",
+    "id": "445",
     "title": "Correlation",
     "excerpt": "Use the [[Variance Many Dimensions]] and the [[covariance multivariate variable]], is mean it have practically the same form of the inner product [^1]...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-12 13:58\nmodified: 2025-08-30 09:45\n---\nUse the [[Variance Many Dimensions]] and the [[covariance multivariate variable]], is mean it have practically the same form of the inner product [^1].\n\nI see it like a **covariance** but normalized.\n\n[^1]: [[Mathematics for Machine Learning]] pp. 197\n",
@@ -4474,7 +4464,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "447",
+    "id": "446",
     "title": "Beta Distribution",
     "excerpt": "$$ p(\\mu|\\alpha,\\beta)=B(\\alpha,\\beta)\\mu ^{\\alpha-1}(1-\\mu)^{\\beta-1} $$ [^1]",
     "content": "---\ntags:\n  - baby\ndate: \"2025-08-12 13:57\"\nmodified: 2025-08-06T23:12:25-05:00\n---\n$$ p(\\mu|\\alpha,\\beta)=B(\\alpha,\\beta)\\mu ^{\\alpha-1}(1-\\mu)^{\\beta-1} $$ [^1]\n\nIs clear that the [[Beta Function]] is there.\n\n[^1]: [[Mathematics for Machine Learning]] pp. 213.\n",
@@ -4484,7 +4474,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "448",
+    "id": "447",
     "title": "Covariance Multivariate Variable",
     "excerpt": "If we take the linear output from [[Covariance univariate variables|covariance case]] then we could generalize to [[Multivariate random variable|multi...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-12 13:41\nmodified: 2025-08-12 13:55\n---\nIf we take the linear output from [[Covariance univariate variables|covariance case]] then we could generalize to [[Multivariate random variable|multivariate random variables]]. [^1]\n>[!definition]\n>$$ \\text{Cov}[\\mathbf{x,y}]=\\mathbb{E}[\\mathbf{xy^{T}}]-\\mathbb{E}[\\mathbf{x}]\\mathbb{E}[\\mathbf{y}]^{T} $$\n\n- Is clear that we are talking about a [[outer product]], not the multiplication matrix.\n\n[^1]: [[Mathematics for Machine Learning]] pp. 196\n",
@@ -4494,7 +4484,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "449",
+    "id": "448",
     "title": "Exponential Family",
     "excerpt": "modified: 2025-08-12 17:14",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-12 12:49\nmodified: 2025-09-09 12:57\n---\nmodified: 2025-08-12 17:14\nanother important matter on [[Statistics like the path for approach the chaotic of life]].[^1]\n\n[^1]: [[Mathematics for Machine Learning]] \n",
@@ -4504,17 +4494,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "450",
-    "title": "Llama Vision 7B Understanding Vision Modeling And A Finetuning",
-    "excerpt": "1. [Motivation](#Motivation)",
-    "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-12 11:29\nmodified: 2025-11-01 23:20\n---\n\n\n# Vision modeling with Transformers and a fine tunning\n\n## Table of Contents\n\n1. [Motivation](#Motivation)\n2. [The age of agents](#The%20age%20of%20agents)\n3. [Why small models?](#Why%20small%20models?)\n4. [Llama Vision](#Llama%20Vision)\n5. [Tunning Challenges - LLM TO SLM](#Tunning%20Challenges%20-%20LLM%20TO%20SLM)\n\t1. [Explaining the Large Vision model](#Explaining%20the%20Large%20Vision%20model)\n\t2. [Llama Vision 3.2 Architecture](#Llama%20Vision%203.2%20Architecture)\n6. [Synthetic Data](#Synthetic%20Data)\n7. [Data Preparation](#Data%20Preparation)\n8. [Training process using Lora](#Training%20process%20using%20Lora)\n9. [Inference Time](#Inference%20Time)\n10. [Benchmarks](#Benchmarks)\n11. [Take Aways](#Take%20Aways)\n12. [Citation](#Citation)\n13. [References](#References)\n\n---\n\n>Special thanks to [Joel Timana](https://github.com/joevidev) for a lot of super valuable feedback during the process of this project.\n\n# Motivation\n\nFine tunning a model is complicated (then I like it), but in first place why I would do that?\n\n[[Tune problems-challenges]] and [[How re use a model - recicle SLM to specific SLM]] are the the reasons of the work. \n\n# The age of agents\n\nAgentic solutions had spread around the globe and had been widely aceppted , some incredibles examples are Lovable, Cursor, ClaudeCode  the most use for differents companies and start ups, the core of them are Multimodal Large Language Models, these are provided by companies such as OpenAI, Anthropic, Google, etc. \n\n\nThe performance of such a models are amazingly good, the prices each time are more accesible, and the inference speed grews since the clusters get improved, the investment on infrastructure continue growing and all seems that is going to the hill.\n\nNow there are cases when we want to use a model for an specific task that is not that complex, it worth use a model that big for this matter? \n\n**cite** proposes SLM's to tackle specifc-repetitive task. A small model should be less around 10 billion of parameters and they propose interesting stuff, but also the limitations that these models create. \n\nOne matter relies on the finne tunne of SML's which in a near future, could be change or insert foot note to that post. And this the topic of this work.\n\nIs clear that in high specialized environment each of the steps to tune a model is delegate to a expert group, so for a basic understanding of how this process is made this work exist.\n\nWe are gonna to realizing a fine-tune over the Llama Vision 3.2 model from META.AI with the goal of the recognisement of flowcharts for the translation into Mermaid code curated by [unsloth](https://unsloth.ai/).\n\n# Why small models?\n\nIs clear that talking in a more general case we are going always prefer a LLM rather than a SLM, they are indeed better, but stop there it doesn't have sense use a exagerately big model on a repetitive specif task, they are not economy and in comparation to a SLM the latency is !. @belcak2025smalllanguagemodelsfuture\n\nAnother more efficent but tedious approach is use a fine-tune model specific for the said task.\n\nyour task, we could take an open source model and we only worry about the hardware needed to inference. But actually exists a considerable amount of cloud services so let's suppose that is not actually a problem.\n\nIf we want to achieve a good performance in a specific task, have limited resources fine-tune is not a trivial task, there are also certain nuances that are necessary to face.\n\n# Llama Vision and the Vit Architecture\n\nSo there exist the clear case of the AlexNet but those are using convolutional neural networks.\n\n@dosovitskiy2021imageworth16x16words , \n\n\nand I care about how OpenAI build its model.\n\nAnd here CLIPS it seem it a lot interesting.\n\n[[computer vision evolution]]\n[[Vision encoder main function]] [[Connector Between Vision and LLm]]\n[[Llama Vision Instruct 3.2]]\n\n\n# Tunning Challenges - LLM TO SLM\n\nChoose a proper model, if we want a specific model that resolve that task, we need to answer the follow matters: the base model, data with train, the best ways and more cutting edge ways to train the model, the hardware and environment needed in order to make that, the metrics and benchmarks to know if indeed exist a improvements, and of course the knowledge necessary to implement all. @radford2021learningtransferablevisualmodels\n\nIf it's true that currently exist a huge amount of tools available on internet published by the community which make the process more direct and seamsly there is still a considerable work to do it, \n\n## Explaining the Large Vision model\n\nThe computer vision is one field that pass trough a lot, an important breakthrough was Alex Net. @krizhevsky2012imagenet\n\n![Screenshot From 2025-10-31 21-52-06.png](Screenshot From 2025-10-31 21-52-06.png)\nVisual Transformer architecture.\n\n$$\nx \\in \\mathbb{R}^{H \\times W \\times C} \\quad \\rightarrow \\quad N = \\frac{HW}{P^2} \\text{ patches of size } P \\times P\n\n$$\n\n$$\nz_0 = [x_p^1 E; x_p^2 E; \\dots; x_p^N E] + E_{\\text{pos}}\n$$\n\n## Llama Vision 3.2 Architecture\n\nBefore to begin with the data-set obtain. A comprenhesive understanding of how this models works is important in order to understand the respective the parameters.\nThe family of Vision models is big exist different innovation that each company made, how you realize the pre-training is an important one. @krizhevsky2012imagenet\n\n\nThe first is find actual works on Lora I wonder if I can tweak the unsloth code to use QLora. First you have to make some reasearch on QLora, the pseudo code, how applied to where to find the data sets, generation of data synthetic, data augmentation where to find the data sets, generation of data synthetic, data Augmentation, some nice graphs during the training process, the GPUS used inference and training, finding metric, reference to the actual metrics. And further improvements.Yeah I can make the pdf and the .md version, so how to the Llama 3.11 models @qi24insidemllama . vision instruct, we could make also llm tunning with the mermaid syntax, yeah we have until know. The visual large language models are funded on the convolutional layers which are quite amazing, the goal of this text is train a vllm more specificaly. I have one month to do it! Which it is the first part? The model is gonna to be fine-tune for the creation of diagrams using Mermaid. @bordes2024introductionvisionlanguagemodeling\n\nTo fine-tune the model we are gonna to use a big\n\nWe could create Synthetic data easily with Langgraph and an API.\n\n\n# Data Preparation\n\nSince we are gonna to be training a model to from images create code, we are\ngonna to use a collator to merge them.\nThe HugginFace repositories are always available, we are gonna to use four\nrepositories more Data augmentation techniques\nyou can easily find the data set on\n\n\n# Training process using Lora\n\nThe training process is straighforward since the library PEFT from HugginFace do\nall the work for us. Our work relies on know what hiper parameters are gonna to use\nto use since if we want to apply QLora in the future.\n\nIs amazing see the big difference between the inference of OPENai Anthropic and another guys compared with a modest GPU. \n\n\n# Citation \n\nOr use BibTex citation:\n\n```\n@article{munoz2025vision,\n  title = {Understanding Vision Models},\n  author = {Munoz, Jorge},\n  journal = {munBlog},\n  year = {2025},\n  month = {July},\n  url = \"https://jorgemunoz.github.io\n}\n```\n\n# References\n\nBelcak, P., Heinrich, G., Diao, S., Fu, Y., Dong, X., Muralidharan, S., Lin, Y. C., & Molchanov, P. (2025). _Small language models are the future of agentic AI_. [https://arxiv.org/abs/2506.02153](https://arxiv.org/abs/2506.02153)\n\nBordes, F., Pang, R. Y., Ajay, A., Li, A. C., Bardes, A., Petryk, S., Mañas, O., Lin, Z., Mahmoud, A., Jayaraman, B., Ibrahim, M., Hall, M., Xiong, Y., Lebensold, J., Ross, C., Jayakumar, S., Guo, C., Bouchacourt, D., Al-Tahan, H., … Chandra, V. (2024). _An introduction to vision-language modeling_. [https://arxiv.org/abs/2405.17247](https://arxiv.org/abs/2405.17247)\n\nDosovitskiy, A., Beyer, L., Kolesnikov, A., Weissenborn, D., Zhai, X., Unterthiner, T., Dehghani, M., Minderer, M., Heigold, G., Gelly, S., Uszkoreit, J., & Houlsby, N. (2021). _An image is worth 16x16 words: Transformers for image recognition at scale_. [https://arxiv.org/abs/2010.11929](https://arxiv.org/abs/2010.11929)\n\nKrizhevsky, A., Sutskever, I., & Hinton, G. E. (2012). ImageNet classification with deep convolutional neural networks. In F. Pereira, C. J. C. Burges, L. Bottou, & K. Q. Weinberger (Eds.), _Advances in neural information processing systems 25_ (pp. 1097–1105). Curran Associates, Inc. [https://proceedings.neurips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf](https://proceedings.neurips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)\n\nQi, J. (2024). Inside MLLaMA 3.2: Understanding meta’s vision-language model architecture. _Medium_. [https://j-qi.medium.com/inside-mllama-3-2-understanding-metas-vision-language-model-architecture-ae12ad24dcbf](https://j-qi.medium.com/inside-mllama-3-2-understanding-metas-vision-language-model-architecture-ae12ad24dcbf)\n\nRadford, A., Kim, J. W., Hallacy, C., Ramesh, A., Goh, G., Agarwal, S., Sastry, G., Askell, A., Mishkin, P., Clark, J., Krueger, G., & Sutskever, I. (2021). _Learning transferable visual models from natural language supervision_. [https://arxiv.org/abs/2103.00020](https://arxiv.org/abs/2103.00020)",
-    "uploadDate": "2025-08-12 11:29",
-    "readTime": "12 min read",
-    "fileName": "Llama Vision 7B Understanding Vision Modeling and a finetuning.md",
-    "featured": true
-  },
-  {
-    "id": "451",
+    "id": "449",
     "title": "Joule Effect",
     "excerpt": ">We call $P$ potency to the product:",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-10 15:39\nmodified: 2025-11-10 14:30\n---\n>[!definition]\n>We call $P$ potency to the product:\n>$$ P=VI $$\n\n- For ohm materials you have $P=I^{2}R$.\n- Why I would define this? I mean there are interesting relations between \n\n[[Physics III - 2025 II]]",
@@ -4524,7 +4504,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "452",
+    "id": "450",
     "title": "Tangent Force",
     "excerpt": "Give it any [[Newton Second Law|force]] this could be written as one tangent to the trajectory and another perpendicular to it. [^1]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-10 15:33\nmodified: 2025-08-10 15:35\n---\n\nGive it any [[Newton Second Law|force]] this could be written as one tangent to the trajectory and another perpendicular to it. [^1]\n\n\nI think that is like choose a reference frame, and the other pretty similar is by using the **vector position** we are going to called it [[radial force]]\nThis two plays a significant role when talking about [[Circular Motion]]\n\n[^1]: [[Fisica Alonso Finn]]\n",
@@ -4534,7 +4514,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "453",
+    "id": "451",
     "title": "Discrete Arc Lengh",
     "excerpt": "Let $f:[a,b]\\to \\mathbb{R}^{n}$ be a [[Vector function over a real variable|function]], let $p$ be a [[Partition for a one dimension function|partitio...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-10 15:17\nmodified: 2025-09-09 12:57\n---\n\n>[!definition]\nLet $f:[a,b]\\to \\mathbb{R}^{n}$ be a [[Vector function over a real variable|function]], let $p$ be a [[Partition for a one dimension function|partition]] $P=\\{ t_{i}|i=0,\\dots,k \\}$ of $[a,b]$, this define a  **polygon** and its arc is simply : \n>$$ \\ell(f,p)=\\sum_{i=1}^{n}\\lVert f_{i}-f_{i-1} \\rVert  $$\n- This **poligon** remind us to the [[Bézier Curve]].\n- We say that a curve is _rectifiable_ if the set $A=\\{ \\ell(f,p)|p \\in \\mathcal{P} \\}$ have upper bound. \n- Here the about the [[Refinement]] also it's also fulfilled (You just add dimensions)\n- Let be $\\mathcal{P}$ the set of all the [[Partition]] over the domain, if the set is bounded then it has [[Supreme and Infimum|supremum]], this last is called **lenght**.\n",
@@ -4544,7 +4524,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "454",
+    "id": "452",
     "title": "Convolution In More Dimensions",
     "excerpt": "It seem to me interesting the notation.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-10 14:24\nmodified: 2025-08-10 14:39\n---\nIt seem to me interesting the notation.\n\n>[!definition]\n>Let $f$ be a [[Scalar function]] $(\\mathbb{R}^{3})$, and $k$ the [[kernel convolution|kernel]]  the **continuous convolution** is:\n>$$ (f*g)(\\mathbf{r})=\\iiint_{\\mathbb{R}^{3}}f ξ$$\n",
@@ -4554,7 +4534,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "455",
+    "id": "453",
     "title": "Convolution Over Images",
     "excerpt": ">Give it a matrix  $W$ you can apply the [[Convolution definition|discrete convolution]] using a [[kernel convolution]] $K$ (two variables) [^1]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-10 11:48\nmodified: 2025-08-10 14:14\n---\n>[!definition]\n>Give it a matrix  $W$ you can apply the [[Convolution definition|discrete convolution]] using a [[kernel convolution]] $K$ (two variables) [^1]\n>$$ S(i,j)=(I*K)(i,j)=\\sum_{m}\\sum_{n}I(m,n)K(i-m,j-n) $$j\n\n- Now the interesting comes with we have more than two dimension, images typically uses a channel $C=3$ (RGB), there apply convolution.\n\n\n[^1]: [[Deep Learning]] pp.351.\n",
@@ -4564,7 +4544,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "456",
+    "id": "454",
     "title": "Kernel Convolution",
     "excerpt": "The kernel is the filter of the [[convolution over images]].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-10 11:32\nmodified: 2025-12-05 14:11\n---\nThe kernel is the filter of the [[convolution over images]].\n\nNow think of like a $$",
@@ -4574,7 +4554,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "457",
+    "id": "455",
     "title": "Cosine Similarity",
     "excerpt": "This is name that receive the [[Dot Product, why define it like that?]] in machine learning literature. Of course that the practical examples are not ...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-09 22:35\nmodified: 2025-08-09 22:40\n---\nThis is name that receive the [[Dot Product, why define it like that?]] in machine learning literature. Of course that the practical examples are not that exact.\n\nBut well reflect pretty well the idea of [[dot product measures the similarity between vectors]]\n\nHere we don't care about the Lengths just about Angles so if we had:\n\n$$\n\\cos(\\theta)=\\frac{\\langle \\mathbf{x},\\mathbf{y} \\rangle }{\\lVert x \\rVert \\lVert y \\rVert }\n$$\n\nNow we have: ?\n",
@@ -4584,7 +4564,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "458",
+    "id": "456",
     "title": "Vision Transformer Like Encoder",
     "excerpt": "For big - large scale [[Vision Language Model VLM]] instead of using [[Convolution Neural Network|CNNS]] we use the [[Attention mechanism]],  a [[Tran...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-09 22:21\nmodified: 2025-10-31 21:54\n---\nFor big - large scale [[Vision Language Model VLM]] instead of using [[Convolution Neural Network|CNNS]] we use the [[Attention mechanism]],  a [[Transformer]] but for a vision task. See [^1].\n\nUsing a ViT trained either contrastively or via masked reconstruction (MAE). (Which use Llama?).\n\n![Screenshot From 2025-10-31 21-52-06.png](Screenshot From 2025-10-31 21-52-06.png)\n\n\n\nWe need a [[Vision Modeling CLIP|vision encoder]] that use the transformer architecture.\n\n\nBut there exist another to consider like by using a **masking**, and more [^2].\n\n[^1]: [[A image worth 16x16 words ViT architecture]]\n\n[^2]: [[An introduction to Visual Language Modeling]] pp. 5\n",
@@ -4594,7 +4574,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "459",
+    "id": "457",
     "title": "Llama Vision Instruct 3.2",
     "excerpt": ">Model developed by **Meta**.",
     "content": "---\ntags:\n  - zettelkasten\nauthor: Jorge\ndate: 2025-08-07 10:53\nmodified: 2025-08-14 16:25\n---\n>Model developed by **Meta**.\n\nUnderstand the architecture is pretty good idea.\nIt's a [[Vision Language Model VLM]], with a **architecture** \n\nNow here there is something interesting [[Connector Between Vision and LLm]] here we have a [[Cross attention adapter]]. Which is an innovation of this model.",
@@ -4604,7 +4584,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "460",
+    "id": "458",
     "title": "Tune Problems Challenges",
     "excerpt": "Issues that we are gonna to be facing at the moment of tune a model, not specifically a llm, it could also be ml model, or Reinforcement model. Everyt...",
     "content": "---\ntags:\n  - zettelkasten\n  - baby\nauthor: Jorge\ndate: 2025-08-07 10:53\nmodified: 2025-08-27 20:00\n---\n Issues that we are gonna to be facing at the moment of tune a model, not specifically a llm, it could also be ml model, or Reinforcement model. Everything that it could be tweak, that it could be trained on data.\n\n>Not just on AI, what about physics models, PINNS. Generalize it. Is clear that this notes aims to the creation of a model.\n\nWhen you want to use a pre-existing model to tackle a specific problem tune it is tempting if the model doesn't perform that well for you task. But there are issues that need to be attended.\n\nChoose a proper model for your specific model, obtain high quality data, sota training techniques,  the hardware or environment needed, the benchmarks-metrics necessaries, and of course the knowledge and experience that is necessary in order to have a smooth fine-tune process. \n\nCurrently all this problems are tackle by the community (internet), exist a considerable amount of tools that are very useful and more feasible these tasks.\n",
@@ -4614,7 +4594,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "461",
+    "id": "459",
     "title": "Vocabulary   Tokenizer",
     "excerpt": ">The **vocabulary** is a **dictionary** that relates a number with a word or prefix. (a.k.a token).",
     "content": "---\ntags:\n  - atomic\nauthor: Jorge\ndate: 2025-08-07 10:53\nmodified: 2025-10-19 08:22\n---\n>[!definition]\n>The **vocabulary** is a **dictionary** that relates a number with a word or prefix. (a.k.a token).\n\n- The size is the number of merges from the [[Bite Pair Algorithm]], is defined over the [[Tokenizer]].\n- This the [[Embedding matrix]] $\\mathbf{E} \\in \\mathbb{R}^{\\lvert \\mathcal{V}\\ \\rvert\\times d}$, where $\\lvert \\mathcal{V} \\rvert$ is the **vocabulary size** and $d$ is the [[Embedding dimension]].\n- The number of mergesis a [[hyperparameters]].",
@@ -4624,7 +4604,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "462",
+    "id": "460",
     "title": "TopK Function",
     "excerpt": "This function is frequently used on deep learning literature.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-08-04 17:16\"\n---\n>[!definition]\n>The **top-**\nThis function is frequently used on deep learning literature.\n",
@@ -4634,7 +4614,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "463",
+    "id": "461",
     "title": "Mean",
     "excerpt": "In the most general case the **mean** is defined via the [[Expected Value]] operator [^1].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-08-02 21:26\"\n---\nIn the most general case the **mean** is defined via the [[Expected Value]] operator [^1].\n\n>[!definition]\n>Give it a [[Random variable (univariate)|random variable]] $X$ its mean is defined by:\n>$$ \\mathbb{E}_{X}(x)=\\int_{X}xp(x)dx $$\n\n- We can see it more clearly when is discrete and the probability is uniform, summing fractions.\n\n[^1]: [[Mathematics for Machine Learning]] pp. 193\n",
@@ -4644,7 +4624,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "464",
+    "id": "462",
     "title": "Multivariate Random Variable",
     "excerpt": ">A **multivariate** [[Random variable (univariate)|random variable]] is nothing but a set of random variables (Obviously over the same [[Probability S...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-08-02 14:53\"\n---\n>[!definition]\n>A **multivariate** [[Random variable (univariate)|random variable]] is nothing but a set of random variables (Obviously over the same [[Probability Space|sample space]]). More specifically is a vector of them. [^1].\n- Is clear that both uni like multi are interchangeable respect the operators, just apply the operators to each element from the vector!\n- Examples there are ton, how many features one could extract from a environment.\n\n\n[^1]: [[Mathematics for Machine Learning]] pp. 193\n",
@@ -4654,7 +4634,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "465",
+    "id": "463",
     "title": "Covariance Univariate Variables",
     "excerpt": "Let's say that we have two [[Random variable (univariate)|random variables]] $X$ and $Y$, how we measure the relation of these, I mean a way to measur...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-02 14:45\nmodified: 2025-08-12 13:41\n---\nLet's say that we have two [[Random variable (univariate)|random variables]] $X$ and $Y$, how we measure the relation of these, I mean a way to measure how much they are directly or inversely proportional.\n>[!definition]\n>The **covariance** between $X$ and $Y$ is defined as the [[Expected Value]] from the deviation of the [[mean]][^1].\n>$$\\text{Cov}_{X,Y}[x,y]:=\\mathbb{E}([x-\\mathbb{E}(x)][y-\\mathbb{E}(y)])$$\n\n- When the variables are not random then this is not the definition?\n- By linearity we have that: $\\text{Cov[x,y]}=\\mathbb{E}(xy)-\\mathbb{E}(x)\\mathbb{E}(y)$, with we could easily generalize to the [[Multivariate random variable|multivariate case]].\n- So the first part it would be a double integral with a joint probabllity.\n- This means the how they variate, the [[covariance synchronized|dance between each one.]]\n\n\n[^1]: [[Mathematics for Machine Learning]] pp. 190\n\n[^2]: \n",
@@ -4664,7 +4644,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "466",
+    "id": "464",
     "title": "Coset About The Quotient Space",
     "excerpt": "Then $(\\frac{V}{S},+,\\cdot)$ is a $\\mathbb{K}$  [[Vector Space]]. Redefining $[u]+[v]=[u+v]$ and $[\\lambda\\cdot v]=\\lambda\\cdot [v]$. Remembering that...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-01 22:03\nmodified: 2025-08-23 17:41\n---\nThen $(\\frac{V}{S},+,\\cdot)$ is a $\\mathbb{K}$  [[Vector Space]]. Redefining $[u]+[v]=[u+v]$ and $[\\lambda\\cdot v]=\\lambda\\cdot [v]$. Remembering that the vectors of this space are ***cosets***. (called)\n\nThis is a \n\nThis is a family of vectors.\n\n The quotient space $\\frac{V}{S}$ captures the idea of treating $S$ as \"zero,\" meaning that vectors in $S$ are indistinguishable from each other. $( s \\in S  \\implies s+S =S)$ \n\n- Is pretty that this idea of quotient work pretty similar to the division that we know.\n- you can divide the complete space in tiny pieces! And in theory it should be more easy to work.\n\n[[Untitled444.png|500x643]]",
@@ -4674,7 +4654,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "467",
+    "id": "465",
     "title": "Probability Mass Function",
     "excerpt": "Give it [[Target space]] **discrete** $\\mathcal{T}$ define by the [[Random variable (univariate)]] $X$, we could define the **probability mass functio...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-08-01 18:14\"\n---\n>[!definition]\nGive it [[Target space]] **discrete** $\\mathcal{T}$ define by the [[Random variable (univariate)]] $X$, we could define the **probability mass functions** such as $P(X=x)$  with $x \\in \\mathcal{T}$, with $P$ being a [[probability]] [^1]. \n\n- The notation $P(X)$ is clear, and here it has complete sense if we think it like a fraction, the other case [[cumulative distribution function]] it would have any sense think it like a fraction.\n- I mean is basically the probability of an event, although we see at the more general case.\n\n[^1]: [[Mathematics for Machine Learning]] pp. 184\n",
@@ -4684,7 +4664,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "468",
+    "id": "466",
     "title": "Target Space",
     "excerpt": "This **target space** is the set of the quantity of interest, so is a subset of $\\mathcal{A}$, the [[Probability Space|event space]] We could think it...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-08-01 17:50\nmodified: 2025-08-12 17:02\n---\nThis **target space** is the set of the quantity of interest, so is a subset of $\\mathcal{A}$, the [[Probability Space|event space]] We could think it like the numerical apparition of a [[Random variable (univariate)]]. [^1]\n\nIn the most general case are to the subset of this where we applied the notion of [[probability]] (the notation $P_{X}(S)$ with $S$ a subset of the **target space**, important)\n\n[^1]: [[Mathematics for Machine Learning]]  \n",
@@ -4694,7 +4674,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "469",
+    "id": "467",
     "title": "Random Variable (Univariate)",
     "excerpt": ">A **random variable** is a function $X$ that takes elements from the sample space $\\Omega$ and take it to the  [[Target space]] $\\mathcal{T}$ [^1]. H...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-08-01 17:35\"\n---\n>[!definition]\n>A **random variable** is a function $X$ that takes elements from the sample space $\\Omega$ and take it to the  [[Target space]] $\\mathcal{T}$ [^1]. However this is a feature from the sample space, \"count the heads\".\n\n#### Toy example!\nLet $\\Omega$ be the set of all the states that throw two coins can be, and the let $\\mathcal{T}$ be number of of heads. So is clear that $\\Omega=\\{ hh,ht,th,tt \\}$ where $t\\text{:tails}$ and $h\\text{:heads}$, now the random variable $X:\\Omega\\to \\mathcal{T}$ is:\n$$\nX(hh)=2,X(ht)=X(th)=1,X(tt)=0\n$$\nSo is clear that $\\mathcal{T}=\\{ 0,1,2 \\}$.\n\nRealize that this random variable is well defined once that the **target space** is well defined.\nLet's say that we want to know the numbers of hours studied by a student so:\n$$\nX(\\text{David})=2\n$$\nSo the sample space $\\Omega$ are all the students, the target space is the numbers of hours studied. Look at the first example one can begin to talk of [[probability|probabilities]].\n\n[^1]: [[Mathematics for Machine Learning]] pp. 183\n",
@@ -4704,7 +4684,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "470",
+    "id": "468",
     "title": "State Of The Art Models",
     "excerpt": "Depend on the task, there exist easy ones and hard ones, and of course the provider.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-08-01 12:29\"\n---\nDepend on the task, there exist easy ones and hard ones, and of course the provider.\nWe have to big groups: The open source models and the closed ones.\n\nWe could easily access to the Open source models via **OpenRouter**, there exist a grand variety of model open such DeepSeek, Alpha, Kimi K2.\nAnd there are the closed ones who belongs to OpenAI, Antrophic, xAI, and Google, (I personally believe that Google Deep Mind is gonna to win this).\n\nThere exist different ways to measure the efficiency from models, using **benchmarks**, human feedback (**llm arena**) and other proves, so is good one check those before pay one subscription.",
@@ -4714,7 +4694,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "471",
+    "id": "469",
     "title": "Scrapping",
     "excerpt": "I think in a spider, In somehow you collect all the data from a webpage. If there exist a link to another web then also you collect from that web and ...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-07-31 20:45\"\n---\nI think in a spider, In somehow you collect all the data from a webpage. If there exist a link to another web then also you collect from that web and like this recursively. \n",
@@ -4724,7 +4704,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "472",
+    "id": "470",
     "title": "Complexity On Lora",
     "excerpt": "When the rank $r=1$, the matrix of $mn$ elements is contained en $m+n$ elements, which of course is an important reduction in the complexity to find t...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-07-31 16:31\"\n---\nWhen the rank $r=1$, the matrix of $mn$ elements is contained en $m+n$ elements, which of course is an important reduction in the complexity to find those matrix by training but there a decrease on the flexibility of the matrix.\n\nNow  for $r\\neq1$, this is $r(m+n)$.  From $\\mathcal{O}(r(m+n))$ to $\\mathcal{O}(mn)$.  Where $\\mathcal{O}$ is the [[Big O-complexity]]. \n\nYes  there w\n\n Applied to [[Query and Key on Attention]] [[Values - LLM]], recall that here is an important matter about the cache.\n ",
@@ -4734,7 +4714,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "473",
+    "id": "471",
     "title": "Adapter To Improve Model, Finetune",
     "excerpt": "Instead of change all the parameters of the model, you add \"layers\", these are nothing but matrices, which are the product of two matrices that so cal...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-07-31 15:53\nmodified: 2025-09-29 10:15\n---\n\nInstead of change all the parameters of the model, you add \"layers\", these are nothing but matrices, which are the product of two matrices that so called $A$ and $B$.\n\nFirst you have to add all the adapters, following a specific configuration. Then you train",
@@ -4744,7 +4724,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "474",
+    "id": "472",
     "title": "Reason To Use Linux",
     "excerpt": "You could avoid multitask since your laptop is that old that only could perform one thing. ",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-07-30 10:14\"\n---\nYou could avoid multitask since your laptop is that old that only could perform one thing. \nAnd it's really amazing how lightweight things become. Is give to old laptops a second oportunity, but if you want to really use well and that it scale well over time you need to get used to a certain problems and definitions.\n\nI mean now that I am using ubuntu + LXQt this laptops works! I should to do this long time ago. I mean you could use the laptop with mouse! of course to specific things which it seem it to me amazing is hard I know but one step at a time. \n\nImagine this the old laptop from Isa to write latex at lightspeed! VIM, that is really georgeus, and well you need to be very smart when syncing across devices latex projects I have a python scripts to that for a pseudo p2p server, but git of course is one nice option.\n\nGithub it was really a game changer. \n\nSo what is the minima stuff that you need. Well only the [[Distributions]] and a Windows manager a KD, or DE, to use apps. as well!\ni3, LXQt, a good time to make this change is by steps. I think that in the acer works pretty well Obsidian. isa code and maybe diana latex is the more leightweight I guess. \n\n\n[[linux and nvidia]]",
@@ -4754,7 +4734,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "475",
+    "id": "473",
     "title": "Teraflops On GPUS",
     "excerpt": "No excerpt available",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-07-28 15:32\"\n---\n\n[[teraflops]]",
@@ -4764,7 +4744,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "476",
+    "id": "474",
     "title": "L4 From Colab",
     "excerpt": "Get excited, I wonder ",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-07-28 15:30\"\n---\n\nGet excited, I wonder \n\nI mean that it was something about 0.2 0.19.\n\n23G\n\nColab not fixed\nRunPod fixed. You need to levarage that!<\n\nI  mean tokens per second, I guess that depends on the [[Tokenizer]] , since itself are differents!\n\nPretty slow? Or what is happening? A bottleneck.\n\nYeah why I didn't use the text Stremer how I could be that blind?\n\nBut is not hard counts the tokens!",
@@ -4774,7 +4754,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "477",
+    "id": "475",
     "title": "What GPU Choose For A Specific Model",
     "excerpt": "I am doing inference using the llama vision model and when ",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-07-28 13:34\"\n---\nI am doing inference using the llama vision model and when \n\nA nice combination two cheaps! I wonder if I run out-of-the-box my script will run?\n\nAnd with choose I refer choose inside RUNPOD, \nI think that for pure inference Colab is better, but for experimenting. Have more access to GPU, terminal . Parrallel GPUs. And acces to colab with more solid projects. I mean is don't available run big projects in a notebook!\n\n\n\n[[L4 from colab]]",
@@ -4784,7 +4764,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "478",
+    "id": "476",
     "title": "When Use .Ipynb Or .Py",
     "excerpt": "These days I was experimented with RUNPOD, renting GPUs and using it via SSH, using VScode to edit the code and run it. Make that was something new an...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-07-27 15:42\"\n---\nThese days I was experimented with RUNPOD, renting GPUs and using it via SSH, using VScode to edit the code and run it. Make that was something new and I commit some errors I refuse to use the [[Jupyter Notebooks, what are these?|jupyter]] because I fell that it doesn't have the same level of difficulty. And I fell that I commit a mistake (I learn) because for that purpose that I have (use momentarily a VLLM) , well.\n\nThe question is that is a tool that I didn't considered, but now yeah! For research for instance is amazing since You don't have to running all again and again, something that I suffered using [[Python]]. So lection learned.\n\nBut of course don't ignore for complete use GPU's on \"local\". \n\n[[Anaconda]] for instance is a nice example for the research step.\n\nFor test models is a good option I think, you don't have to download all the necessary stuff.\n\n> Kaggle uses jupyter notebooks, so that is a good example!",
@@ -4794,7 +4774,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "479",
+    "id": "477",
     "title": "Symmetry On N Forms",
     "excerpt": "Is beauty because we called **symmetric** if you make a permutation of the variables then is unchanged. Of course that this is the under hood the [[Sy...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-07-26 13:43\nmodified: 2025-08-26 12:34\n---\nIs beauty because we called **symmetric** if you make a permutation of the variables then is unchanged. Of course that this is the under hood the [[Symmetric matrix]]! No! What?, this is different from the title\n\nyeah I mea if you take a,b is equal of b,a.\n\nWhen talking about n-forms xAxt, we call to A symmetric if we don't care the out is independent of the order between x and yt, is another way to define symmetry on matrices.\n\ni see it on a book of ml. maybe the mathemical one.",
@@ -4804,7 +4784,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "480",
+    "id": "478",
     "title": "Machine Learning Everywhere",
     "excerpt": "When Newton obtain his three postulates and published on Philosophae Naturalis Principia Mathematica, from data recollected from Galileo Galilei.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-07-24 09:34\"\n---\nWhen Newton obtain his three postulates and published on Philosophae Naturalis Principia Mathematica, from data recollected from Galileo Galilei.\nAt the end he did machine learning but the machine was it's brain. But well now is completely impossible to don't use computers to resolve the actual problems.\nHe develop a model who  predicts all movement.\n\nAnd we can't forget to Gauss who basically created the [[Least squares algorithm]] (debatible).\n\nThe question is that now, in this world, with the quantity of data that we can obtain all can be reduced  to a [[Machine Learning]] problem. Which is amazing, and even on physics.\n",
@@ -4814,7 +4794,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "481",
+    "id": "479",
     "title": "Using Lora To Fine Tune Vllms",
     "excerpt": "The base is [[Lora, how it works]]",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-07-23 11:12\nmodified: 2025-08-15 18:50\n---\n\nThe base is [[Lora, how it works]]\n\n![Screenshot From 2025-07-23 11-15-18.png](Screenshot From 2025-07-23 11-15-18.png)\nSo we can actually add the adapters to ",
@@ -4824,7 +4804,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "482",
+    "id": "480",
     "title": "Difussion Models",
     "excerpt": "Okay, when a model generates an image how they do it.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-07-22 20:19\nmodified: 2025-11-06 09:51\n---\nOkay, when a model generates an image how they do it.\n\n>But here all your trained, looks like also parameters? Yeah they called (U-Net/Transformer).\n\nImagine that they initialize at random the values of that tensor and a model in such a way generate an image.\n \nI mean it have sense that instead of create a random from a one shot, you take more time and more steps.\n\nTo this noise how is it that you change for generate a image from a Dog? Of course that first you have to train to your model,  but how?\n\nYou have a image of a dog, and you have to transform it on Noise by sequences.\n\nSome thought is that the data it have already few \"entrophy\" and the noise a ton of \"entrophy\", we can consider this a cost function.\n\n\nOf course that here we are talking about images. But the more general case [[Diffusion Problem]]\n\nAnd you actually learn the total noise $\\epsilon$. I don't get it.\n\n- And here the must are DDPM\n- DDIMs\n\n[[Step by step Diffusion An Elementary Tutorial]]",
@@ -4834,7 +4814,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "483",
+    "id": "481",
     "title": "Difussion Models",
     "excerpt": "Okay, when a model generates an image how they do it.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-07-22 20:19\nmodified: 2025-11-06 09:51\n---\nOkay, when a model generates an image how they do it.\n\n>But here all your trained, looks like also parameters? Yeah they called (U-Net/Transformer).\n\nImagine that they initialize at random the values of that tensor and a model in such a way generate an image.\n \nI mean it have sense that instead of create a random from a one shot, you take more time and more steps.\n\nTo this noise how is it that you change for generate a image from a Dog? Of course that first you have to train to your model,  but how?\n\nYou have a image of a dog, and you have to transform it on Noise by sequences.\n\nSome thought is that the data it have already few \"entrophy\" and the noise a ton of \"entrophy\", we can consider this a cost function.\n\n\nOf course that here we are talking about images. But the more general case [[Diffusion Problem]]\n\nAnd you actually learn the total noise $\\epsilon$. I don't get it.\n\n- And here the must are DDPM\n- DDIMs\n\n[[Step by step Diffusion An Elementary Tutorial]]",
@@ -4844,7 +4824,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "484",
+    "id": "482",
     "title": "Value Function",
     "excerpt": "There are cases where we want a more instantaneous reward, like obtaining money to eat and don't feel hungry, and there are other cases when we think ...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-07-22 13:56\"\n---\n\nExample:\nThere are cases where we want a more instantaneous reward, like obtaining money to eat and don't feel hungry, and there are other cases when we think in the long term and our actions maybe give us less satisfaction (save money on cheap food) but in the long run they scale better. This is the value function, change our mindset about our actual actions. ",
@@ -4854,7 +4834,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "485",
+    "id": "483",
     "title": "Value Function",
     "excerpt": "There are cases where we want a more instantaneous reward, like obtaining money to eat and don't feel hungry, and there are other cases when we think ...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-07-22 13:56\"\n---\n\nExample:\nThere are cases where we want a more instantaneous reward, like obtaining money to eat and don't feel hungry, and there are other cases when we think in the long term and our actions maybe give us less satisfaction (save money on cheap food) but in the long run they scale better. This is the value function, change our mindset about our actual actions. ",
@@ -4864,7 +4844,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "486",
+    "id": "484",
     "title": "Physical Artificial Intelligence",
     "excerpt": "[[Artificial Intelligence]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-07-22 13:49\nmodified: 2025-10-31 11:37\n---\n[[Artificial Intelligence]]\nOkay, it have that future is gonna to be rule by robots, and they need understand the law of physics.  I mean now exist a ton of those robots, that actually walk in the streets and all of that, but if they only work are pretty useless, if we want to make them to make more stuff then they have to be trained to feel human sensation, and how they can make that? Data? Where did you obtain all of these?\n\n[[Pi 0 A Vision-Language-Action Flow Model for General Robot Control]]\n[[Knowledge Insulating Vision-Language-Action Models Train Fast, Run Fast, Generalize Better]]\n\n[[take aways physical Ai]]",
@@ -4874,7 +4854,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "487",
+    "id": "485",
     "title": "Reinforcement Learning From Human Feedback",
     "excerpt": "For training the pretty famous model ChatGPT, openAI used 10000 humans (probably from India or one of these countries with a ton people searching for ...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-07-21 23:12\"\n---\nFor training the pretty famous model ChatGPT, openAI used 10000 humans (probably from India or one of these countries with a ton people searching for a job) giving feedback to the Chatgpt responses.\nThey were sitting a ton of hours saying yes or no to the responses, and the model can update their parameters to sound better, to sound more like a human, because they are (for its architecture) a pretty fancy predictor of the next word.\n",
@@ -4884,7 +4864,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "488",
+    "id": "486",
     "title": "What Things We Can Actually Do By Using A GPU",
     "excerpt": "[[what GPU choose for a specific model]]",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-07-20 19:57\"\n---\n[[what GPU choose for a specific model]]\nI mean is not just run LLM, there it also should be more that I'm not seeing.\nAnd important questions is give it a model what is the best GPU's that maximize the ratio efficiency/ cost.\n\nThere exist the LOW ones talking about RTX ADA 2000 and RTX ADA 4000\nThen there are the MEDIUM ones L4 and the GUYS\nAnd there are also the HIGH one the serie A and now the B. I guess that [[cluster servers]] use the series or A, lower than I doubt it!.\n\nI wonder if the tokens per second are like a way to measure. Them\nUse Huggin Face like Inference is a good decision?\n\nUse (wisely) GPU is not that trivial! \n",
@@ -4894,7 +4874,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "489",
+    "id": "487",
     "title": "Probability Theory, First Peek",
     "excerpt": "This theory belong to [[Statistics like the path for approach the chaotic of life]] and threats with all the related to probabilities.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-07-20 17:09\nmodified: 2025-09-13 11:12\n---\nThis theory belong to [[Statistics like the path for approach the chaotic of life]] and threats with all the related to probabilities.\n\nThe theory of probability search model a environments, and such we can't predict what is going to happen (unreliable analytically since exist [[stochastic]]) we use randoms variables to try to predict what is gonna to happen next. \n\n - Along side statistics is one of the more practical fields from math, it finds ways to approach the complexity of our world.\n- Linear algebra has vector spaces, probability theory has [[Probability Space]].\n\nTo talk properly about the basis of statistics which is [[probability distribution]] one requires certain conditions [^1], one can't think on build a model when its data is very \"poor\".\n\nThere are some conditions of reproducibility about experiments .\n\n\n[^1]: [[Mathematics for Machine Learning]] pp. 181",
@@ -4904,7 +4884,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "490",
+    "id": "488",
     "title": "Sql Memory Llm",
     "excerpt": "Is well known that SQL is one of the most famous environments/[[Language Program]] to work with databases, being more specific with relational databas...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-07-20 11:40\"\n---\nIs well known that SQL is one of the most famous environments/[[Language Program]] to work with databases, being more specific with relational databases, the ones who works with rows and columns. \n\nNow this goes beyond my actual topics but give you more insight know what it is. The same for **R** who is not that different.\n\nNow respect my topic, is a good question wonder about the how is that exist memory in [[large language model]].\n\nOne need to differentiate between the [[Context size LLM]] and long term memory that in this situation mean a file something similar to [[RAG]] I would say.\n\nThe context size live basically in the Memory but the long term what it means? are strings, maybe parameters? what contain a .sqlite? binary data?",
@@ -4914,7 +4894,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "491",
+    "id": "489",
     "title": "Physical Informed Neural Networks",
     "excerpt": "What are in essence a [[Neural Network]]? Are functions, so we can basically create functions from [[Data]] (?). ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-07-20 11:01\nmodified: 2025-09-25 11:29\n---\n\nWhat are in essence a [[Neural Network]]? Are functions, so we can basically create functions from [[Data]] (?). \nAbstracting the most, where we are interested to find functions? [[Differential Equation]].\nSo es tentador try to use the actual theory that we have around Neural Networks and apply it, and find those tricky functions!\n\nHow neural networks are not that to old, we can actually say that this is a new field, I mean there exist documentation from 1980, but we can see more advance on 2017-2019.\n\nSo get excited!",
@@ -4924,7 +4904,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "492",
+    "id": "490",
     "title": "Deviation, One Dimension",
     "excerpt": "In the most basic case when we have a set of real numbers with $(card=n)$, we can easily compute the mean $(\\sigma^{2})$ and from that we can create a...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-07-20 10:30\n---\nIn the most basic case when we have a set of real numbers with $(card=n)$, we can easily compute the mean $(\\sigma^{2})$ and from that we can create another number such that:\n$$\n\t\\sigma^{2}=\\sum \\lvert x-\\overline{x} \\rvert^{2} \\frac{1}{n} \n$$\nWe call it variance $(\\sigma^{2})$. Now what does this number mean?\nThe deviation $(\\sigma)$ is a measure that tell how dispersed is our data, if all our data is the same (zero dispersion) then deviation is equal to zero, now if our our data is spread (in the extremes) then this number is big.\n\nNow how you could do it more variables, by using the [[Euclid Norm, product]]?\n\n[[Variance Many Dimensions]]",
@@ -4934,7 +4914,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "493",
+    "id": "491",
     "title": "How Lunch A Website",
     "excerpt": "This is amazing question. Because you need a server right. And",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-07-19 8:53\"\n---\nThis is amazing question. Because you need a server right. And \n",
@@ -4944,7 +4924,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "494",
+    "id": "492",
     "title": "Diffusion Problem",
     "excerpt": "> Find the reverse sampler. [^1]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-07-18 09:31\nmodified: 2025-11-06 09:42\n---\n> Find the reverse sampler. [^1]\nYou show to the model the initial models with  noise, how you denoise?\n\nAnd for generate images, how is that the prompt guide it?\n\nOf course they learn using [[Neural Network]] with a [[Transformer]].\n\n\n\n[[Difussion Models]]\n\n[^1]: [[Step by step Diffusion An Elementary Tutorial]]\n",
@@ -4954,7 +4934,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "495",
+    "id": "493",
     "title": "Change Of Variable One Variable",
     "excerpt": ">Let $f,g$ be [[Real function]] then [^1].",
     "content": "---\ntags:\n  - young\n  - atomic\nauthor: Jorge\ndate: 2025-07-05 13:32\nmodified: 2025-08-10 18:13\n---\n>[!theorem]\n>Let $f,g$ be [[Real function]] then [^1].\n> $$\\int_{a}^{b}f(u)du=\\int_{g(a)}^{g(b)}f(g(x))g'(x)dx$$\n\n- The prove is via [[Chain rule real functions|chain rule]].\n- I mean this is one key when you resolve integrals. \n- When you work with only a unique variable make a change variable is easy.\n- Now the question relies on the generalization, the multi variable case in that case you have to use the [[Jacobian Matrix]].\n- But I'm very interesting about what are the specific steps to show that theorem, I mean I don't know what is the pretty formal demonstration in the one variable case, so it's a good starting point. \n\n[^1]: [[Analisis Real Elon Lages]] pp. 164\n",
@@ -4964,7 +4944,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "496",
+    "id": "494",
     "title": "Inductors",
     "excerpt": "complements pretty well the circuit. And how you introducing it.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-07-04 14:13\nmodified: 2025-12-12 09:29\n---\ncomplements pretty well the circuit. And how you introducing it.\nAnd if you have two [[Solenoid]] that are concentric, and are pretty large so playing with some definitions you could find a constant that only depends on the geometry configuration. Is pretty similar to a [[Capacitors]].\n\nAnd I'm not sure but this acceerates electrons on circuits right. What they specifically do?\n\n\nNow the questions relies in why define this coefficient.\n\nAnd well that is the case where one could use to introduce the theme.\n$$\nL_{12}=\\mu_{0}\\frac{N_{1}N_{2}}{l}\\pi r_{1}^{2}\n$$\nThe area always needs to be a circle, bobina definiton and they need to be concentric, now the\n\n[[Magnetic Field Energy]]",
@@ -4974,7 +4954,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "497",
+    "id": "495",
     "title": "Statistics Equation",
     "excerpt": "\\overline{X}=\\frac{1}{n}\\sum_{i=1}^{n}X_{i}$$ ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-06-30 10:40\"\n---\n\n\nSample Mean\n$$\n\\overline{X}=\\frac{1}{n}\\sum_{i=1}^{n}X_{i}$$ \nVariance\n$$\ns^{2}=\\frac{1}{n-1}\\sum_{i=1}^{n}(X_{i}-\\overline{X})^{2}\n$$\nMaximum Likelihood Estimator (MLE) Condition\n$$\\frac{d}{d\\theta}\\log L(\\theta;X_{1},\\dots ,X_{n})=0 \n$$\nCumulative Distribute Function (CDF)\n$$\nF(x)=P(X\\leq x)\n$$\nExpected Value (Continue Case)\n$$\n\\mathbb{E}[X]=\\int_{-\\infty}^{\\infty} xf(x) dx \n$$\nVariance Formula (using expectation)\n$$\nVar(X)=\\mathbb{E}[X^{2}]-(\\mathbb{E}[X])^{2}\n$$\nCovariance\n$$\n\\text{Cov}(X,Y)=\\mathbb{E}[(X-\\mu_{X})(Y-\\mu_{Y})]\n$$\nCorrelation Coefficient \n$$\n\\rho_{XY}=\\frac{\\text{Cov}(X,Y)}{\\sigma _{X}\\sigma_{Y}}\n$$\n",
@@ -4984,7 +4964,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "498",
+    "id": "496",
     "title": "Theorem Conservative Force",
     "excerpt": "> This theorem states that exist a equivalence",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-06-28 20:18\"\n---\n>[!theorem]\n> This theorem states that exist a equivalence\n> - [[Path Independency]] (conservative)\n> - Exist a [[potential conservative force|potential function]] of $F$.\n> - Any [[Vector line integral|line integral]] over a closed curve is equal to zero.\n\n- This theorem need that the function is defined over [[Simply connected region]], if that were not the case a field with curl zero is not necessary conservative.\n\n![Conservative Fields.svg](Conservative Fields.svg)",
@@ -4994,7 +4974,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "499",
+    "id": "497",
     "title": "Torque Magnetico",
     "excerpt": "Okay give let's think on closed conductor (with a rectangular shape), where current is flowing, and of course the mere presence creates a magnetic fie...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-06-26 19:18\nmodified: 2025-11-17 16:28\n---\nOkay give let's think on closed conductor (with a rectangular shape), where current is flowing, and of course the mere presence creates a magnetic field, but let's add deliberately a [[Magnetic Field]], now this generates a [[Magnetic Force]], let's analyze the torque that is produced by this.\n\nOne reach to the conclusion that under certain condition that:\n$$\n\\vec{\\tau}=IAB\\hat{k}\n$$\n\nRespect the example, that is the basic how [[electric generators]] work. Which is incredible, \n\nAnd this is sufficient reason to define one super important constant. The [[Magnetic Moment]]",
@@ -5004,7 +4984,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "500",
+    "id": "498",
     "title": "Conductor",
     "excerpt": "A conductor is a metal, or semi metal where \"electricty\" could flow. I mean that is a pretty savage definition. Cave man",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-06-26 19:14\"\n---\n\nA conductor is a metal, or semi metal where \"electricty\" could flow. I mean that is a pretty savage definition. Cave man\n\nNow the question is why exist some materials that could flow. Why cupper, gold, and plata, could",
@@ -5014,7 +4994,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "501",
+    "id": "499",
     "title": "Current Density",
     "excerpt": "> Give it a [[conductor]] where exist [[Current Intensity]] the **current density** is define as [^1] [^2]:",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-06-26 19:00\"\n---\n>[!definition]\n> Give it a [[conductor]] where exist [[Current Intensity]] the **current density** is define as [^1] [^2]:\n>$$J\\equiv \\frac{I}{A}=nqv_{d}$$\n> Where $I$ is the current and $A$ is the transversal area and $n=\\frac{\\#port}{V}$ represents the density of charge, $q$ the [[Charge]] flowing and $v_{d}$ the [[Crawl Speed]].\n\n- The second equation is consequence of the definition\n- It have unit **Ampere per square meter**.\n- It also exist the differential form: $\\frac{dI}{dS_{n}}$\n- You can think it like a vector with direction equal to the flux of the positives charges. Why?\n- The third equal comes from the fact that $n=\\frac{port}{vol}=\\frac{port}{Area\\times dx}=\\frac{port}{area\\times vd\\times t}$\n- Because $\\Delta Q=num port*q$\n\n[^1]: [[Fisica para ciencias e ingenieria]] pp. 694\n\n[^2]: [[Physics III - 2025 II]] Session seven one.\n",
@@ -5024,7 +5004,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "502",
+    "id": "500",
     "title": "Force Definition",
     "excerpt": "How we could define force exist the natural understanding of this and also there it is the formal one.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-06-26 18:01\nmodified: 2025-09-30 16:06\n---\nHow we could define force exist the natural understanding of this and also there it is the formal one.\n\n>[!definition]\n>Let be $\\vec{P}$ the [[Linear Momentum]] of a [[particle classic physics punctual|particle]] we define the **force** of this using.\n>$$ \\vec{F}=\\frac{d(\\vec{P})}{dt}$$\n\n- What does it mean differentiate that vector over $t$.\n- This definition assumes that $\\vec{P}$ exist, what genre it?\n- And really that the force matter is something that bother me, because the times plays an important role, I mean who applied a force that much of time. The definition who helps a lot in these cases are the [[chaImpulse]].\n\n[^1]: [[Fisica Alonso Finn]] pp.\n",
@@ -5034,7 +5014,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "503",
+    "id": "501",
     "title": "Colision   Classical",
     "excerpt": "So when we have a [[particle classic physics punctual]] we could modelate easy when a collision happens.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-06-26 17:44\"\n---\nSo when we have a [[particle classic physics punctual]] we could modelate easy when a collision happens. \n",
@@ -5044,7 +5024,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "504",
+    "id": "502",
     "title": "RLC Circuits",
     "excerpt": "When you add an [[Inductors]]. So there are two cases that are of our interest, when you don't have a [[Electromotive Force]] $\\varepsilon$. Or when y...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-06-22 13:12\nmodified: 2025-12-13 11:17\n---\nWhen you add an [[Inductors]]. So there are two cases that are of our interest, when you don't have a [[Electromotive Force]] $\\varepsilon$. Or when you have a [[Alternating Current]].\n\nWhen you don't an external fund, then we talk about a [[Damped Harmonic Motion]].\n\nWhat is the equation that rule in that case? Recall that Broca was able to derive it using energy also.\n\nWhen you first talk about the case [[LC Circuit]], but later you consider that [[Resistors]] say good bye to energy via **Heat**. [[Electric Power Potency]].\n\nSo if you take the expression of the **Electric Power Potency** that we obtain from the **LC Circuit**. but with the additional that here the energy is saying bye.\n\nYou obtain that:\n\n$$\n-Ri^{2}= i\\left( \\frac{Q}{C}+L \\frac{dq^{2}}{dt} \\right)\n$$\n\nBut you obtain a equation which is sadly equal to the [[Damped Harmonic Motion]].\n\nThen we know that the solution implies some decay exponential. \n\nKey parameters are:\n\n$$\n\\omega_{0}=\\frac{1}{\\sqrt{ LC }}\n$$\n\n$$\n\\alpha=\\frac{R}{2L}\n$$\nWe care the situation where it oscillates, and the [[Angular velocity]] is:\n$$\n\\omega_{d}=\\sqrt{ \\omega_{0}^{2}-\\alpha^{2}}\n$$\n\nLet's talk about [[Resonance RLC Circuit]]\n",
@@ -5054,7 +5034,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "505",
+    "id": "503",
     "title": "Tridiagonal Symmetric Matrix",
     "excerpt": "2 & -1 & 0 & \\cdots & 0 \\\\",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-06-21 11:35\"\n---\nIs:\n$$\nH=\\begin{pmatrix}\n2 & -1 & 0 & \\cdots & 0 \\\\\n-1 & 2 & -1 &  \\cdots & 0 \\\\\n0 & -1 & 2  & \\cdots & 0 \\\\\n\\vdots & \\vdots & \\vdots  & \\ddots & -1 \\\\\n0 & 0 & 0 & -1 & 2\n\\end{pmatrix}\\in \\mathbb{R}^{n\\times n}\n$$\nThe beaty of this [[Matrix what it is]] is that rule the [[Coupled Oscillators]] when the masses and the resorts constants are equal. And the beaty is that we know all the values of its [[EigenValues]]. One reach to those values with theory of [[Differential Equation]],  something about Dirichelt frontier conditions.\n\n[[Symmetric matrix]]\n\nyes, technology is \n\n$$\n\\lambda_{j}=2-\\cos\\left( \\pi(\\frac{j}{n+1}) \\right)\n$$\nIt is amazing how is that the cosine of the \"divisors\" of pi rule this.\nAnd of course is posible to obtain the [[Eigenvector]]:\n$$\nv_{i}=\\sin\\left( \\pi\\left( \\frac{i}{n+1} \\right) \\right)\n$$\nLet's say that this is the most basic form. It has a special name. \n\nWhat about the general form?",
@@ -5064,7 +5044,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "506",
+    "id": "504",
     "title": "Binary Neurons States",
     "excerpt": "The less time is thirty minutes and well.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-06-18 22:38\"\n---\n\n\n\nThe less time is thirty minutes and well.\n\nEach neuron only could two states, either ON (1) or off OFF (0).\n\nThe question relies on what type of information I could use?\n\nAnd why they don't use more numbers, why only restrict to those two?\n\nThis remembers [[Perceptron]]",
@@ -5074,7 +5054,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "507",
+    "id": "505",
     "title": "Ferromagnetics",
     "excerpt": "> The ferromagnetics are a set of  elements ubicated on the third line of the [[Chemical Table]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-06-12 10:30\"\n---\n>[!definition]\n> The ferromagnetics are a set of  elements ubicated on the third line of the [[Chemical Table]]\n\n- The most representative is the iron.\nIron Nickel Cobalt Steel Ferrites\n\tYou could create it when your using wire, the [[Magnetic Field]] is gonna to appears because [[Current Intensity]] and allign the atoms?\nSteel \n**Ref**.\n[[Quimica]]",
@@ -5084,7 +5064,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "508",
+    "id": "506",
     "title": "Soistaniable Energy",
     "excerpt": "I mean with the amazing amount that servers are going to use in the future [[nuclear energy]] it becomes more necessary, I The less time is thirty min...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-06-07 21:59\n---\nI mean with the amazing amount that servers are going to use in the future [[nuclear energy]] it becomes more necessary, I The less time is thirty minutes and well I am pretty sure that science is gonna to do it possible.",
@@ -5094,7 +5074,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "509",
+    "id": "507",
     "title": "What Mean Being Trainable On Pytorch",
     "excerpt": "I mean is kind of confusing what it means all about this graphs, what it means grad. I mean torch to be very efficient, faster I guess that behind the...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-06-07 20:58\"\n---\nI mean is kind of confusing what it means all about this graphs, what it means grad. I mean torch to be very efficient, faster I guess that behind there be things weird. And to have a fully understanding I think it is necessary!",
@@ -5104,7 +5084,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "510",
+    "id": "508",
     "title": "Table Of Parameters",
     "excerpt": "Here some examples of how the [[parameters on deep learning]] are distributed.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-06-07 13:59\n---\nHere some examples of how the [[parameters on deep learning]] are distributed.\n\n- [[gpt3p.png|175 B parameters to GPT-3]]\n- [GPT-124M parameters](https://github.com/openai/gpt-2)\n\n\n\n\n",
@@ -5114,7 +5094,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "511",
+    "id": "509",
     "title": "Linearity On Neural Networks",
     "excerpt": "The less time is thirty minutes and well.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-06-03 08:37\"\n---\nThe less time is thirty minutes and well.",
@@ -5124,7 +5104,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "512",
+    "id": "510",
     "title": "Batch Normalization",
     "excerpt": "This is completely for optimize because [[Feed Forward Neural Network]] works but are hard to train.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-06-03 08:08\"\n---\nThis is completely for optimize because [[Feed Forward Neural Network]] works but are hard to train.\nExist a book that possible could be useful for introduction [[Natural Language Processing with Transformers]]",
@@ -5134,7 +5114,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "513",
+    "id": "511",
     "title": "Universal Sustitution",
     "excerpt": "When you have a function rationale of sines and cosines use the follow substitution to solve that [[integral]]. ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-06-02 14:16\"\n---\nWhen you have a function rationale of sines and cosines use the follow substitution to solve that [[integral]]. \n\n[[Change of variable one variable]]\n\n$$\nu=\\arctan\\left( \\frac{x}{2} \\right)\n$$\nSo you can rewrite easily $\\cos(u)$ and $\\sin(u)$",
@@ -5144,7 +5124,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "514",
+    "id": "512",
     "title": "Initialization Parameters",
     "excerpt": "So when I was trying to create a [[Feed Forward Neural Network]], I take some arbitrary decision, (remember what they were).",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-06-02 12:11\"\n---\nSo when I was trying to create a [[Feed Forward Neural Network]], I take some arbitrary decision, (remember what they were).\n\nOne was when I initialize the [[parameters on deep learning]] (the weights and bias), and of course I put a uniform distribution from -10 to 10, and it never converge. \n\nSo they tell me about that I need to initialize it in specially ways, and I guess that depends on some factors,  like the [[Activation function]], and I guess that from the [[Optimizer for Neural Networks]].\n\nSo also exist more theory here. \n\n",
@@ -5154,7 +5134,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "515",
+    "id": "513",
     "title": "Learning Rate",
     "excerpt": "So this numbers is close to zero, so the parameters don't change that bad, ",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-06-02 12:07\"\n---\nSo this numbers is close to zero, so the parameters don't change that bad, \n\n\nand also exist something about alpha and beta that comes from other way,\n\nSo this also depends on the chose of the [[Optimizer for Neural Networks]]. ",
@@ -5164,7 +5144,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "516",
+    "id": "514",
     "title": "Parameters On Deep Learning",
     "excerpt": "So we call parameters to the numbers in the [[Tensor - Computation|tensors]], and his life also depends on the [[learning rate]] , and what technique ...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-06-02 12:02\"\n---\nSo we call parameters to the numbers in the [[Tensor - Computation|tensors]], and his life also depends on the [[learning rate]] , and what technique used on [[initialization parameters]].\nAnd of course when talking about [[Sparse Moe]] we talk of [[Active Parameters]]\n\n[[Table of parameters]] to get used to it.\n\nLike state-of-the-art model all of them use the [[Transformer]]",
@@ -5174,7 +5154,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "517",
+    "id": "515",
     "title": "Positional Embedding Matrix",
     "excerpt": "The less time is thirty minutes and well.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-06-02 11:05\"\n---\nThe less time is thirty minutes and well.",
@@ -5184,7 +5164,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "518",
+    "id": "516",
     "title": "Pipe Line And Dual Pipe Line",
     "excerpt": "The less time is thirty minutes and well.In software Pipe line refers to the convey of information, data through two devices.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-06-02 09:56\"\n---\nThe less time is thirty minutes and well.In software Pipe line refers to the convey of information, data through two devices.\nIn [[DeepSeek-V3 Technical Report]] introduces the word _Dual Pipe Line_. \n\nAnd something that I really like it was the in one video of platzi they combine four macs and the quantity of [[teraflops]] are added, was simply amazing.\n\n> The idea is to overlap the computation and communication within a pair of individual forward and backwards chunks. Each chunk is devided in four components.\n\nI mean it would be a bomb that you can use the power of many CPU's and GPU's like a one. The communication between devices is important we need write and read a lot of data and being actualized constantly.\n\nThis word \n\nI know the NVlink that allows to connect two GPUs. And a more old technology is the SLI. This are of GPU consume, now what is the name of the technology that cluster, servers use, because they meed to connect not only GPU but also CPUs and memory virtual space. And it's amazing how something so abstract could be take form on a virtual space.\n\nThey say that for servers NVlink and Nvidia Infiniband, or more rustic with PCIe scaling  and Nvidia DGX systems. \n\nAnd was thinking on a miner (cryptocurrency) that needs knows pretty well, because they need to use many GPUS.\n\n[[Cryptocurrency decentralism]]",
@@ -5194,7 +5174,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "519",
+    "id": "517",
     "title": "LLM'S Basic Working",
     "excerpt": "What it would be a beauty definition of LLM, then is important differentiate I think that the model itself is only that but without the tokenizer neit...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-06-02 09:17\"\n---\nWhat it would be a beauty definition of LLM, then is important differentiate I think that the model itself is only that but without the tokenizer neither the choose of the token, once that you have the logits.\n\nSo a function multilinear stochastic predictive token I need to be very cautious.\n\nWe could understand **LLMs** like functions but for words, we can give it a uncompleted sentence as input and the output will be the missing word. If we iterate this process we could obtain sentences.\nSo we could say that the function depends on: before words, the message intention, the context/place, the receptors, and a ton of variables. How we integrate that amount information? Let's give the first step, and that is grasp the follow [[Transform Architecture|architecture]] of course is not the unique architecture but is the most efficient.\n![transformerArchitecture.png](transformerArchitecture.png)\n\nOnce that you understand all, to have your own model follow the next steps.\nFirst it's obvious that we need data, data that \"easily\" could be extract form internet. Books, papers, websites, code, repositories, everything that reflect the human language.\nNow let's say you have a file with millions of PDFs with all this data. What do I do with this?\nI mean we can give a each word a number this is know like [[Tokenization - Embedding - LLM]]\n[[Transformer]]\nOnce you have all the data, what's next?\n\nYou need to choose a structure, (here I'm gonna to do a remark) I'm gonna to talk before that said paper that change the game.\n\n[[Choose the model architecture LLM]]\n[[Training Phase LLM]]\n# YouTube Video\n\n ![](https://www.youtube.com/watch?v=LPZh9BOjkQs&t=56s)\n\n\n![](https://youtu.be/FdZ8LKiJBhQ)\n\n\nhe less time is thirty minutes and well.",
@@ -5204,7 +5184,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "520",
+    "id": "518",
     "title": "LLM'S",
     "excerpt": ">Is the fusion of a [[Tokenizer]], a [[Transformer]] and a selection method for the logits. For the state-of-the-art models a bunch of techniques for ...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-06-02 09:17\nmodified: 2026-01-20 07:54\n---\n>[!definition]\n>Is the fusion of a [[Tokenizer]], a [[Transformer]] and a selection method for the logits. For the state-of-the-art models a bunch of techniques for improve the answers.\n\n- The main process occurs in the **Transformer** step.\n- In the practical exist a ton of them, you have to [[state of the art models|choose them wisely]].\n- Decide [[large language model]], [[Large Dataset to train classification]]",
@@ -5214,7 +5194,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "521",
+    "id": "519",
     "title": "Capacitors",
     "excerpt": ">A capacitor is a physical object that keeps charge, and the most important of it is:",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-05-30 10:38\nmodified: 2025-11-04 11:51\n---\n>[!definition]\n>A capacitor is a physical object that keeps charge, and the most important of it is:\n>$$  C\\equiv \\frac{Q}{\\Delta V} $$\n\n- Where the value of $C$ depends completely on the geometry and the intrinsic material of the materials that you are using. Similar to a [[Inductors]].\n- With $Q$ [[Charge]], where $C$ is called the **capacitance** and is a constant and $\\Delta V$ is the [[Potential Difference]].\n- [[Capacitor Plaques Paralels]]\n- The second equal comes from the fact of the capacitors are like two planes  the electric field on a plane is lke $\\frac{\\sigma}{\\varepsilon_{0}}$  that with the fact of [[Potential Uniform Electric Field]] $\\Delta V=Ed$, and assuming that the plane is a square then you have it.\n- It could be considered a [[Dielectric Material Constant]]\n- [[Capacitor Association]]\n\n[[Spherical Capacitors]]\n[[Resistors]]\n[[Electromotive Force]]\n[[Electrical Permittivity on the Vaccum]]\n[[Capacitorrs Resistencia.png]]\n\n\n**Ref**. [[Fisica para ciencias e ingenieria]]",
@@ -5224,7 +5204,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "522",
+    "id": "520",
     "title": "Change Of Variable Vector Field",
     "excerpt": "Ok we need first a linear map? But what? if it linear is super poor right? ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-05-30 10:30\"\n---\n\nOk we need first a linear map? But what? if it linear is super poor right? \nOne moment I think that I confussing with scalar functions.\n\nThe  question is that  here we obtain a matrix $n\\times n$. So then if we try to make a change of variable in vector field we would obtain a tensor?\n\nOf course we need to difference between when want to calculate the derivative of compositions or we want to make more easy a integral.\nOne is called generlalized chain rule and other ta\n\n[[change of variable]]",
@@ -5234,7 +5214,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "523",
+    "id": "521",
     "title": "Center Of Mass",
     "excerpt": ">Give it a [[particle system]] the center of mass is a vector r",
     "content": "---\ntags:\n  - baby\n  - author: Jorge\ndate: \"2025-05-29 10:57\"\n---\n>[!definition]\n>Give it a [[particle system]] the center of mass is a vector r\nwhere ri is the vector position of the ith [[particle classic physics punctual]] \n\n\n- when the body have symmetry axes ave symmetThe center of mass is always to be there; how you prove that; integral propierty of par function? what means that symmetry is a discrete one?  \n[[center of mass idea]]\n**Ref**. \n$$\n\\mathbf{r}_{c}=\\frac{\\sum_{i=1}^{n} m_{i}\\mathbf{r_{i}}g}{\\sum_{i=1}^{n} m_{i}g}\n$$",
@@ -5244,7 +5224,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "524",
+    "id": "522",
     "title": "Conservative Force Physics",
     "excerpt": "A force is conservative if it's dependency of the position vector is in such a way that that the [[Work]] could be expressed how the difference betwee...",
     "content": "---\ntags:\n  - baby\n  - author: Jorge\ndate: \"2025-05-28 22:49\"\n---\n>[!definition]\nA force is conservative if it's dependency of the position vector is in such a way that that the [[Work]] could be expressed how the difference between the difference of a quantity  $E_{p}(x,y,z)$ between the end and final point. To  the quantity we called **Potential** **function**.\n\n> We could call a force \"conservative\" because its corresponding vector field is conservative.  \n\nI want a more physical interpretation. \n\n\n**Ref**. [[Fisica Alonso Finn]]  pp.213",
@@ -5254,7 +5234,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "525",
+    "id": "523",
     "title": "Transposition",
     "excerpt": "No excerpt available",
     "content": "---\ntags:\n  - baby\n  - author: Jorge\ndate: \"2025-05-27 07:59\"\n---\n>[!definition]\n>[[Permutation]]\n\n**Ref**. ",
@@ -5264,7 +5244,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "526",
+    "id": "524",
     "title": "Sylvester Criterion",
     "excerpt": " This matrix is very useful to calculate if a point is critical point or not. First we need to equal to zero the [[Gradient]] $\\nabla f$. Then you put...",
     "content": "---\ntags:\n  - baby\ndate: 2025-05-27 07:26\nmodified: 2025-08-22 10:25\n---\n>[!criterion]\n This matrix is very useful to calculate if a point is critical point or not. First we need to equal to zero the [[Gradient]] $\\nabla f$. Then you put those points (obtained on the past step) on the [[Hessian matrix]], and then you look on the [[Definiteness of the matrix]]. And from that you can says if it as a **minima or maxima**. \n\n- Is clear that is criterion from [[optimization problem]] for well defined [[Scalar function]]\n",
@@ -5274,7 +5254,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "527",
+    "id": "525",
     "title": "Quadratic Form",
     "excerpt": ">A **quadratic form** takes a vector and and return a number. Let $x$ be a column vector.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-05-26 13:25\"\n---\n>[!definition]\n>A **quadratic form** takes a vector and and return a number. Let $x$ be a column vector.\n>$$\nQ_{A}(x)=x^{T}Ax $$\n\n- Where $A$ is [[Symmetric matrix]] of size $n\\times n$.\n- Is clearly that the result is based on quadratic terms of the vector $x$, (where the names comes from)                          \n- We could say that practically a  matrix define for complete a quadratic form.\nAnd we could define [[Definiteness of the matrix]] with this. A matrix is positive definite if:\n$$\nx^{T}Ax >0, \\forall x\\neq 0 $$\n- And here there an amazing intuition I mean why this could be a [[Scalar function]], is the same!?\n- Is clear that we can generalize this concept by only the size of the [[Matrix what it is]]\n- Another name",
@@ -5284,7 +5264,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "528",
+    "id": "526",
     "title": "Graph",
     "excerpt": "A graph $G$ (**no-aimed**) is a tuple $(V,A)$ where $V$ (natural numbers) is a finite set of nodes-vertices and $A$ is a set of edges (non ordered pai...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-05-22 15:26\"\n---\nA graph $G$ (**no-aimed**) is a tuple $(V,A)$ where $V$ (natural numbers) is a finite set of nodes-vertices and $A$ is a set of edges (non ordered pairs).\n\nA man that this is simply amazing.\n\n\n>[!example]\n>$V=\\{ 1,2,3 \\}$, $A=\\{ (1,2),(2,1),(2,3),(3,2) \\}$\n\nA **aimed graph** is the same of the first but first here exist arrows. One could go from $A$ to $B$ but not from $B$ to $A$.\n\n\n[[Adjacent matrix]]",
@@ -5294,7 +5274,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "529",
+    "id": "527",
     "title": "Ethernet",
     "excerpt": "Before always that I see a ethernet cable it seem it to me bored. But I was missing that those things are really excited.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-05-22 08:44\"\n---\nBefore always that I see a ethernet cable it seem it to me bored. But I was missing that those things are really excited.\n\n\nTHe same with the router that internet give to us. I was wrong.\n\nOkay the first problem was fix the IPS to be static, what does it mean? Using the GUI is quite easy but since we don't have a gui, we have to do it manually, which it was a pain on the ass.\n\nBut it was a issue, with the lan0 eth and now we use epns, after that the \nmention that we should to refresh the (turn on and off) gui of GNOME, then after a ton of errors, more problems with the DBUS, which in Arch in really a pain on the ass, gemini couldn't handle and if these don't read internet is quite hard that it solve it! GPT solve but partially I give up for today, \n\nyou  have to install a ton of stuff on Arch but it really it fells the fast improvements.\n\nAnd is really a pain on the ass, all this stuff, which input leap, but the important is know what is happening. And is something that works with AI. Without AI assistants I fell weak!\n\n\n\n\n",
@@ -5304,7 +5284,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "530",
+    "id": "528",
     "title": "Hyperparameters",
     "excerpt": "So judging by the name what is the difference with [[parameters on deep learning]]",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-05-21 10:14\"\n---\nSo judging by the name what is the difference with [[parameters on deep learning]]\n\n\nAll the parameters reside on the matrices and vectors (weights and bias)? of the [[Feed Forward Neural Network]].\n\nAnd also while using pytorch those matrices in some way are different from normal matrices.\n\nHyper parameters of the model like the embed dimension and that stuff. For chatgtp2 we have the follow hyperparameters, general because really exist a ton. and well all make reference, we could say that this define the [[Transform Architecture]].\n\nThe vocabulary size. ```vocab_size```[[Vocabulary - Tokenizer]] \nThe block size. ```block_size``` \nThe number the heads for layers. ```n_head``` \nThe embedding size. ```n_embd``` [[Embedding dimension]]\nThe numbers of layers. ```n_layer``` \n\nOnce you define this parameters you could define the [[Embedding matrix]] and the [[positional embedding matrix]].",
@@ -5314,7 +5294,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "531",
+    "id": "529",
     "title": "Lens",
     "excerpt": "First we need to understand the difference between [[mirrors]] and lens. A example is the mirrors that exist in these malls, now respect lens we have ...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-05-21 08:08\"\n---\nFirst we need to understand the difference between [[mirrors]] and lens. A example is the mirrors that exist in these malls, now respect lens we have our glasses and [[Magnifiers]] [[glasses]]\n\n[[Glass]]\n\n\n![[Lentes Fisica.png]([Lentes Fisica.png)]![[Lentes Optica.png]([Lentes Optica.png)]",
@@ -5324,7 +5304,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "532",
+    "id": "530",
     "title": "Glasses",
     "excerpt": "The science of our glasses, I mean how is possible that only by blending [[Glass]] we could observe long distances.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-05-21 08:06\n---\nThe science of our glasses, I mean how is possible that only by blending [[Glass]] we could observe long distances.",
@@ -5334,7 +5314,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "533",
+    "id": "531",
     "title": "Magnifiers",
     "excerpt": "My glasses made of [[Glass]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-05-21 07:36\"\n---\nMy glasses made of [[Glass]]",
@@ -5344,7 +5324,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "534",
+    "id": "532",
     "title": "UV Light",
     "excerpt": "And UV light is of this things that are amazing. Is easy to understand it from the [[Electromagnetic Radiation]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-05-20 17:46\"\n---\nAnd UV light is of this things that are amazing. Is easy to understand it from the [[Electromagnetic Radiation]]",
@@ -5354,7 +5334,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "535",
+    "id": "533",
     "title": "Newton Binomial Idea",
     "excerpt": "Now the question is: (and I have to wondered this before, but I think that the answer was quite obvious)",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-05-20 09:33\"\n---\n\n\nNow the question is: (and I have to wondered this before, but I think that the answer was quite obvious)\n\n>[!question] Why is named of Newton?\n\nIt's true that many cultures already know this formula and it is widely used by many cultures before [[Isaac Newton]], but he instead of using only natural numbers he used also negative and rational numbers. He documented his results and share to the world. Surprising and fascinating them.\n>[!success] Comment\nI remember quite well that in four grade of secondary teach me this topic. Of course in the school only teach you the formula and that is all. I mean not even tough you the relation ship that exist with the Pascal triangle, I mean that female teacher what study and why is teaching mathematics.\n\n\n>Now of course this formula born by the necessitate of calculate quickly the binomial, do the classic method is so embarrassing, with the exponents we do not have any problem, the problem is with the coefficients that appears, how we can find a rule to governs all these numbers?  \n\nThe answer is with the [[Pascal Triangle]]. This give to us in a fancy way the find coefficients, this is known like the ___Binomial Theorem__\n",
@@ -5364,7 +5344,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "536",
+    "id": "534",
     "title": "Gravitational Field",
     "excerpt": ">This is pretty interesting because is one entry point to [[General Relativity Theory MOC]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-05-19 18:13\"\n---\n\n>This is pretty interesting because is one entry point to [[General Relativity Theory MOC]]\n\nWell is the field generated by a [[mass, everything have mass]]",
@@ -5374,7 +5354,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "537",
+    "id": "535",
     "title": "Equations Practice",
     "excerpt": "[[theorems for real analysis elon]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-05-15 17:37\nmodified: 2025-09-11 07:12\n---\n[[theorems for real analysis elon]]\n\n[[Physics Equations]]\n[[Statistics Equation]]\n\n$$\n\\begin{align}\n\\Lambda(x)= \\\\\nx_{c}^{n}\\frac{\\int xdV}{\\int dV} \\\\\n\\kappa=\\frac{8\\pi G}{c^{4}} \\\\\ng_{\\mu \\nu}=[S1]\\times \\text{diag(-1,+1,+1,+1)} \\\\\nR ^{\\mu}_{\\alpha \\beta\\gamma}=[S2 ]\\times(\\Gamma)\n\\end{align}\n$$\n Hilbert Equations:\nHilbert's Integral Equation\n\n$$\n\\phi(x)+\\int_{a}^{b}K(x,s)\\phi(s)(ds)=f(x)\n$$\n$$\na_{pq}=\\int _{a}^{b}\\int_{a}^{b}K(x,t)\\omega_{p}(t)\\omega_{q}(t)dxdt\n$$\n$$\n\\phi_{p}+\\sum_{q=1}^{\\infty}a_{pq}\\phi_{q}=f_{p},  p=1,2,3,\\dots\n$$\n$$\nf=\\sum_{i}\\left( \\frac{p_{i}}{q_{i}} \\right)^{2}\n$$\n",
@@ -5384,7 +5364,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "538",
+    "id": "536",
     "title": "PowerOfWork",
     "excerpt": "Here is another place where we observe the importance of the [[cluster servers]].",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-05-14 12:39\"\n---\nHere is another place where we observe the importance of the [[cluster servers]].\nBasically this is what we called mine, people with some knowledge enter to the [[Blockchain]] and they are playing like mini lotteries to earn some bitcoin. \n\nBasically is like a job they \"check\" that everything ",
@@ -5394,7 +5374,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "539",
+    "id": "537",
     "title": "Path Independence Physics",
     "excerpt": "A conservative force is such that the [[Work]] only depends on the initial and final positions and not the path taken.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-05-11 10:31\"\n---\nA conservative force is such that the [[Work]] only depends on the initial and final positions and not the path taken.\n\n[[Electrostatic force -electrical]]\n\nAnd I have always a idea because this happens (that only cares the final positions and not the path) for instance if we want to get close two electrons the work that I need if I take the follow path, and there moments when you need to make a positive work and the another it is negative, this cancel out , and only you are interested in the initial and final positions, in secundary like exist places where the potential is pretty regularly it's pretty easy to calculate that differential but the cases where exist a field with many charges I think is kind of hard.   \n\n[[]]",
@@ -5404,7 +5384,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "540",
+    "id": "538",
     "title": "Electrical Potential Energy",
     "excerpt": "When we are on the context of [[Electric Field]], and we want to know the [[Work|work]] made it by the this over a infinitesimal displacement:  ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-05-11 10:09\nmodified: 2025-08-22 20:04\n---\nWhen we are on the context of [[Electric Field]], and we want to know the [[Work|work]] made it by the this over a infinitesimal displacement:  \nAlso we know.\n$$\nW_{int}= \\vec{F}_{e}\\cdot d\\vec{s}=q\\vec{E}\\cdot d\\vec{s}=-dU_{E}\n$$\n\nAnd if you integrate. The [[Potential energy classic]] associated to this system [[Charge]] - Electrical field.\n\nFor discrete distributions: But here doesn't have sense because what is that $q$\n$$\n\\Delta U_{E}=-q\\int_{A}^{B} \\vec{E}\\cdot d\\vec{s}\n$$\nAnd this.\n$$\nU_{E}=\\frac{1}{2}\\int V.dq\n$$\n[[Physics III - 2025 II]]",
@@ -5414,7 +5394,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "541",
+    "id": "539",
     "title": "How Cryptos Works",
     "excerpt": "This virtual coin relies on four pillars.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-05-05 16:43\nhour: 18:49\nmodified: 2025-09-16 08:48\n---\nThis virtual coin relies on four pillars.\n\n1. [[PowerOfWork|POW]]\n2. [[Blockchain]]\n3. [[PeerToPeer|P2P]]\n4. [[Cryptography]]\n\nAnd it seem it interesting what happen about the logarithmic coins.\n\nAnd it would be really sad if one day I put my money there and for some reason the coin lost its value. That could happen? I don't know, the third world war maybe or something similar can fluctuate its value.\n\nHistorically this coin increase its value, in the other hand the dollar decrease its value.\n\nFinancial Education.- I mean the basics are quite important.",
@@ -5424,7 +5404,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "542",
+    "id": "540",
     "title": "Surface On R3 Via Integrals",
     "excerpt": "If you have the parameterization of the surface, which is a [[Vector field]] in the sense that we attach to each point of the plane to each space poin...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-30 10:30\nmodified: 2025-09-09 12:58\n---\nIf you have the parameterization of the surface, which is a [[Vector field]] in the sense that we attach to each point of the plane to each space point.\n$$\n\\varphi:\\mathbb{R}^{2}\\to \\mathbb{R}^{3}\n$$\nNow you can obtain the area by:\n$$\n\\iint \\limits_{S}dS=\\iint \\limits_{D}\\ \\lVert r_{\\mu}\\times r_{\\nu} \\rVert d\\mu d\\nu\n$$\n\n- I think that is amazing that the [[Determinant of a matrix|determinant]] appears here because it reflects pretty well the concept of what means, area.\n- Is clear that when $f=1$ then we obtain the are of the [[Important surfaces on R3|surface]], if you want to calculate the area of a surface the doubles or triples are not useful, a good reason to describe this is by thinking that they have units. \n\n\n\nconjunto simplemente conex",
@@ -5434,7 +5414,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "543",
+    "id": "541",
     "title": "Self Attention Idea",
     "excerpt": "Allows token attend each others in parallel.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-29 14:35\nmodified: 2025-09-25 10:59\n---\nAllows token attend each others in parallel.\n\nThe _parallelisation_ it's possible for the [[Gpu paralellism-deep learning-computational costs]],it's perform in the _multi head attention_ task\n\nBasically (_inference_), give it a set of words in its vector form, apply this mechanism makes change the values of the vector by summing vector, a single head make change a little, but the sum of many heads change considerably the words. [[Multi-head attention]].\n\nThis is vector that change the meaning of the words is obtained by **Attention Formula**. ",
@@ -5444,7 +5424,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "544",
+    "id": "542",
     "title": "Query And Key Idea",
     "excerpt": "The query is ts asking if exist adjectives in front of a noun, the key vector is answer that question. (All implicitly of course, encoded in the value...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-29 14:29\nmodified: 2025-10-19 11:41\n---\nThe query is ts asking if exist adjectives in front of a noun, the key vector is answer that question. (All implicitly of course, encoded in the values of the matrix). [^1]\n\nNow let's relate this idea to the [[Key Value Cache]], if the **key** just can look at the past, why recompute it again? And the values are the same so its has all the sense.\n\nNow it the training we use this trick? I don't think so. [[Use of batch in Deep Learning]].\n[[Key Value Cache Training]]\n\n\n- For each head we have one a unique $W_{Q}$ and $W_{K}$. \n- On each attention head operates on **smaller subspace** of the full model dimension.\n- Creating the key and query vectors is something that happen on the RAM they are momentary.\n- The dimension of the query and key vector are determined by the _dimension model (quantity of parameters)_ the numbers of _heads_ and the \"head dimension\"\n\n[^1]: [[Natural Language Processing with Transformers]] pp. 14\n",
@@ -5454,7 +5434,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "545",
+    "id": "543",
     "title": "Embedding Dimension",
     "excerpt": "The **embedding dimension** defines how many parameters a token will have.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-29 14:05\nmodified: 2025-12-22 12:12\n---\nThe **embedding dimension** defines how many parameters a token will have.\n\nExist a whole paper about how is this\nWe are going to notate it simply like : $d$\n\n>The interesting thing is that while more bigger this numbers we have more options to express one word over a complex context.\n>Even exist a theorem that relate the exponential- ",
@@ -5464,7 +5444,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "546",
+    "id": "544",
     "title": "Context Problem",
     "excerpt": "We know that a part of what we call _context_ relies on the use of adjectives, what other words are around, the physical space between the receiver an...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-29 13:43\nmodified: 2025-08-11 22:30\n---\nWe know that a part of what we call _context_ relies on the use of adjectives, what other words are around, the physical space between the receiver and speaker, all those factors.\n\nThis modifies the meaning of the word, but how could a model understand all these modifications? \n\n>[!example]\n>That person is crying (a funeral) (a success-hard event).\n\nSolution:\nword -> vector + attention\n\n\n---\nfor us this is translated to change the values of the [[Tokenizer|words trough its vector parameters]].\n\nThus, we have to know the position of the words and ask if there adjectives in front of a word, for that purpose exists the _query vector_.\n\nThis have all the implicit information of the context related to a specific word, thus to each vector we have associated a _query vector_ that encodes all that contextual information respect that word.",
@@ -5474,7 +5454,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "547",
+    "id": "545",
     "title": "Blockchain",
     "excerpt": "Study and more study. It's only about study all the day man, read all the day, and being smart to earn money from that.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-29 08:36\"\n---\nStudy and more study. It's only about study all the day man, read all the day, and being smart to earn money from that. ",
@@ -5484,7 +5464,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "548",
+    "id": "546",
     "title": "Trading",
     "excerpt": "Well this is pretty interesting and exciting for me, I only need to be very aware of the price of dollar and the economic stability, and in certain po...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-29 08:33\"\n---\nWell this is pretty interesting and exciting for me, I only need to be very aware of the price of dollar and the economic stability, and in certain point the idea of make profit doing something so simple is exciting, and it's quite the same with [[Cryptocurrency decentralism]] but for that you need to [[Blockchain]] and it's really exciting the true.\n\nAnd here the skill of see what decisions take the politicians is very important. Have this skill to sell and buy in the precise moments.\n\nAnd it's pretty interesting how work all of this, I use BCP I think is the better bank in Peru, and respect the change between dollar and soles, I understand that they establish it's own  price that depends on the market and some cost that they pay for the transaction.\n\n>I think that is a begin for me in the financial world\n\nAnd a problem is where you search the source, I guess that the better is check everyday the prices in these two banks and save that data on python.\n\nI wonder what other kinds of make money worth.\n\nThis strategy of buy crypto in one country and sell it on another is tricky.",
@@ -5494,7 +5474,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "549",
+    "id": "547",
     "title": "Data Storage System",
     "excerpt": "I mean if you are a scientific after the publication of the Theory of the information of claude shannon, all the information could be zeros and ones. ...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-28 10:34\"\n---\n\nI mean if you are a scientific after the publication of the Theory of the information of claude shannon, all the information could be zeros and ones. Now the questions is how you storage a lot of this zeros and ones, I say millions of them, it's a hard work. \n\nBecause before the unique way of storage is trought books, draws, and about this it's a completely natural question the printing, this marketing of the books and paper, I mean that it is a important.\n\nAnd the use and exploitation of the paper also a huge task, well today all is industrialized but I remember pretty well that one day I tried to make paper it's not a easy task, and the quality of this is very poor.\n\n[[Data storage]]",
@@ -5504,7 +5484,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "550",
+    "id": "548",
     "title": "DCGAN Deep Convolutional GAN",
     "excerpt": "I guess that this is a step further of the [[GAN-Generative Adversarial Network]]. ",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-28 07:38\"\n---\nI guess that this is a step further of the [[GAN-Generative Adversarial Network]]. \n\nOf course that is a little more complex.",
@@ -5514,7 +5494,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "551",
+    "id": "549",
     "title": "GAN Generative Adversarial Network",
     "excerpt": "The idea is quite good, you have a generator that creates images and a discriminator that try of say if the image is fake or new.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-28 07:27\"\n---\nThe idea is quite good, you have a generator that creates images and a discriminator that try of say if the image is fake or new.\n\nI guess that it would be a certain limit where this properly works, (the model don't improve) \n\nAnd this for me is considered [[Reinforcement Learning]], exist a punishment a reward, a agent action and state space.  ",
@@ -5524,7 +5504,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "552",
+    "id": "550",
     "title": "Image Generator From Noise Diffusion",
     "excerpt": "The idea is that the exist the matrix where you could act this three dimensional matrix, over this a [[Model for predicting new data]] could act, it h...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-28 07:25\nmodified: 2025-08-07T09:54:06-05:00\n---\nThe idea is that the exist the matrix where you could act this three dimensional matrix, over this a [[Model for predicting new data]] could act, it has its parameter that say to the model if \"brush\" this square of a certain color, we tweak this parameters using what actually we know. \n\nThe model can't generate new pixels only form a random matrix called it noise at first it could tweak this.\n\nAnd here exist some terms useful to manage Pooling, padding.\n\nSome architectures:\n- [[GAN-Generative Adversarial Network]]\n- [[DCGAN-Deep Convolutional GAN]]",
@@ -5534,7 +5514,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "553",
+    "id": "551",
     "title": "Adaptive Moment Estimation",
     "excerpt": "For each weight $\\theta$, we have $m_{t}$ the average of past gradients, $v_{t}$ the average of past squared gradients.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-24 11:15\nmodified: 2025-11-22 20:26\n---\n>Adam\n\nFor each weight $\\theta$, we have $m_{t}$ the average of past gradients, $v_{t}$ the average of past squared gradients.\n\nThe update is $$\\theta_{t+1}=\\theta_{t}-\\alpha.\\frac{\\hat{m}_{t}}{\\sqrt{ \\hat{v}_{t}+\\epsilon }}$$\n$\\alpha$ the learning rate, and epsilon a number close to zero.\n\n\n[[Deep Learning]] pp. 311",
@@ -5544,7 +5524,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "554",
+    "id": "552",
     "title": "Optimizer For Neural Networks",
     "excerpt": "How we actualize our parameters, bias and weights",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-24 11:09\nmodified: 2025-11-18 07:04\n---\nHow we actualize our parameters, bias and weights\n$$\nw\\to w'\\quad b\\to b'\n$$\nWe call **optimizer** to the method picked to change the learnable parameters or find the values who minimize a [[Loss function]].\n\nI mean this at the end is **Numerical Analysis**.\n\n- Some popular optimizer are : \n1. [[Gradient descent for FNN]] [[Gradient Descent for Neural Networks]]\n2. [[Natural Gradient Descent]], [[Kroenecker Factored Approximate Curvature]]\n3. [[Stochastic Gradient Descent]].\n4. [[Adaptive Moment Estimation|ADAM]].\n5. RMSprop, Adagrad, AdamW.\n6. Second-order and quasi Newton [[newton method]]  \n\n- We use one specifically for the task of the [[Model for predicting new data]]. The  are ones that works much better in certain cases.\n- First we have the forward process, computation of the loss function, using the [[Back propagation algorithm]], we compute the gradients, with these we choose a way of how change the parameters. The optimizer is that way, using those gradients we minimize the loss function.",
@@ -5554,7 +5534,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "555",
+    "id": "553",
     "title": "Superior Order Partial Derivatives",
     "excerpt": "f(\\mathrm{x})=f(x_{1},\\dots,x_{n})",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-23 12:04\"\n---\n$$\nf(\\mathrm{x})=f(x_{1},\\dots,x_{n})\n$$\n[[Clairaut's Theorem]]\n\n$$\nD_{j,k}f(\\mathrm{x})=\\frac{\\partial }{\\partial x_{j}}\\left( \\frac{\\partial f}{\\partial x_{k}} \\right)=\\frac{\\partial^{2}w}{\\partial x_{j}\\partial_{k}}\n$$\n\n[[Vector field]]",
@@ -5564,7 +5544,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "556",
+    "id": "554",
     "title": "NVIDIA",
     "excerpt": "I say the second biggest companiy. And it's maxima product are the graphics card but they also offer another devices and any type of software, we can'...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-22 09:37\"\n---\nI say the second biggest companiy. And it's maxima product are the graphics card but they also offer another devices and any type of software, we can't forget Omniverse.\n\nAnd also they are the biggest person doing research on new technologies like Ray Tracing and a lot of more stuff.\n\nOne time I saw a brief video of the CEO, this Taiwanese Jen-Hsun Huang he study electrical engineer and I guess that he shine on Standfors like play table tennis and he works and AMD, and the idea of make GPU's where comes from? \nAl.\n\n[[GPU]]\n\n[[Big Tech Companies]]",
@@ -5574,7 +5554,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "557",
+    "id": "555",
     "title": "CUDA What It Is",
     "excerpt": "> It's important to have a solid understanding of CUDA, ",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-22 09:13\"\n---\n> It's important to have a solid understanding of CUDA, \n\n**Cuda** (Compute Unified Device Architecture) is a parallel computing platform and programming model developed by [[NVIDIA]]. Give you the chance of tweak the NVIDIA's [[GPU]] for specific purposes, leveraging the [[Gpu paralellism-deep learning-computational costs|paralellism]], the performance that we can obtain using cuda is surprising highly. To works like [[Cryptocurrency decentralism]] \n\n\nWe could say that cuda is one of the more relevant technologies behind all [[Model for predicting new data]], this comes with the GPU, inside of it, to this you add the right drivers and you are ready. ",
@@ -5584,7 +5564,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "558",
+    "id": "556",
     "title": "Linux Change Your View About Software",
     "excerpt": "Is incredible that a simple change (from Linux to windows) change so much the perspective about software, programming and how computer works. So first...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-19 21:13\nmodified: 2025-10-11 16:51\n---\nIs incredible that a simple change (from Linux to windows) change so much the perspective about software, programming and how computer works. So first what is Linux?\n\nLinux is a open source [[Kernel|kernel]] developed by _Linus Torvald_ on 1991, inspired on *Unix*.\n\nThe main question is why used it? Exist many advantages for use Linux, like automation, security, customization, I mean if you know what is each piece of code then you are able to tweak everything for you. \n\nAnd is important to know some of terminology. Such is [[Distributions]] [[shell]]\n[[reason to use linux]].\n\n![LinuxOverview.svg](LinuxOverview.svg)\n\nBut then what operating system.\n\nDefinition and operating system is system software that manages computer hardware and software.\nSee it like the path between the hardware and user. Using drivers, system calls, and the kernel,\n\nI mean one you entrance to this world of Linux programming it's convert a import part on your life,\n\nAfter battle and battle with Linux, I finally make this thing of synchronize with all my devices, also I read something about the Linux. \n\n[[Software]]\n",
@@ -5594,7 +5574,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "559",
+    "id": "557",
     "title": "Data",
     "excerpt": "Definition.- Data is a way to represent a physical or abstract meaning, then it could be storage for an indefinite time.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-19 21:12\nmodified: 2025-08-13 11:08\n---\nDefinition.- Data is a way to represent a physical or abstract meaning, then it could be storage for an indefinite time.\n\nAnd of course in this era, sell data is a huge business that companies could use to maximize their earns.\n\nAnd the questions is what exactly do a data scientist. Data science, this words are very resonated in this days. And for me it's very interesting extract pattern hidden for us. \n\n\nParadigms of the science? (empiric, theorist and computational)\nWhat \n\nIf you realize all is about data, now that AI is revolutionizing everything is inheritable asking that how is possible that extract patterns on Data. And exist patterns that for a human it's impossible to see, I mean the tokens live in a dimension that it's impossible to access for us.\nInstead if it's in written is encode for us using a language.\nBut the language is nothing but a set of symbols with a circle meaning.\n\nAnd in this world that all is pays virtual and use of virtual cards. Until what extent my money is secure? (Recalling Scotia bank) and this worth a note on [[Cyber Security]] \n\nRelated: \n[[Data Science]]\n[[Data set-  Problem to obtain high quality data]]\n[[Fine-tune on large language models]]\n[[Large Dataset to train classification]]\n\n",
@@ -5604,7 +5584,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "560",
+    "id": "558",
     "title": "Internet",
     "excerpt": "Reading this book about startup the most profitable business is on internet.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-18 18:30\"\n---\nReading this book about startup the most profitable business is on internet.\n\nExist the history of how Internet evolve from 1990, until what actually is, the first search engine like [[Google]] \n\nIt's interesting that all the big millionaires were the first on think that Internet, was serious stuff, we need that kind of mindset, no matter, artificial. \n\nAnd I think that a good first step is begin to use a linux distro, because the environment of windows is simply awful.  \n\n\nMan and talking between how the connection works some terminology interesting is IP, proxy, gate ,DNS. And it's really interesting one thing more to learn\n\n[[ethernet]]",
@@ -5614,7 +5594,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "561",
+    "id": "559",
     "title": "Cyber Security",
     "excerpt": "This is note aim more to a reminder, that we need to be very careful to where places on [[Internet]], I actually have money on the BCP, but that is th...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-18 18:29\"\n---\nThis is note aim more to a reminder, that we need to be very careful to where places on [[Internet]], I actually have money on the BCP, but that is the best way? Is really secure? Yape is secure?\n\nI remember that Diana was stolen by connecting to a open WiFi. I use open services they are actually secure? \n\nExist a lot of words to understand this whole word where I'm not interested on, like Proxy, Servers, and a lot more. But each time with time have basic acknowledges on this field are more important, and for an average person the best is being careful, when one give the credit card. ",
@@ -5624,7 +5604,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "562",
+    "id": "560",
     "title": "Vector Graphics",
     "excerpt": "They are images that don't lose quality if one make a zoom in. ",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-16 19:57\"\n---\nThey are images that don't lose quality if one make a zoom in. \nAre a form of computer graphics.\nand what about [[computer vision]]\nWe have the PDF, svg. \n",
@@ -5634,7 +5614,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "563",
+    "id": "561",
     "title": "Tensor   Computation",
     "excerpt": "In the [[Deep learning, what it is?]], a tensor basically _matrices_ of _high dimensions_, you can simply iterate using brackets and that is what we  ...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-15 09:40\"\n---\nIn the [[Deep learning, what it is?]], a tensor basically _matrices_ of _high dimensions_, you can simply iterate using brackets and that is what we  call _Tensor_, of course from a more mathematical perspective that is a joke comparing to [[Tensor via Manim]], but of course this is more practical and have more easy, although is not that pretty for it's mere existence. \n\nAnd in the practice we  use [[Pytorch]].",
@@ -5644,7 +5624,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "564",
+    "id": "562",
     "title": "Cloud",
     "excerpt": "Basically the use of [[cluster servers]] to store data, because those already have more utilities.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-15 08:51\"\n---\nBasically the use of [[cluster servers]] to store data, because those already have more utilities.\n\n>What are those words that describe it properly? Use of analogies? Examples, predict.",
@@ -5654,7 +5634,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "565",
+    "id": "563",
     "title": "TPU",
     "excerpt": "Tensor processor unit.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-15 07:59\nmodified: 2025-10-31 18:29\n---\nTensor processor unit.\n\nIt's pretty the same of [[CPU First Peek]] and [[GPU]] but aims to the manage of [[Tensor - Computation]].\n\nPractically is used more in the [[Deep learning, what it is?|deep learning]].\n\nNow the follow step is the [[NPU]]",
@@ -5664,7 +5644,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "566",
+    "id": "564",
     "title": "Jupyter Notebooks, What Are These?",
     "excerpt": "> In 2014, begin the _Jupyter Project_ an open source project where you can run code from cl",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-13 13:10\"\n---\n> In 2014, begin the _Jupyter Project_ an open source project where you can run code from cl\n\nThe most important is what about the kernel, what is the difference that exist with [[Python]].\n\nFirst it's important that Python is a language program, there we use an interpreter that read the code, and create all the variables, save it into the RAM, and when it's done you lost all. Each run is fresh start. Is plain text!\n\nIn the other hand the .ipynb are under the hood a JSON file, this gives us the sufficient structure to run these cells. And go cell by cell, each one independently and in any order (well defined). Since this is one step further that just mere .py you need a environment like Jupyteer Notebook, VsCode, etc.\n\nYou could use **Markdown** and **Latex** two of the things who I really like, run code (originally Julia, R, python) graphs with Mermaid, tables  and images practically the same what I did with Obsidian but adding code. That is interesting!\n\nThe question is [[when use .ipynb or .py]]\n\n\nAnd the well known _Colab_ is a hosted Jupyter Notebook, (if you don't have the need [[Hardware]] it's a pretty good option) that basically is a [[cloud|cloud service]]",
@@ -5674,7 +5654,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "567",
+    "id": "565",
     "title": "Lang Chain",
     "excerpt": "Basically give steroids to [[Birth of LLMs]], and you use it in your day a day, that is not crazy.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-13 12:49\"\n---\nBasically give steroids to [[Birth of LLMs]], and you use it in your day a day, that is not crazy.\n\n>It's a framework that enable the connection between [[Model for predicting new data]] with other tools like [[API]] and even your [[Data]]. \n\n\n",
@@ -5684,7 +5664,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "568",
+    "id": "566",
     "title": "Hugging Face",
     "excerpt": ">Is an American company that develops computation tools for [[Machine Learning]]",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-13 08:09\nmodified: 2025-10-11 16:51\n---\n>Is an American company that develops computation tools for [[Machine Learning]]\n\n\nThis is another startup related to AI, well it begin on 2016 founded by French people, thinking make a Chat bot for teenagers, but for some reason they OpenSource the model and they change the the [[Machine Learning]] field. \n\nI would say that is the best social network (surpass to reddit, anc twitter), the question is that here you could find many [[Model for predicting new data]], and also the question research is always a constant,  I love this page. \n\nAnd it's true that they don't have the same quantity of user that another webs, but they are pretty good.",
@@ -5694,7 +5674,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "569",
+    "id": "567",
     "title": "How Internet Works Servers",
     "excerpt": "Maybe I retiring from the machine learning field. But I'm pretty sure that [[Artificial Natural Satellites]] have something to do with this. More real...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-12 21:32\"\n---\nMaybe I retiring from the machine learning field. But I'm pretty sure that [[Artificial Natural Satellites]] have something to do with this. More realted of 5G technology.\nI mean If I would be a backend developer I would say that this is important.\nBut ok I give up respect curiosity. \nI mean it's very complex, all these I will skip it, it has to be with id, servers, and more stuff.\nIf I would be on 2020 I will try to understand strongly, but actually I'm race against time.\n\nThe use of servers are imprescinble. When you enter (using internet) for instance to [[Hugging Face]] you enter to its server, and I guess that in the local of its servers there are all the models and [[Data]]. We call the local of that server [[cloud]].\n\n[[Internet]]\n\n",
@@ -5704,7 +5684,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "570",
+    "id": "568",
     "title": "Google",
     "excerpt": ">And google also begun like a startup, Larry Page and Sergey Brin founded it on 1996, and all begin as search engines, I guess that internet is starti...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-12 21:18\"\n---\n>And google also begun like a startup, Larry Page and Sergey Brin founded it on 1996, and all begin as search engines, I guess that internet is starting.\n\nAnd currently I'm very curious on how Internet begin. [[how internet works servers]]\n\nMan this is one the biggest [[Big Tech Companies]] that exist, I remember when they realize bard, and now they recalled like _Gemini_ because they have one problem with one add they realized, man just this week they realized a model with one million context size, that is a madness. \n\n",
@@ -5714,7 +5694,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "571",
+    "id": "569",
     "title": "Antrophic",
     "excerpt": ">They are a startup founded by seven man people who worked on [[OpenAI, the first and most important company who begin the AI era]], I mean it's prett...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-12 20:51\"\n---\n>They are a startup founded by seven man people who worked on [[OpenAI, the first and most important company who begin the AI era]], I mean it's pretty normal that people from a [[Big Tech Companies]] renounce to fund it's own company or start up. It happen with [[Apple]], Nuvia and Qualcomm. They said the essential thing is not that complex, we could make that. \n\nAnd something that I find interesting is that you can send you CV, pretty easy and if you are good maybe you could be accepted, it's full meritocracy, and they ask Github-Git, linkdelin, Curriculum Vitae, and that kind of stuff.\n\nIt's model is Claude Sonnet has a very good performance.\n\nThis week together with [[Google]] ",
@@ -5724,7 +5704,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "572",
+    "id": "570",
     "title": "Operative System OS",
     "excerpt": "Man this is so confusing. Are the same of [[Distributions]]",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-12 17:39\"\n---\nMan this is so confusing. Are the same of [[Distributions]]\nWell here we have windows for instance Windows eleven, MacOs, linux (the kernel only).\n\n\n\n",
@@ -5734,7 +5714,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "573",
+    "id": "571",
     "title": "API",
     "excerpt": "Application Programming Interface, for the name I would say that is basically give it an application you can tweak it for you want, it's more focused ...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-12 17:07\"\n---\nApplication Programming Interface, for the name I would say that is basically give it an application you can tweak it for you want, it's more focused on make different app talk each other trough [[Programming]].\n\nThis are very useful to specific purposes, when you work with many disconnect apps it's very useful. \n\n",
@@ -5744,7 +5724,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "574",
+    "id": "572",
     "title": "Vibe Coding",
     "excerpt": ">This note refers how the AI affect or upgrade our process of learning, specially code. One field where [[Model for predicting new data]] are quite be...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-12 16:06\"\n---\n>This note refers how the AI affect or upgrade our process of learning, specially code. One field where [[Model for predicting new data]] are quite better than humans.\n\nThis make programming more accesible to the common user. Now you don't need hard skills on programming to make simples scripts,  Nietzche hates the masses, practically it's a no brainer, now the problem is evident you are not thinking, you are not learning, for the long run is more a problem, well that depends for the specifical use, I think that for science is bad.\nBut if you are not engaged, well is the best thing that ever happens.\n\nBut don't scale overtime! Science don't have easy paths, but I think than doing is the best way of learn. but I think than doing is the best way of learn.\n\nI past all  the day doing Vibe Coding and I felt that I don't use my brain, I go to bed with more than 18 hours awake and I don't feel tired, I don't feel that my neurons work properly, this is actually bad but if I weren't do that I don't will have a webpage. Modificable! Is completely brain rot. If life were all the days like this I will commite suicide. But well is just one day, and I don't wanna to do this again so...\n",
@@ -5754,7 +5734,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "575",
+    "id": "573",
     "title": "Recurrent Neural Network",
     "excerpt": "In the classic neural network if you give one input, this flow until became the output. Now what would happen if when is near to became the output we ...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-12 13:35\nmodified: 2025-11-22 18:01\n---\n\nIn the classic neural network if you give one input, this flow until became the output. Now what would happen if when is near to became the output we return it to the begin, it's like add a cycle. To this we call RNN.  \n\nAnd it mention about the use of sequential data (orders matters) you need to keep it somewhere this is _hidden state_\n\n, specifically how no idea. If the input is so long then it's probably that the [[Feed Forward Neural Network]] forget you know the vanishing problem, for that they create _LSMT_ (Long short term memory) networks.\nGRU (Gated Recurrent Networks) no idea also. \n\n--- \n\nSome References:\n\n```bibtex\n@article{hochreiter1997long,\n  title = {Long Short-Term Memory},\n  author = {Hochreiter, Sepp and Schmidhuber, J{\\\"u}rgen},\n  year = 1997,\n  journal = {Neural Computation},\n  volume = {9},\n  number = {8},\n  pages = {1735--1780},\n  publisher = {MIT Press},\n  doi = {10.1162/neco.1997.9.8.1735}\n}\n``` \n \n```bibtex\n@article{elman1990finding,\n  title = {Finding Structure in Time},\n  author = {Elman, Jeffrey L},\n  year = 1990,\n  journal = {Cognitive Science},\n  volume = {14},\n  number = {2},\n  pages = {179--211},\n  publisher = {Wiley Online Library}\n}\n``` \n ",
@@ -5764,7 +5744,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "576",
+    "id": "574",
     "title": "Pytorch",
     "excerpt": ">Developed by **Meta**, realized 2017, one year after **TensorFlow**, but it converted in the most package used for [[Deep learning, what it is?|deep ...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-12 13:14\nmodified: 2025-10-16 12:14\n---\n>Developed by **Meta**, realized 2017, one year after **TensorFlow**, but it converted in the most package used for [[Deep learning, what it is?|deep learning]] algorithms quickly.\n\n- Together with TensorFlow and Keras are very useful to treat Neural Networks, but is easy to know that Pytorch is the most used.\n- Now it seem it very interesting how they threat certain object, for instance when you want to train, they differentiate between non and trainable objects, and they do it using graphs?\n- That is not incredible?\n- And of course is quite important when treating with [[CUDA what it is]] .\n\n[[understanding autograd pytorch]]",
@@ -5774,7 +5754,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "577",
+    "id": "575",
     "title": "Apple",
     "excerpt": "And respect Apple they sell basically all in one products, they don't sell pieces and the consumer could assembly it's costume computers. But for that...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-12 11:40\"\n---\n\nAnd respect Apple they sell basically all in one products, they don't sell pieces and the consumer could assembly it's costume computers. But for that exist _Hackinstosh_, that basically trick to MacOs, the bootloaders say that is Apple hardware. It is interesting what things make the community.\n\nAnd respect the AI, they are one of the leads respect to another [[Big Tech Companies]]\nThey have Neural Engine on its CPU but they are pretty expensive, stupidly expensive.\n\nAnd that is something good of Apple, if you want one product you buy it and ready for use. It's a no brainer which for me is bad, you assume many things. \n\n\n",
@@ -5784,7 +5764,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "578",
+    "id": "576",
     "title": "Mother Board",
     "excerpt": "To train [[Birth of LLMs]] the [[cluster servers]] use mother boards.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-12 11:27\"\n---\nTo train [[Birth of LLMs]] the [[cluster servers]] use mother boards.\n\nWell this stablish the connections between the [[GPU]] the [[CPU First Peek]] and the else.\n\n\n",
@@ -5794,7 +5774,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "579",
+    "id": "577",
     "title": "Laptop",
     "excerpt": "When we say laptop, it's complex realize upgrades, portable, and that stuff.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-12 11:15\"\n---\nWhen we say laptop, it's complex realize upgrades, portable, and that stuff.\nFirst you need to buy one, of course here you have a lot of options.\n\nFirst you need to choose the if (money is not a worry) use Linux, Windows or Mac.\n\nLinux for developers and hard skill, Mac for creative workers, and windows for casual users. Here the Mac have the best performance in general but they are stupidly expensive for my use, I don't like creative work or visual stuff.\n\nIn this cases we are going to talk only on [[Linux change your view about software]] for me the best kernel, and with \"awesome\" community. \n\nThen natural questions appears, what is the best laptop for use [[Distributions]], There is always the think pad of Lenovo, and well that is , pretty simple now what are my [[My specific use of electronic devices]] ",
@@ -5804,7 +5784,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "580",
+    "id": "578",
     "title": "Teraflops",
     "excerpt": "Trillion point operations per second $10^{12}$",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-12 10:28\nmodified: 2025-11-06 10:14\n---\nTrillion point operations per second $10^{12}$\n\nBut what kind of operation? Well the basic ones, **Addition, substraction, multiplication, division**. FMA?\n\nNow tell the power of a computer, tell us the quantity of operation point float\nit often used on computer.\n",
@@ -5814,7 +5794,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "581",
+    "id": "579",
     "title": "Distributions",
     "excerpt": "This is only available when we talk respect [[Linux change your view about software]] the people could create it's on distro because Linux is open sou...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-12 10:17\"\n---\nThis is only available when we talk respect [[Linux change your view about software]] the people could create it's on distro because Linux is open source, of course if you want to create your own distro is not easy. \nFor *Linux* we have: Ubuntu, Arch, Debian, Red Hat ,etc.\nAnd for apple products we have \n\nEach [[Operative System OS]] have it's own kernel \n\nBut what a _distributions_ make?\nThey give it to you one starting point, they give you basic tools for use the PC. \n\n\n>Why I am using Ubuntu in my laptop? Because it's beautiful\n\nAnd we have to be very restricted with the time that we dedicated to only use Linux.\n\nI established that for the end of the cycle I will return, but now it seemed to me that for the one week for the beginning of the fourth cycle I finished with the establish, and become a arch Linux user for the beginning of the fifth cycle. I mean now I quite better with Ubuntu, and I don't have time for struggle with Linux, then the next year we make the change. \n\nAnd I think that is the better way to change to Linux, first Ubuntu and then Arch after a long time of course).\n\nNow I could use those laptops to carry to the University day to day and leave this that is the better at house.\n\nMan but it was really exciting use arch Linux , of course that I help me with that because do it manually it's a lot. but each time we are more near to the minimalism digital, the problem is respect the phone but that is another history.\n\nThe question is that I want to forget this thing and don't think on it. Until February 2026 or maybe 2027. I mean that change is important, respect the cellphone why don't use a cellphone open source. I mean exist but that is only a possibility if I have to buy a phone and I can inherit many phone so there not much reason to talk about this. \n\n",
@@ -5824,7 +5804,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "582",
+    "id": "580",
     "title": "Kernel",
     "excerpt": "This is the most important thing between the communication between [[Hardware]] and [[Operative System OS]].",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-12 10:14\nmodified: 2025-08-10 11:28\n---\nThis is the most important thing between the communication between [[Hardware]] and [[Operative System OS]].\n\n|        | Linux [[Distributions]] | MacOS | Windows    |\n| ------ | ----------------------- | ----- | ---------- |\n| Kernel | Linux                   | XNU   | Windows NT |\nRespect to _Microsoft_ and all the PC's that use Windows we have: Microsoft NT\nThis are the motors core of a _distribution_ often called **Distro**.\n\nOf course when we talk for Kernel first you need to know what is your _hardware_, because compatibility problems, when someone buy a mac don't think on use windows, \n\nAbstracting the most, in the case of a PC, where you can choose the components, a directly ensemble (it's really simple).\n\nOf course the most normal is use a intel/amd processator and gpu of nvidia, and for programming you the only use it that you can you make of GPU is the parallelisation.\n\n\n\n[[laptop]]\n[[PC]]\n\nWell the Kernel most used (but people don't know) are from _Microsoft_, practically all the people who are not developers use it,  \n",
@@ -5834,7 +5814,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "583",
+    "id": "581",
     "title": "Cluster Servers",
     "excerpt": "You combine a lot of [[Hardware]], (and when I refer to hardware, which are the percentages, the people, the individual and what is the percentage of ...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-10 18:14\"\n---\nYou combine a lot of [[Hardware]], (and when I refer to hardware, which are the percentages, the people, the individual and what is the percentage of the servers used, the difference is that big?)\n, well specialised hardware for servers, I mean the better hardware, then you could save space and in certain way [[Electrical energy]] because I guess that mere fact that is turn it is on implies a use of energy. \n\nThe question is that these are connected using a specific technology for fast communication to performing thousands of asking, if one device don't work properly, this don't affects the else.\n\nThe obvious problem relies on the use of energy and refrigeration.\nFor the energy problem some of these are ubicated on countries where auto renewal energy are cheap, for instance there a server related to _Tor_ that is located on a geothermal energy place, and the technology behind it would be crazy.\n\nAnd for the refrigeration the use of water (one of the most absorbers of heat) is pretty common, I mean that is interesting , it would be a specialised kind of water for don't spoilt the devices, don't generated short circuit.\n\nThe quantity of options are biggest for that reason companies lunch new methods to optimize all the process or specific parts. For instance [[Pipe Line and Dual Pipe Line]]\n\n[[how lunch a website]]\n\n📖 [[DeepSeek-V3 Technical Report]] pp. 11",
@@ -5844,7 +5824,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "584",
+    "id": "582",
     "title": "Quantization Of The Parameters",
     "excerpt": "When we talk about quantization of **AI literature** we refer to the act to reduce the precision of the float numbers, this is cut the [[Bytes for com...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-10 18:04\"\n---\nWhen we talk about quantization of **AI literature** we refer to the act to reduce the precision of the float numbers, this is cut the [[Bytes for computation|bites]].\n\nBy doing it, it increases the velocity of inference/training since the quantity of calculations is less (or at least that I guess) but of course the accuracy of the models decay, it's a good technique if you have a poor hardware.\n\nThe implementation we have it on [transformers](https://huggingface.co/docs/transformers/index) inside.\n\nI mean forms part of the wide range of tools that allows us to use [[LLM's|llm's]] not high-eng GPUs. Llama.cpp\n\nIn [[DeepSeek-V3 Technical Report]] talk about a nice to implement.",
@@ -5854,7 +5834,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "585",
+    "id": "583",
     "title": "Quantization",
     "excerpt": "And yes reduce the quantity of [[Byte]] to the numbers to increase the velocity of use of these but of course the performance of the models decay, it'...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-10 18:04\nmodified: 2025-11-06 10:07\n---\nAnd yes reduce the quantity of [[Byte]] to the numbers to increase the velocity of use of these but of course the performance of the models decay, it's a good technique if you have a poor hardware.\nI guess that in somehow you cut the numbers. I mean it sounds easy but in the practical to create a package for make this is really complex I don't know.\n\nIn [[DeepSeek-V3 Technical Report]] it's talked about this. (Complex)\n\n|Format|Bits|Representation type|Typical use|Pros|Cons|\n|---|---|---|---|---|---|\n|FP32|32|full floating-point|baseline/training|lots of precision & range|heavy memory, compute|\n|FP16 / BF16|16|half-precision floating|many models for training/inference|good compromise|less precision/range than FP32|\n|INT8|8|integer|quantized inference|small size, fast|very limited range/precision|\n|FP8|8|floating (exponent+mantissa)|modern inference/training|better range than INT8, small size|still challenging, hardware must support|\n|INT4|4|integer|extreme quantisation/inference|tiny footprint|severe precision/range restrictions|\n|FP4|~4|floating (minifloat)|bleeding-edge training/inference|ultra-small size|very risky, needs clever techniques/hardware support|",
@@ -5864,7 +5844,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "586",
+    "id": "584",
     "title": "F8P Training",
     "excerpt": "Basically to certain type data we assign more precision this is more decimals, we need to remember that the numbers are [[Bytes for computation|bytes]...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-10 17:46\"\n---\nBasically to certain type data we assign more precision this is more decimals, we need to remember that the numbers are [[Bytes for computation|bytes]], this occupy a space, a physical space in the [[Hardware]] (not so different that atomic level in the actuality), the question is that to more relevant data like parameters we assign more accuracy and to another we despite more less accuracy.\n\nWe play the game between FP8, BF16, FP32, what are this I don't know.\n\nTalk about these at the end is talk about [[quantization of the parameters]].\n\n\n📖 [[DeepSeek-V3 Technical Report]] pp. 14",
@@ -5874,7 +5854,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "587",
+    "id": "585",
     "title": "Hardware One And Zeros",
     "excerpt": "Now this is very important to the technology, used by [[Deep seek]] TF8P",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-10 17:30\nmodified: 2025-10-31 17:59\n---\nNow this is very important to the technology, used by [[Deep seek]] TF8P\n\n\n\n\nOk, we have know that hardware are the CPU,G  GPU, etc  all component physic, \nbut I have some questions, all have transistor, how the memory saves information, in zeros and ones but how exactly?\n[[Bytes for computation]]\nI mean a transistor works with tree foots, \nI mean the first thing we are going to learn is about the hard disk, I always heard about this.\n\nFirst about memory, let's understand Hard Disk and make notes with the higher quality.\n\nThis two notes are about introduction. \n[[Hard disk Drive]]\n[[Hardware]]",
@@ -5884,7 +5864,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "588",
+    "id": "586",
     "title": "Checkpoint LLM",
     "excerpt": "You need to save the checkpoints, it could be that exist a [[Electrical energy]] fail, and you lost all the advance, and you need to start again, I th...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-10 17:20\"\n---\nYou need to save the checkpoints, it could be that exist a [[Electrical energy]] fail, and you lost all the advance, and you need to start again, I think that the only that\n",
@@ -5894,7 +5874,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "589",
+    "id": "587",
     "title": "Artificial Intelligence",
     "excerpt": "How we create intelligence, if a design a mechanism to move a ball we could say that the mechanism have intelligence?",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-09 15:14\"\n---\nHow we create intelligence, if a design a mechanism to move a ball we could say that the mechanism have intelligence?\n\nOf  course animals in a certain sense have intelligence, we dont ask about they but inanimadad things.\n\nFirst we call AI to all that shows an intelligent behaviour, therefore the overall idea is based on [[Emulate the human brain through computers|emulate the brain]] a task completely hard, that could be see it from different approaches.\n\nWe are talking in the most general case, the word **artificial** refers non natural, and the actuality there are a huge amount of unnatural things. \n\n[[Machine Learning]]\n\n[[Another uses of Artificial Intelligence]]\n[[Machine Learning Classification]]\n\nAnd talking respect the overall purpose\n- [[Artificial Narrow Intelligence]] (Narrow)\n- [[ASI]] (Super)\n- [[AGI]] (Generative)\n",
@@ -5904,7 +5884,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "590",
+    "id": "588",
     "title": "Active Parameters",
     "excerpt": "When we ask a question we only use a part of the brain, we have knowledge in distinct branch of knowledge, but a questions in general are in specific ...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-09 15:10\"\n---\nWhen we ask a question we only use a part of the brain, we have knowledge in distinct branch of knowledge, but a questions in general are in specific field. We don't need to know history to answer a question of physics, (it's true that all the branch are connect but we need to answer precise), the same it would be for active parameters? \n\n\n[[Model for predicting new data]]\n[[Values LLM]]",
@@ -5914,7 +5894,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "591",
+    "id": "589",
     "title": "Machine Learning",
     "excerpt": "> Inside of this we have to the branch of science with more develop/budget in the last decade, [[Deep learning, what it is?|Deep Learning]].",
     "content": "---\ntags:\n  - baby\n  - ml\n  - connection\nauthor: Jorge\ndate: 2025-04-09 08:17\nmodified: 2025-08-11 10:25\n---\n> Inside of this we have to the branch of science with more develop/budget in the last decade, [[Deep learning, what it is?|Deep Learning]].\n\nThis is a sub branch of the most general [[Another uses of Artificial Intelligence]].\n\nHere the combination of [[Hardware]] and [[Software]] \"learn\" and practically when we say AI we are referring to this\n\nInstead of elaborate a complex algorithm to perform a task that is very complex \n,trough trial and error we can create a algorithm to do this, and the better is that we can generalize this. Although I think that is more about prediction from [[Data]].\n\nWe search to a[[Model for predicting new data]] predict something, [[Why IA exist, pattern recognisition]]\n\nWe need to think a word that always appear in the Machine learning world.",
@@ -5924,7 +5904,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "592",
+    "id": "590",
     "title": "O1 Model",
     "excerpt": "This o1 model surpass its equals by increasing the [[Test time compute]]. Which translate on more use of hardware, more money, more energy and more ti...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-09 07:55\n---\nThis o1 model surpass its equals by increasing the [[Test time compute]]. Which translate on more use of hardware, more money, more energy and more time, gold resources in the actuality, but its performance is amazing.\n\n[o1 model](https://openai.com/o1/)\n\n",
@@ -5934,7 +5914,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "593",
+    "id": "591",
     "title": "OpenAI, The First And Most Important Company Who Begin The AI Era",
     "excerpt": "This is one of the biggest [[Big Tech Companies|tech companies]] that lead the [[Machine Learning|machine learning]] respect products, respect researc...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-09 07:47\n---\nThis is one of the biggest [[Big Tech Companies|tech companies]] that lead the [[Machine Learning|machine learning]] respect products, respect research I don't know. This company start with the idea of make free and open services for people but they choose lucrar de estos servicios, which is normal for the quality of these.\n\nOne important turning point was the realese of Chatgtp, and the [[o1 model]].\n\nOf course they are going to keep launching new things, the kind of persons who lider this kind of companies never stop when they start. They want it all.\n\nWhy Sant Altman is very popular?\n\n>I wonder what will be the future of this company in ten years (April-09-2025)\n\n[Open AI research](https://openai.com/research/index/) ",
@@ -5944,7 +5924,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "594",
+    "id": "592",
     "title": "Computer Vision",
     "excerpt": ">Computer vision is one field from Machine Learning that seeks emulates the vision.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-04-09 07:16\nmodified: 2025-08-16 09:11\n---\n>Computer vision is one field from Machine Learning that seeks emulates the vision.\n\nAnd here the the most used is [[Convolution Neural Network]], that work perfectly recognize borders and that stuff. \n\nRemember that there is this book (old one) about this topic on the library, exist a ton of method to approach this problem.\n\nAnd okay state-of-the-art models (LLama-Vision) have the stuff necessary to process images (e.g [[Convolution Neural Network]]) but if you want a more detailed output descriptions for example you need a [[large language model]], also is good use some formula to throw away a number (classification) like the Alex Net case.\n\nThose are [[Vision Language Model VLM]]",
@@ -5954,7 +5934,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "595",
+    "id": "593",
     "title": "Classification Using AI",
     "excerpt": "How we said that this image is a dog? A complex question, this is completely [[computer vision]]",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-08 19:20\"\n---\nHow we said that this image is a dog? A complex question, this is completely [[computer vision]]\nAnd what another thing would be useful\n\n\nIf you mention to [[Birth of LLMs]] a book of it know if the book belong to Drama, Academic or Life style, I think is for the nature of words used.",
@@ -5964,7 +5944,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "596",
+    "id": "594",
     "title": "Function AI",
     "excerpt": "There exist a lot of function that are very used on AI literature and I don't understand for instance. arg min",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-08 18:55\"\n---\nThere exist a lot of function that are very used on AI literature and I don't understand for instance. arg min\nThat is pretty easy to understand, ,$argmin_{x}f(x)$, return a element of the domain that _minimize_ the function, instead $min_{x}f(x)$ return said value.\nIf we have many inputs that subscript refer which are choosing. \n\nAlso exist $argmax$, is obvious what makes.\n\n_Example:_ In the context of [[classification using AI]]\n\n$$\n\\hat{y}=argmax_{y}\\mathbb{P}(y|x)\n$$\n\nThis gives the most probable class label $y$ for input $x$.\n\n\n[[SoftMax Function]] is one.",
@@ -5974,7 +5954,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "597",
+    "id": "595",
     "title": "Function Used In Literature AI",
     "excerpt": "There exist a lot of function that are very used on AI literature and I don't understand for instance. arg min",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-08 18:55\"\n---\nThere exist a lot of function that are very used on AI literature and I don't understand for instance. arg min\nThat is pretty easy to understand, ,$argmin_{x}f(x)$, return a element of the domain that _minimize_ the function, instead $min_{x}f(x)$ return said value.\nIf we have many inputs that subscript refer which are choosing. \n\nAlso exist $argmax$, is obvious what makes.\n\n_Example:_ In the context of [[classification using AI]]\n\n$$\n\\hat{y}=argmax_{y}\\mathbb{P}(y|x)\n$$\n\nThis gives the most probable class label $y$ for input $x$.\n\n\n[[SoftMax Function]] is one.",
@@ -5984,7 +5964,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "598",
+    "id": "596",
     "title": "AI Agent",
     "excerpt": "And if always is about **AI agents** and currently they are the last use of [[Artificial Intelligence]], I mean the most advanced tool.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-04-08 10:53\"\nmodified: \n---\nAnd if always is about **AI agents** and currently they are the last use of [[Artificial Intelligence]], I mean the most advanced tool.\n\nI need to use one, only for prove I would say. It's like have a virtual assistant who would say that Jarvis already exist.\n\nImagine have all with this automation, programming. I don't need any information that don't comes from a book.\n\nAnd I think that the use of interfaces kill what really are computers. \n KIMI K2, a good example I think\n[huggingface.co/moonshotai](https://t.co/4ukcXB0iP6)\n\nOk, let's say that you want to automatize all the boring or repetitive task, \nit's like a the calculator, you don't need to sum or multiplicate, but in this case you loose mental velocity, in the case of AI agent you lost something I would say no.\n\nIn my case I don't need one, (I could create someone who is able to make the same things that I do?) , I past all the time making exciting things, but I'm really excited about the function of these. \n\nthink it like this all the time you are in the risky or your acknowledge, you don't lost time eating, walking, bath things.\n\nToday I past a great amount of time trying OneDrive work well on Ubuntu, I could make that AI agent make that chore?\n\nOk, but [[Lang Chain]] is the implementation \n",
@@ -5994,7 +5974,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "599",
+    "id": "597",
     "title": "Surface Tension",
     "excerpt": "I remember how brocca taught to us, with the bubble example. And I remember that I read in the biography of [[Bernhard Riemann]] that he use something...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:47\"\n---\nI remember how brocca taught to us, with the bubble example. And I remember that I read in the biography of [[Bernhard Riemann]] that he use something related with this to solve a problem and I have some conversation with ChatGTP related to this. \n\nAnd I remember that in the laboratory we want to find the coefficient measuring this thing of a bubble.\n\nThe question is that if you want a exact formula that depends a lot on the cases that your are working, but in like a symbolic case you can use.\n\n$$\n\\gamma=\\frac{F}{L}\n$$\n\nThat is force per length.\n\nOr also if you want for certain cases.\n\n$$\n\\gamma=\\frac{W}{\\Delta A}\n$$\n\nAnd there are interesting cases, like the surface on the beach , table, the water droplets (this minimizes the surface area there is a relation respect the volume) a vaccine. \n\nThe capillary action very important in plants. And the use of soap bubbles.\n\nAnd well exist the relation intermoleculares forces temperature and my question is what about [[resistance on a fluid]]\n\nWe need to understand how a [[bubble]] works",
@@ -6004,7 +5984,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "600",
+    "id": "598",
     "title": "Hubble'S Law",
     "excerpt": "The universe is expanding, but you don't have any idea the gain of how relativity. [[General Relativity Theory MOC]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:30\"\n---\nThe universe is expanding, but you don't have any idea the gain of how relativity. [[General Relativity Theory MOC]]\n\nAnd the thing respect measure the distance between Galaxies is very important. ",
@@ -6014,7 +5994,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "601",
+    "id": "599",
     "title": "Doppler Effect Sound",
     "excerpt": "I think that exist this effect for sound and another for the case when we talk of the wavelength of light but at the end is the same but in another co...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:25\"\n---\nI think that exist this effect for sound and another for the case when we talk of the wavelength of light but at the end is the same but in another context. Of course in astronomy is more interesting because you can make another thing like demonstrate that the universe is expanding. this is the [[hubble's law]]\n\nAnd brocca give an explanation that fundament the reason of the use of the formula. \n\nWell this is the general formula:\n\n$$\nf'=f\\left( \\frac{v\\pm v_{0}}{v\\mp v_{s}} \\right)\n$$\n\nWhere $v$ is the speed of sound, $\\left( 343 \\frac{m}{s} \\right)$ in air, $v_{0}$ observer velocity, (+ if moving toward the source), $v_{s}$ source's velocity (+ if moving away form the observer) - the another cases obviously.\n\n",
@@ -6024,7 +6004,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "602",
+    "id": "600",
     "title": "Atmosphere",
     "excerpt": "Naw I mean our athmosphere is simply amazing but its study relies on what about the weight that this put on us.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:09\"\n---\nNaw I mean our athmosphere is simply amazing but its study relies on what about the weight that this put on us.\n\nI mean Pascal thin on it and we the Pascals that is\n\nAnd something that I like from the atmosphere is the quantity of Nitrogen that exist. And well for that reason we have food, the well know Haber Process.",
@@ -6034,7 +6014,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "603",
+    "id": "601",
     "title": "Science Material",
     "excerpt": "Well if you wonder of what material are making the things around this is your field, and thinking more on it is really an exciting field. Only think o...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:07\"\n---\nWell if you wonder of what material are making the things around this is your field, and thinking more on it is really an exciting field. Only think on what are you capable of, and the infinite options more even if you work on a laboratory with the sufficient matters really exciting.\n\n\nThis is one thing that physics make viable  [[Why exist physics]]",
@@ -6044,7 +6024,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "604",
+    "id": "602",
     "title": "Symplectic Space",
     "excerpt": "The inner product is such that   symmetry, non degeneracy, (this last it has trick) , the vector space are $V$ and the field is $\\mathbb{F}$, it is us...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-06 16:04\nmodified: 2025-08-30 16:50\n---\nThe inner product is such that   symmetry, non degeneracy, (this last it has trick) , the vector space are $V$ and the field is $\\mathbb{F}$, it is used on Hamilton Mechanics, Field $\\mathbb{R}$.\n\nSymplectic Space Manifold.\n\nHere the [[Inner product]] give you the area of parallegroms in the phase space.\n\nSkew, geometry simplectic and the gram matrix associated is antisimetric\nAntisimetrics.\n\n",
@@ -6054,7 +6034,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "605",
+    "id": "603",
     "title": "Symplectic Vector Space",
     "excerpt": "> A **Symplectic Vector Space (SVS)** is a [[Vector Space]] with a [[inner product]] $\\omega$ which is   antysymmetry, non degeneracy, (this last it h...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-06 16:04\nmodified: 2025-11-21 08:46\n---\n>[!definition]\n> A **Symplectic Vector Space (SVS)** is a [[Vector Space]] with a [[inner product]] $\\omega$ which is   antysymmetry, non degeneracy, (this last it has trick) , the vector space are $V$ and the field is $\\mathbb{F}$, it is used on Hamilton Mechanics, Field $\\mathbb{R}$. Refs?\n\n- Here the [[Inner product]] give you the area of parallegroms in the phase space.\n- Skew, geometry simplectic and the gram matrix associated is antisimetric Antisimetrics.\n- Symplectic Space Manifold.\n",
@@ -6064,7 +6044,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "606",
+    "id": "604",
     "title": "Upper And Lower Integral",
     "excerpt": ">Let a [[Real function]] bound $f_:[a,b]\\to \\mathbb{R}$,  the _upper integral_ is and a [[Partition for a one dimension function|partition]]. [^1]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-06 16:04\nmodified: 2025-08-15 14:56\n---\n>[!definition]\n>Let a [[Real function]] bound $f_:[a,b]\\to \\mathbb{R}$,  the _upper integral_ is and a [[Partition for a one dimension function|partition]]. [^1]\n>$$\\overline{\\int_{a}^{b}}f(x)dx=sup_{P} s(f,P)$$\nThe _lower integral_ analogously is:\n$$\n\\begin{align} \n\\underline{\\int_{a}^{b}}f(x)dx & =inf_{P}S(f,P) \\\\\ns(f,P) & =\\sum_{i=1}^{n}m_{i}(t_{i}-t_{i-1}) \\\\\nS(f,P) & =\\sum_{i=1}^{n}M_{i}(t_{i}-t_{i-1}) \\\\\nm_{i} & =inf\\{ f(x):t_{i-1}\\leq x\\leq t_{i} \\} \\\\\nM_{i} & =sup\\{ f(x):t_{i-1}\\leq x\\leq t_{i} \\}\n\\end{align}\n$$\n\n[^1]: [[Analisis Real Elon Lages]] pp. 150\n",
@@ -6074,7 +6054,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "607",
+    "id": "605",
     "title": "Young Module",
     "excerpt": "Ok this topic is respect the study of the property of material that measures something.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-06 16:04\nmodified: 2025-09-29 14:59\n---\nOk this topic is respect the study of the property of material that measures something.\nI don't know in what area put it I mean the science material is an important field of science.\nThen [[science material]]\n\nAn important measure of the materials\nhttps://chat.whatsapp.com/D9bPvUrddvSBUIkMSoTqrk\nThe Young's modulus is given by: It on pascal $Pa$ this thing that measure the [[atmosphere]]\n\n$$\nE=\\frac{\\sigma}{\\varepsilon}\n$$\n\nWhere $\\sigma$ _axial stress_ , force per unit area, $\\frac{F}{A}$, and $\\varepsilon$ axial strain (relative deformation) $\\frac{\\Delta L}{L_{0}}$.\nI remember pretty well that Brocca, made some interesting examples on this.\n\nThis proportional relation is only valid in the elastic region.\n\n",
@@ -6084,7 +6064,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "608",
+    "id": "606",
     "title": "Telecomunication",
     "excerpt": "[[Artificial Natural Satellites]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:04\"\n---\n[[Fourier]]\n[[Artificial Natural Satellites]]",
@@ -6094,7 +6074,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "609",
+    "id": "607",
     "title": "Artificial Natural Satellites",
     "excerpt": "Of course there are like 1000 satellites rotating around our planet, of course they don't need energy to orbit. They only energy to reach where they a...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-06 16:03\nmodified: 2025-09-22 22:05\n---\n#pendent  Look how this is related to orbit movement and how you actually send a satellite to outer space.\n\nOf course there are like 1000 satellites rotating around our planet, of course they don't need energy to orbit. They only energy to reach where they are, the question is how they know that they are not going to crash with another satelite of what they are. \n",
@@ -6104,7 +6084,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "610",
+    "id": "608",
     "title": "Mean Value Theorem For Integral C.",
     "excerpt": "basic the area of what you want could be written like a the area of a rectangle.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:03\"\n---\nbasic the area of what you want could be written like a the area of a rectangle.\n\n\nElon Lages pag 165",
@@ -6114,7 +6094,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "611",
+    "id": "609",
     "title": "Pythagorean Theorem",
     "excerpt": "The most know pretty theorem of math.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:03\"\n---\nThe most know pretty theorem of math.\n\nLet $ABC$ a rectangle triangle, the sides of the triangle are related like follow: \n\n$$\nc^{2}=a^{2}+b^{2}\n$$\n\nThis formula was used for civilization before the Greeks but was the **Pythagorean** school that show a first prove.\n\nNow if we want to talking about the natural numbers that satisfy this equation the theory of [[Elliptic Curves]] gives an answer. It will exist a geometric place where all it will be contained?\n\nI mean there a lot of well known triplets like $(3,4,5)$ $(5,12,13)$ $(7,49,50)$ and more else, \n\nNow the exponent is necessary two? The [[Fermat Theorem]] say yes.\n",
@@ -6124,7 +6104,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "612",
+    "id": "610",
     "title": "Re Parameterization",
     "excerpt": "Let f be [[Vector function over a real variable]], $f:[a,b]\\to \\mathbb{R}^{n}$",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:03\"\n---\nLet f be [[Vector function over a real variable]], $f:[a,b]\\to \\mathbb{R}^{n}$\n\nLet $\\varphi:[a,b]\\to [c,d]$ [[Real function]], and [[Homeomorphism in Topology]].\n\nA reparameterization of $f$, is a [[composition]] $\\hat{f}=f  \\circ \\varphi$, such that $\\hat{f}:[c,d]\\to \\mathbb{R}^{n}$. Introducing the new parameter $\\tau \\in[c,d]$, $\\hat{f}(\\tau)=(f\\circ \\varphi)(\\tau)$ the reason of the name.\n\nIt's easy to see that using the [[Chain rule real functions]].\n\n$$\n\\hat{f}'(\\tau)=f'(\\varphi(\\tau))\\cdot \\varphi'(\\tau)\n$$\n\nWhen $\\varphi$ is a linear function they only differ for a constant scalar. In another cases they differ for a variable scalar, but always is a multiple of the original vector. \n\nAnd we could think on velocity using not only the linear function but also the quadratic, and a whole family of functions with the only condition that they are [[Homeomorphism in Topology]] .\n\nThere is an important reparameterization that is the [[Arc length parameterization]] \n\nynsi quiero que sea constante , una lineal, una exponencia, cuadratica y sqrth",
@@ -6134,7 +6114,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "613",
+    "id": "611",
     "title": "Refinement",
     "excerpt": ">Let $P$ and $Q$ two [[Partition for a one dimension function|partitions]] over the same interval. We say that $Q$ refine $P$ when $P\\subset Q$. [^1]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-06 16:03\nmodified: 2025-08-15 14:53\n---\n>[!definition]\n>Let $P$ and $Q$ two [[Partition for a one dimension function|partitions]] over the same interval. We say that $Q$ refine $P$ when $P\\subset Q$. [^1]\n\n- Basically we are adding point to $P$, at least one.\n- We talk of refinements is many context but the idea is the same, one set is more fine than other if is content on it. \n- Until now I find it integrals, vectors and topology. Refinement of a vectors?\n\n\n[^1]: [[Analisis Real Elon Lages]] pp. 149\n",
@@ -6144,7 +6124,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "614",
+    "id": "612",
     "title": "Infinite Limit",
     "excerpt": "[[Limits (One Dimension)]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:03\"\n---\n$$\n\n$$\n\n[[Limits (One Dimension)]]",
@@ -6154,7 +6134,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "615",
+    "id": "613",
     "title": "Multi Head Lora",
     "excerpt": "La cuestion es que para motivar esto se necesita saber como es que la paralelizacion esta aplicada.  Y yo no lo entiendo.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:03\"\n---\nLa cuestion es que para motivar esto se necesita saber como es que la paralelizacion esta aplicada.  Y yo no lo entiendo.\n\nEqual $BA\\in \\mathbb{R}^{d_{1}\\times d_{2}}$ , $B\\in \\mathbb{R}^{d_{1}\\times d}$ and $A\\in \\mathbb{R}^{d\\times d_{2}}$.\n\nNow it would possible that.\n\n$$\nBA=B_{1}A_{1}+B_{2}A_{2}\n$$\n\n\n\n$$\nf_{mhlora}(\\mathbf{x})=W\\mathbf{x}+\\frac{s}{N}\\sum_{i=1}^{N} B_{n}A_{n}\\mathbf{x}\n$$\n\n[[Lora, how it works]]",
@@ -6164,7 +6144,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "616",
+    "id": "614",
     "title": "Particle Physics",
     "excerpt": "This branch of physics that study the interaction between the tiniest particles [[elementary particle]] that exist like [[Electron]], [[protons]], [[q...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:03\"\n---\nThis branch of physics that study the interaction between the tiniest particles [[elementary particle]] that exist like [[Electron]], [[protons]], [[quarks]], we can't forget about the [[Fermions]] and the graviton the gluon and all that guys\n\nAnd it's pretty related to the [[quantum field theory]] ",
@@ -6174,7 +6154,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "617",
+    "id": "615",
     "title": "Product",
     "excerpt": "\\lim_{ n \\to \\infty }n!=1.2.3.4.5\\dots ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:03\"\n---\n$$\n\\lim_{ n \\to \\infty }n!=1.2.3.4.5\\dots \n$$\n\nIs not the same of why not?\n\n$$\n\\prod_{k=1}^{\\infty}k\n$$\n\nBut when studying the [[wallis formula]] one find beauty relations\n\nOf course this diverges.\n\nBut for instance\n\nYes are the same",
@@ -6184,7 +6164,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "618",
+    "id": "616",
     "title": "Quantum Field Theory",
     "excerpt": "Branch of physics that consider that everything in this world is a [[Field-physics]], or have the same behavior. ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:03\"\n---\nBranch of physics that consider that everything in this world is a [[Field-physics]], or have the same behavior. \n\nAnd a questions that emerges is what about the vacuum, in this world it's possible that exist the true vacuum, or only is a dream, what would happen if we are able to see the fields our brain will explode.  \n\n\n\n[[Quantum Mechanics MOC]]",
@@ -6194,7 +6174,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "619",
+    "id": "617",
     "title": "Repel Charge",
     "excerpt": "Well we accept that same charge repels and different attracts, if we accept that we have all the theory on electromagnetism and works very well, but n...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:03\"\n---\nWell we accept that same charge repels and different attracts, if we accept that we have all the theory on electromagnetism and works very well, but nobody answer the question of why.  And it is a very hard question practically at the same level of a philosophic one. And exist a theory that explain this thing when we study very small thing maybe the quantum but I am more of the field Theory\n\n[[quantum field theory]] there one could find answer of why exist the charge law.",
@@ -6204,7 +6184,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "620",
+    "id": "618",
     "title": "Euclid Norm, Product",
     "excerpt": "Let be $\\mathbf{v},\\mathbf{u}\\in\\mathbb{R}^{n}$. The scalar dot is:",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-06 16:02\nmodified: 2025-08-10 14:54\n---\nLet be $\\mathbf{v},\\mathbf{u}\\in\\mathbb{R}^{n}$. The scalar dot is:\n\n$$\n\\langle \\mathbf{v},\\mathbf{u} \\rangle=v_{i}u_{i} \n$$\n\nThis defines a [[Norm]] on $\\mathbb{R}^{n}$:\n\n$$\n\\lVert \\mathbf{u} \\rVert =\\sqrt{ \\langle \\mathbf{u},\\mathbf{u} \\rangle   }\n$$\n\nAnd also a [[Metric Space]]:\n\n$$\nd(\\mathbf{u,v})=\\lVert \\mathbf{u-v} \\rVert \n$$\n\nSay to us the level of similitude between two vectors.\n\n$$\n\\frac{\\langle \\mathbf{u,v} \\rangle}{\\lVert \\mathbf{u} \\rVert\\lVert \\mathbf{v} \\rVert  } =\\cos(\\theta) \n$$\n\nAnd I don't know who was the first who define it but I believe the reason to define it like this is for [[Pythagorean Theorem]].\n",
@@ -6214,7 +6194,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "621",
+    "id": "619",
     "title": "Fermat Theorem",
     "excerpt": "There doesn't exist triplet of natural numbers $(a,b,c)$  such that:",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:02\"\n---\nThere doesn't exist triplet of natural numbers $(a,b,c)$  such that:\n\n$$\nc^{n}=a^{n}+b^{n} , n\\in \\mathbb{N}, n>2\n$$\n\nNow the prove of this theorem is extremely difficult such that long more five hundred years to be prove it for _Wallis_ a England mathematician. \n\nWe don't believe to [[Pierre Fermat]] when he say that he find the prove of that theorem but there was a lack of space on this paper. I mean it's impossible it was mathematician joke. ",
@@ -6224,7 +6204,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "622",
+    "id": "620",
     "title": "Fundamental Theorem Of Calculus",
     "excerpt": "Let $f:I\\to \\mathbb{R}$ continuous in $I$, another function $F:I\\to \\mathbb{R}$ are equivalent: [^1]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-06 16:02\nmodified: 2025-08-15 15:18\n---\n>[!theorem]\nLet $f:I\\to \\mathbb{R}$ continuous in $I$, another function $F:I\\to \\mathbb{R}$ are equivalent: [^1]\n1. $F$ is a indefinite integral of $f$, this is $\\exists a\\in I$ such that:\n\n$$\nF(x)=F(a)+\\int_{a}^{x}f(t)dt,\\forall x\\in I\n$$\n\n2. $F$ is the the primitive from $f$, this is $F'(x)=f(x)$ for all $x\\in I$.\n\nThis theorem relates [[First derivative on one dimension]] with the integral. \nThis is proved that all continuous function has a primitive. (exist F)  also is proved that if $F$ es  $C^{1}$ class first derivative continuous then it could be written like the sum of a constant and the integral of his derivative. \n\nNow respect the prove I know the one using the [[Mean Value Theorem for Integral C.]]\n\n\nReference Analisis Rael Elon Lages 163\n\n[^1]: [[Analisis Real Elon Lages]] pp. 163\n",
@@ -6234,7 +6214,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "623",
+    "id": "621",
     "title": "Hermitian Space",
     "excerpt": "- We the inner product simply is the a hermitian, this is _sesquilinearity_.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-06 16:02\nmodified: 2025-10-10 09:55\n---\n- We the inner product simply is the a hermitian, this is _sesquilinearity_.\n- Hermitian symmetry.\n- I think it is used on Quantum Mechanics field $\\mathbb{C}$.  \n- Then the gram matrix is a [[Self Adjoint Operators]] one.\n- [[Hilbert Space]].",
@@ -6244,7 +6224,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "624",
+    "id": "622",
     "title": "Complex Space",
     "excerpt": "The [[Field]] is simply $\\mathbb{C}$, pretty simple.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-06 16:01\nmodified: 2025-09-13 10:05\n---\nThe [[Field]] is simply $\\mathbb{C}$, pretty simple.\nHere the conjugate cares, I don't know.A",
@@ -6254,7 +6234,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "625",
+    "id": "623",
     "title": "Accumulation Point Rn Per",
     "excerpt": "I mean is basically the same but only using the [[Euclid Norm, product]], that is the only who have a mean in this world. In another universe we could...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-06 16:00\nmodified: 2025-09-27 23:32\n---\nI mean is basically the same but only using the [[Euclid Norm, product]], that is the only who have a mean in this world. In another universe we could use another norm and give it mean.\n",
@@ -6264,7 +6244,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "626",
+    "id": "624",
     "title": "Application Of Physics",
     "excerpt": "There is something similar in the Feynman lectures ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-06 16:00\nmodified: 2025-09-23 07:43\n---\nThere is something similar in the Feynman lectures \n\n- [[Artificial Natural Satellites]]\n- Electronic devices\n- Supply of light\n- Hot water (Circuits)\n- Medicine, (Chemistry)\n- Communication (Telecommunication)\n- Glass, Lens\n- Car engines\n- Space ships\n- Climate Prediction\n- Airplanes\n- Trains\n- Boats (Fluids)\n- Foods (Chemistry, Fertilizer which a type of Nitrogen, they are basically doing it with physical processes)\n- Keyboards",
@@ -6274,7 +6254,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "627",
+    "id": "625",
     "title": "Arc Length Parameterization",
     "excerpt": "Here we use the **arc length** of the curve (we should demand the differentiation?) to _re-parameterize_ one _curve_.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:00\"\n---\nHere we use the **arc length** of the curve (we should demand the differentiation?) to _re-parameterize_ one _curve_.\n\nWe create the [[Vector function over a real variable|function]] $\\hat{f}=f\\circ s$, where $s$ is the [[Arc length|arc length function]].\nIt's easy to observe that the domain of $\\hat{f}$ is $[0,L]$, the range of $s$.\n\nThe beauty of this [[Re-parameterization]] is that we obtain.\n\n$$\n\\lVert  \\hat{f}(\\tau) \\rVert =1, \\forall \\tau \\in D_{\\hat{f}}\n$$\n\nIt could be proved that is the unique _re-parameterization_ such that the norm is equal to zero.\n\nThink it like ball of constant velocity going trough for a string. In this video of Bezier curves there is a good visual explanation, and I guess that this has direct application in the video games creation.",
@@ -6284,7 +6264,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "628",
+    "id": "626",
     "title": "Big O Complexity",
     "excerpt": "We know that a double `for` has a computational cost of $\\mathcal{O(n^{2})}$ ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-06 16:00\nmodified: 2025-09-14 06:22\n---\nWe know that a double `for` has a computational cost of $\\mathcal{O(n^{2})}$ \nBut what does it mean?\n\nWhat does it mean spatial and temporal complexity. [[spatial and temporal complexity]].\n\nIs about measure the asymptotic behavior of functions. What does it mean?\n\n\nUn algorithm has complexity $\\mathcal{O(f(x))}$ estamos diciendo que el tiempode ejecucion (o el uso de memorio u otro recurso) creace a lo sumo como una constante por f(n), obviamente nos interesa cuando $n$ se hace grande.\n\nOsea que es una cota superior asistontica., el algoritmo no sera mas lento que eso.\n\nDefinicion We say that \n$$\nf(n)\\in \\mathcal{O}(g(n))\n$$\nthen exist a constant, if exist constant $C>0$ and $n_{0}$ such that. \n\n$$\n\\lvert f(n) \\rvert\\leq C.\\lvert g(n) \\rvert \\forall n\\geq n_{0}  \n$$\n\nThis is also part form a family of functions that wikipedia say but I actually not interested.\n\nAnd I think that for a computer science is like trivial say the complexity of well known algorithms",
@@ -6294,7 +6274,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "629",
+    "id": "627",
     "title": "Chain Rule For Real Functions",
     "excerpt": "When we want to [[derivatives]] of a [[composition]] instead of over complicate us, we could use the derivative like fractions, it's pretty fun.",
     "content": "---\ntags:\n  - baby\n  - atomic\nauthor: Jorge\ndate: 2025-04-06 16:00\nmodified: 2025-10-16 10:07\n---\nWhen we want to [[derivatives]] of a [[composition]] instead of over complicate us, we could use the derivative like fractions, it's pretty fun.\n\n$$\n\\frac{df}{dx}=\\frac{df}{dh} \\frac{dh}{dx}\n$$\n\nNow we need to prove it formally to continue construct more definitions and concepts in a reliable form. Exist a demonstration on the Differential Book.\nThere is some beauty on the more dimension case. Because there you threat with matrices or vectors.\n\n[[Chain Rule for Vector Functions to the Reals]]",
@@ -6304,7 +6284,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "630",
+    "id": "628",
     "title": "Chain Rule Real Functions",
     "excerpt": "> Give it two [[Real function]] $f$ and $g$ , the [[First derivative on one dimension]] of the [[composition]] $f\\circ g$ is: [^1] ",
     "content": "---\ntags:\n  - baby\n  - atomic\nauthor: Jorge\ndate: \"2025-04-06 16:00\"\n---\n>[!theorem]\n> Give it two [[Real function]] $f$ and $g$ , the [[First derivative on one dimension]] of the [[composition]] $f\\circ g$ is: [^1] \n>$$(f\\circ g )'=f'(g(x))g'(x)$$\n\n\n- When we want to [[derivatives]] of a [[composition]] instead of over complicate us, we could use the derivative like fractions, it's pretty fun.\n- This is one of the most important proposition on calculus and it worth a careful study.\n$$\n\\frac{df}{dx}=\\frac{df}{dh} \\frac{dh}{dx}\n$$\n\nNow we need to prove it formally to continue construct more definitions and concepts in a reliable form. Exist a demonstration on the Differential Book.\nThere is some beauty on the more dimension case. Because there you threat with matrices or vectors.\n\n\n\n[^1]: [[Calculo Diferencial con aplicaciones]] pp. asd",
@@ -6314,7 +6294,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "631",
+    "id": "629",
     "title": "Communication Satellite How It Works",
     "excerpt": "Now this is practically, send [[Electromagnetic waves]] that practically travel at [[Speed Of Light]].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-06 16:00\nmodified: 2025-09-22 22:03\n---\nNow this is practically, send [[Electromagnetic waves]] that practically travel at [[Speed Of Light]].\n\nIt's something like this, you start could emit something similar or directly radio waves, this touch a [[Artificial Natural Satellites]] and rebound on it and go directly to the another phone that you want to call.\n\nI don't think on another thing more difficult that make.\n\nMore if one think in the quantity of phone calls in the actuality. But is kind of impossible to connect two phone calls without using a satellite, nah is so complex the thing. But what different is about use radios. \n\nBut this is a direct application of the invention of the radio I don't know. [[telecomunication]]\n\n",
@@ -6324,7 +6304,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "632",
+    "id": "630",
     "title": "Charge On A Conductor",
     "excerpt": "Let's think on a cylinder, of course if nothing interesting is happen when is in a natural state, now if you apply a [[Electromotive Force]] then for ...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-06 16:00\"\n---\n\nLet's think on a cylinder, of course if nothing interesting is happen when is in a natural state, now if you apply a [[Electromotive Force]] then for some reason the [[Charge]] begins to move or not.\n\nWell first there are negatives charges [[Electron]] I guess and how they want to repel \n\nBut the questions is that the charge don't move and for that happens two thing must happen. The [[Electric Field]] is perpendicular to the surface and this is zero inside the conductor. \n\n[[Electrical energy]]",
@@ -6334,7 +6314,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "633",
+    "id": "631",
     "title": "Set",
     "excerpt": "And it's hard define set without mention the word set, collection and all the synonyms.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-01 18:31\"\n---\nAnd it's hard define set without mention the word set, collection and all the synonyms.\nAnd this give rise to the most important theory, the set theory, where practically all the others theories are based, and a beautiful history. That is so well said it in this book.\n\nAnd of course it is very important to use pretty well the sense of union, intersection, complement.\n\n\n[[Math Axioms]]\n\n[[Zermelo's Theorem]]\n\n📖 @gustavoernestoInfinitoMatematicasCantor2016\n",
@@ -6344,7 +6324,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "634",
+    "id": "632",
     "title": "Mobile Tihedron Idea",
     "excerpt": "And it's beauty because the tangent and the normal define a plane, with the binormal it's defined another two plane, this three form a [[Orthonormal b...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-04-01 15:30\"\n---\n\n\nAnd it's beauty because the tangent and the normal define a plane, with the binormal it's defined another two plane, this three form a [[Orthonormal basis]] basis.\n\n[[Frenet Formula]]\n\n",
@@ -6354,7 +6334,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "635",
+    "id": "633",
     "title": "Potential Difference",
     "excerpt": "The _potential difference_ is $\\Delta V=V_{B}-V_{A}$ is: (not depend any arbitrarity)",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-01 09:58\nmodified: 2025-09-12 10:00\n---\n>[!definition]\nThe _potential difference_ is $\\Delta V=V_{B}-V_{A}$ is: (not depend any arbitrarity)\n>$$ \\Delta V\\equiv \\frac{\\Delta U_{E}}{q}=-\\int_{A}^{B}\\vec{E}\\cdot d\\vec{s}  $$\n\n- Equipotenciales curves pretty similar to nivel curves and that convert it interesting.\n",
@@ -6364,7 +6344,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "636",
+    "id": "634",
     "title": "Potential Difference",
     "excerpt": "The _potential difference_ is $\\Delta V=V_{B}-V_{A}$ is: (not depend any arbitrarity)",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-04-01 09:58\nmodified: 2025-09-12 10:00\n---\n\nThe _potential difference_ is $\\Delta V=V_{B}-V_{A}$ is: (not depend any arbitrarity)\n$$\n\\Delta V\\equiv \\frac{\\Delta U_{E}}{q}=-\\int_{A}^{B}\\vec{E}\\cdot d\\vec{s} \n$$\nEquipotenciales curves pretty similar to nivel curves and that convert it interesting.\n",
@@ -6374,7 +6354,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "637",
+    "id": "635",
     "title": "Cryptocurrency Decentralism",
     "excerpt": "In two thousand eighteen the bitcoin exploded in value and a lot of people have substantial gains.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-30 16:14\"\n---\nIn two thousand eighteen the bitcoin exploded in value and a lot of people have substantial gains.\n\nTo make transactions (deposits, loans, withdrawals) I depend on BCP (a bank) , if someday they get hacked I could lose my money that I have there, (hard to recover) and this is not impossible, (it happened to Interbank), and they could change their policies drastically harming me.\n\nFor that reason exists a new type of money.\n\nOn January 3 of two thousand nine, Sotoshi mined the genesis block, a few months after the release of the paper explaining the workings of BitCoins.\nThe essence of this digital coin is that is not managed by any authorities, the management of the transactions relies completely on the community. Completely decentralized, it works in such a way that dangerous individuals can't take advantage of newbies.\n\nOk, but [[how cryptos works]].\n",
@@ -6384,7 +6364,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "638",
+    "id": "636",
     "title": "Pre Newtonian Physics",
     "excerpt": "Before [[Isaac Newton]] how the physics was?",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-30 16:14\"\n---\nBefore [[Isaac Newton]] how the physics was? ",
@@ -6394,7 +6374,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "639",
+    "id": "637",
     "title": "Fourier",
     "excerpt": "One of the most used thing in math and physics funded by [[Joseph Fourier]] but another famous mathematician found it before but don't give it importa...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-30 12:18\"\n---\nOne of the most used thing in math and physics funded by [[Joseph Fourier]] but another famous mathematician found it before but don't give it importance. \n\nThe application we find it on Telecomunication, how we read when a [[earthquakes]] happens. \n\nIn the analogy video of Versitarium, exist a device that calculates a fourier system that is useful to predict sea waves. \n\nBut specifically for an average person how I could explain it. \n\nFor instance, when I make a call phone how it's possible that my voice could be heared from another country. ",
@@ -6404,7 +6384,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "640",
+    "id": "638",
     "title": "Gpu Paralellism Deep Learning Computational Costs",
     "excerpt": "[[Training Phase LLM]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-26 23:59\"\n---\n[[Training Phase LLM]]\n[[Training your Neural Network]]\nWe are enfasing on DL, we could talk of graphics, cryptos.",
@@ -6414,7 +6394,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "641",
+    "id": "639",
     "title": "Eye Animal",
     "excerpt": "One experience the eye, probably the organ that we most used.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-26 23:58\"\n---\nOne experience the eye, probably the organ that we most used.\n\nand there a lot of questions to make. \nThe animal can observe in another range of the [[The Electromagnetic Spectrum to approach the EMR]], why? What are the morphological differences between the human and the animal like whales, birds, etc. How a fish see underwater? What about the amount of eyes in a fly and a spider? They watch at slow motion? I don't think that happens,  I think is most of reflexes, with this thing why our brains late on answer or feel respect some stimuli? like light? What is the speed of electricity on our body?\n\nThink on a horse, observe like it, it will be very strange and it is not a lot of observe this is not a lot? What is the name of this kind of visualixation?\n\nAnd there are women, or were that it could see a quantity of colors very large. And anomalies are very useful to understand the working of certain things.\n\nFor instqnce that man that could remember a lot for give to each thing sensations\n\n[[Optics, what it is?]]",
@@ -6424,7 +6404,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "642",
+    "id": "640",
     "title": "RAG",
     "excerpt": "So  you put it directly in the context windown? Or use another more fancy stuff.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-03-26 23:58\nmodified: 2025-08-28 11:06\n---\nSo  you put it directly in the context windown? Or use another more fancy stuff.\n\nName for retrieval augmented generatord\n\nJust for these days in github we have a repo called RAG something really wonderfull. [[RAGflow]]. Diana is also working on something about this.\nRetrieval -augmented generator is a technique for better model accuracy.\n\nWhen you have a model you train it with data, this data we know that is it on constant changing, _How we could make that the model could \"read\" new data for accuracy.\n\n\nIt was formally presented by [[Big Tech Companies|Facebook Research]], the model \"upgrade\" using retrieval information (that is the act of extract relevant data from large data sets) thus it interpret it and give you the answer, all is inference the model don't change.\n\nProcess\nThe query vector is compared against a vector database?\nThe model retrieves relevant data from a external data set.\nthe retrieved documents are concatenated with the original query.\nnow is like give it a input more expanded.  the model understand the input and give a the answer  \n\n",
@@ -6434,7 +6414,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "643",
+    "id": "641",
     "title": "Resistors",
     "excerpt": "Why if you decrease the temperature of a super resistor the resistance of a conductor goes to zero, and why this give it magnetic properties?   ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-26 23:58\"\n---\nWhy if you decrease the temperature of a super resistor the resistance of a conductor goes to zero, and why this give it magnetic properties?   \n\nA resistor works well when follow the Ohm law, \na resistor prevents the passage of electric current, it super useful because exist certain components that if there many electrons passing trough, the component explodes because it a lot for him.\n\nThe unit used are the ohms and a Grecce symbol.\n[[Ohm Law]]\n[[Electromotive Force]]\n[[Current Intensity]]\n\n[[Kirchhoff Law]]\n\n\n**Ref**. [[Fisica para ciencias e ingenieria]]",
@@ -6444,7 +6424,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "644",
+    "id": "642",
     "title": "DiscretizacióN Quantizacion",
     "excerpt": "Why the charge is quantized? I mean the moment angular it is quantizado, the light it is quantizado, the matter in a sense it is quantizado, the energ...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-26 23:58\"\n---\n\nWhy the charge is quantized? I mean the moment angular it is quantizado, the light it is quantizado, the matter in a sense it is quantizado, the energy it is quantized. Then what it is plenary continuous ? All it is quantized? The sound it energy, the camp it is continuous, yes it is impossible that give a camp all the space it is continuous, the space it is continuous , the time, it will be a good parameters plantear esto segun si es continuous o no, \nDistance masa tiempo , no tendria sentido ya que usamos numerous y los areales son Continuous en teoria no existe limited aunque masa esta limitada por atomos\n, debemos de fijarnod en la nature.\nAunque es impossible pensar de que mas El spacio Este cuantizado , los atomos pueden moverse en teoria numeros infinitasimalmente pequeños yo puedo hacerlo. \n\nPero por ejemplo momento angular una cantidad compuesta esta cuantizada, pero no deberoa de estar compuesta por cosas tambien discretas, \nPero recordemos \nUn pedacito de momento angular es una medida de UN estado no existe como la Energia o la materia , ahi esta la diferencia, y todas las cosas que estan relacionadas con El momento angular? Es super confuso, sera El Unico, sera possible que mientres yo Este vivo se haga UN descubriento de esa magnitud, es de una grande magnitud? Feynman fue El que hizonaquel descubrimiento, pero no se le reconoce por ello debe de haber UN problema con mi razonamiento, ",
@@ -6454,7 +6434,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "645",
+    "id": "643",
     "title": "Earthquakes",
     "excerpt": "Until now I only live two shakings strongs that scared me, of course in Lima because in the Andean I think that the mountains protect us, (research).",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-26 23:58\"\n---\n\nUntil now I only live two shakings strongs that scared me, of course in Lima because in the Andean I think that the mountains protect us, (research).\n\nBut this is netally thinking on future, we are prepared to strong earthquake? \n\nAnd of course it's very interesting to know about the science of earthquakes and one always something about plaques, moving of these, and all that, but what are this plaques? How they move? How it's possible that they accumulate such energy to move mountains. I think that Verisatium have a video on this. (Say I read a book about this) ",
@@ -6464,7 +6444,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "646",
+    "id": "644",
     "title": "Big Tech Companies",
     "excerpt": "The biggest company on the world, Steve Jobs fund it in 1900, all we know that the iphone are its best product but I have one question the Mcbooks are...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-26 23:57\"\n---\n# Apple\nThe biggest company on the world, Steve Jobs fund it in 1900, all we know that the iphone are its best product but I have one question the Mcbooks are the best laptops in the world? And that questions depends on the user and tne use that he would make. And there are three metrics, gaming, AI inference or train of small models and creation of content, and the last two Apple shines, I never see a person playing on a Mac, and for play I think it's better use laptops with Nvidia, I suppose that Apple don't make GPU s it's processors are based on graphics include.  \nThey made its own processors the chips family M1, and I don't know until when they make processors specialized on AI inference.\nBut the issue with Apple it is the expensive of his products and one don't know if is paying for the product or the branch. \n\nThe last Iphone and its pairs are like 1700 dollars, and the Mcs are practically the same, the questions is what kind of technology uses for justify that price. And what are the limits of the power. Apple also have the all in one that performs very great.\nWhy they don't make desktop pc.\n[[Apple]]\n\n\n# Facebook Meta\n\nAnd it's interesting to see the path that Facebook and then all what that mean traveled. Of course there was this man Zuckerberg who studied computer science, and then grew and grew, I remember that in the old facebook I could play Dragon City (what a game) in the old Richard Lan center.\n\nThen I remember that change of name to Meta, buy whatsapp that is the most app chat actually, then it was in this stupidity of NFT, virtual worlds, and now also is developing AI like everyone. \n\nBuy instagram, whatsapp, and focus on build this stupidity of metaverse, the maxima representation of all the bad of those three apps. What stupidity the true. And the horrible use of this applicattions are the goal of this company. How I hate it.\n\nAlso develops some well know model like llama, but those represents well all I hate about social networks.\n\nThey don't have a competitor? they have a monopolio seem\n# Microsoft\nThe man behind Microsoft Bill Gates, and when I saw this video of Majorana they have a whole part of research\n\n# IBM\nIs the one that are achieving quantum computers\n\n# Open AI\nThe model o1 simply good.\n# Google\nThe another bigger competitions this history of that they start on a garage is pretty know.\nI remember that old face interface, when I was more young. The foundators are not eh most known but they achieved a lot\n# Elon Musk Companies\n[[Elon Musk]] and this guy have a lot of companies, space, brain, car stuff. I think that they effort a lot on his whole life to be where he is.  To mention ones there are _Starlink_, _Tesla_, _Neuralink_, _SpaceX_.\n\nMan Starlink is a complete madness, it's a lot of high speed internet in the most far parts of the world. 100MB/s that is one giga per ten second one tera on 1000 second that is crazy, and here the question that I always made, and it's have a lot of nuances [[Communication satellite How it works]]\n\nAnd respect to Neuralink that is company of the future, when the AI models could perform exactly what a person make, once that you give it to them physical parts, we need to give to our brain, a plus. We know that the competitive is always good between companies. \n\nBut respect with Neuralink, is difficult to say that they making huge advances, or maybe exist one person documentation all the progress maybe one day I woke  and I receive the new that they revolutionaze the world of Neuroscience. And maybe one good indicator I think is the value of the action company.  \n\n# INTEL and Ryzen\n\nThis are the two fabricators of CPUs and maybe one of the Ceo of Intel have a relation with the blue led or maybe Samsung. Practically all the laptpos \n\n# SAMSUNG\n\nI love the tablet of Samsung, I always I could observe it's tower here in Lima. And there is big link that with the Chinese people or talking well the Asian young competitive student that are simply crazy The Korean Students once I heard if they are the best of the best, enter in a good university like the Seoul University, and if they keep all that energy they end in companies like Samsung that is not very good.\n\n\n\n# Alibaba\nAlibaba is another strong Chinese company. Is alibaba the ceo Jack Ma, started the company at 1999. after found another first company and achieve hugely, well this teacher of English, man it was a teacher of English and became one of the most rich man on Chinese, I remember that he said this about the employ on KFC, and this history when being a child he learn English like any in this world, I think is natural consequence of live in a country hyper globalized. One of his dream was enter on this Ivy league most specifically to Harvard but he could \n\n\n# Amazon \n\nAnd Amazon I think that buy online is good when you have the services available. Or at least have the chance of pick up in a place near to you. \nI mean the prices that they put are good, but buy something there bring a lot of fear. I mean I feel that guaranty doesn't exist. And imagine they sell products in \n\nOf course there is also Amazon with Besos at the head but I don't care and he would be a physicist there is a anecdoota on that , \n\n\nBoth, Alibaba and Amazon Because actually if I want to buy a device went to the center is horrible, a lot of options. I think \nthat they are that successful , for some reason they are successful. \n\n---\n\nAnd in such a way this companies controls the life of millions of people, not in the same way like countries like USA, Russia, Chinese but have a power very strong. \n\nI suppose that exist a book on this topic.\n\n\nbe update",
@@ -6474,7 +6454,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "647",
+    "id": "645",
     "title": "Cancer And Radiation",
     "excerpt": "it is better be a natural person because if you consume a lot of something not natural you could obtain canncer",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-03-26 23:57\nmodified: 2025-08-28 08:51\n---\nit is better be a natural person because if you consume a lot of something not natural you could obtain canncer\nCancer occurs when the ADN that it is inside a cell  (in the nucleous being more exactly) \nget damaged and the cell begins to reproduce without any control, one control that the cell when happpens this is the autofagia donde the [[Cell idea for define life]] se autoelimina but for some reason this don't works then due that reproduction it forms a tumor , and here exist two types of tumor the benign and the malignant, for some reason we can't live with the malign because kill to us, exist treatments depend the stage of the tumor, why we cut the hair? Bit you will have to change your live inevitably.  \n\nThe questions relies on how the radiation attack to the ADN, and it will be the most harm in the sense that it another causes of cancer are more controllable? \n\nBecause exist another common ways to obtain cancer like smoke exxaggeratedly ...\n\nAnd why don't exist a cure for cancer? I think that is due to the damage that another orgnas near of the tumor get damage for this or it can simply work well, it mere presence cause damage it is like reemplaze a organ for a roca podrida.\n\n[[alpha beta gamma particles]]",
@@ -6484,7 +6464,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "648",
+    "id": "646",
     "title": "Cell Idea For Define Life",
     "excerpt": "It's pretty known the history of the first person [[Robert Hooke]] who observe the first cell of a corcho, he made use of a  [[microscope]] (one of th...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-26 23:57\"\n---\n\nIt's pretty known the history of the first person [[Robert Hooke]] who observe the first cell of a corcho, he made use of a  [[microscope]] (one of the first versions of this),he lived in the epoch were [[Glass]] were being born, for the seventeen century.\n\nAnd the amazing of this little life beings it is its complexity (that we learn in school) and variety for that reason we can make the classification on the different types of cells that we find on the nature. (but that's is work for the biologists).\n\nAnd the awesome of a cell is that could be observed from a microscope that are not that expensive in these dias.\n\nPersonally I could use for the define what have life and or not, it is a good parameters, for example we know that all humans and plants are a cell set, then another things are not live?  Yes, but I like to think that for instance the sun have life, I mean born , grows-develop and die, I like to think that this kind of entes are live and the unique thing that I ask is change and a limited time of excistance, when \"dies\" left a clue of of his excistance.\n\nOf course I know the other requirments ask for a superior being, we can call the another pre life and to the another post.\n\n(How is the process of death of a star?)\n",
@@ -6494,7 +6474,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "649",
+    "id": "647",
     "title": "Data Set   Problem To Obtain High Quality Data",
     "excerpt": "Exist several techniques to collect data one that I heard a lot is about [[scrapping]], data banks like [[Hugging Face]] or **Kaggle**, the problem re...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-03-26 23:57\"\n---\nExist several techniques to collect data one that I heard a lot is about [[scrapping]], data banks like [[Hugging Face]] or **Kaggle**, the problem relies if you are hyper specific on a topic, if that were the case then you would need to use another techniques like [[Data Augmentation to increase the volume and generalization]]\n\nAnd exist a lot of ways to make a model learn the data that we have, \none that the most know are.\n\n- [[Fine-tune on large language models]]\n\t- [[RAG]]\n\nand specifically talking there is this thing of _verl_ tambien esta DPO que le enseñamos a preferir ciertas respuestas,RLHF RL with human feedback and a lot of things.\n\nAnd here you need some of creativity to say what project I could perform.\nfor instance learn to the model talk in a specific way, I mean for that you use simply chatgtp but if you want that the model learn and don't say it specifically?, and for companies that have a lot of data and want take advantage of that, I mean the works on Data Scients are very asked, maybe there we can make something, I see it interesting.\n\nAnd what about the API of chatgtp, I think it is more useful to make lighten things, because at the end you are using chatgtp setting for your purpose, you are not changing the model, the model behaviour changes not change itself.",
@@ -6504,7 +6484,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "650",
+    "id": "648",
     "title": "Alex Net",
     "excerpt": "Alex net was the turning point on the chronology of AI.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-03-26 23:56\nmodified: 2025-08-16 09:11\n---\nAlex net was the turning point on the chronology of AI.\nIt would be the first of the class generative.\nGeoffrey Hinton participated here, and basically Alex Net was the first to use this mount of budget, people, and data in a model, it task was recognize of images.\nYou give tons of image to a model in somehow it can create its own images, that is not amazing? Well we need to differentiate between classification task and generator class,\nand the generate is a new world. [[Image Generator from Noise Diffusion]]\nThe question is the How?\nI don't think that for recreate Alex Net it would be necessary have an incredible budget, because currently the cheap for that hardware is decreased. (That I guess) and that is really a good project.\nThis is [[computer vision]]. And here is where left to understand machine learning.",
@@ -6514,7 +6494,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "651",
+    "id": "649",
     "title": "Physics III   2025 II",
     "excerpt": "| Physics III  | 2025 II    |",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-03-24 22:39\nmodified: 2025-12-19 16:13\n---\n| Physics III  | 2025 II    |\n| --- | --- |\n| Professor    | Brocca    |\n| Practice Professor| Altamirano, Laura|\n| Schedule| Monday, Wednesday 8:00 10:00 |\n| Place | R1 180 |\n|Code | CF1C2 |\n| Idea for capstone | [[Capstone Physics III]] |\n\n> The quality of examples and demonstrations are good and something very unique is that use Calculus to demonstrate certain propositions, something that [[Fisica para ciencias e ingenieria]] doesn't make.\n\n## Week 1: Interaction on Nature\n- [ ] 1.1. What is an electric charge? Understanding the charge\n- [ ] 1.2. Examples of electrical devices on the nineteenth century Coulomb's Law to Punctual charges Coulomb's Law to continuous distributions of charge\n\n## Week 2: Electrical Field\n\n- [ ] 2.1. [[Electric Field]]\n- [ ] 2.2. [[Electric dipole]] \n\n## 3. Gauss' Law\n\n- [ ] 3.1. Electrical Flow\n- [ ] 3.2. Plane electric field using Gauss's Law 3.4. Gauss's law differential form (Maxwell's first equation)  \n\n## 4. Electrical Potential\n\n- [ ] 4.1. [[Potential (Voltage)]]\n- [ ] 4.2 Uniform electrical field Dipole Sphere Conductor Equipotential surface\n\n## 5. First Maxwell Equation\n\n- [ ] 5.1 [[First Maxwell Equation differential form]]\n- [ ] 5.2 [[electrostatic pressure]]\n\n## 6. Energy for systems\n\n- [ ] 6.1 [[Density Energy Electrostatic]]\n- [ ] 6.2 Energy over a discrete system Energy over a continuous system (Integrals over the space [[Potential Electric Dipole]]\n\n## 7. Capacitors I (Oct 14 - 21)\n\n- [ ] 7.1 [[Capacitors]] [[Capacitor Association]] [[Spherical Capacitors]]\n- [ ] 7.2 \n \n## 9. Current and Dielectric (Oct 21 - 28)\n\n- [x] 9.1 [[Current Intensity]] [[Microscope model current intensity]]\n- [ ] 9.2 [[Gauss Law Dielectric Materials]] [[Polarization vector]] [[Dielectric Material Constant]]\n\n## 10. Resistance and electromotive force (Nov 3 - 7)\n\n - [x] 10.1 [[Drude Model]] [[Ohm Law]] [[Joule Effect]] [[Microscope model ohm law]]\n - [ ] 10.2 [[Kirchhoff Law]] [[Electromotive Force]] [[Resistance Association]] [[Crawl Speed]]\n\n## Week 11: Magnetic Force (Nov 7 - 14)\n\n- [ ] 11.1 [[Time of charge of capacitors]] [[Magnetic Force]].\n- [ ] 11.2 [[Charges in a Magnetic Field]] Auroras from where they come from.\n\n## Week 12: Magnetic Flux (Nov 17 - 24)\n\n- [ ]  12.1 [[Magnetic moment on atoms]] [[torque magnetico]] [[Magnetic Moment]] [[Magnetic field on conductors]] Flux.\n- [ ] 12.2 [[Biot-Savart Law]].\n\n### 12.1 Practice Four\n- One question about RC Circuits (Time).\n- Kirchoff, Drude, Dielectric\n\n### 12.2 Laboratory\nA quick laboratory, if it wasn't the Magnetometer measurement we would finish it quickly.\n\n## Week 13: Magnetic Field (Nov 24 - 31)\n\n- [x] 13.1 [[Ampere Law]], Application of the [[Biot-Savart Law]].\n- [ ] 13.2 [[Lenz Law]], [[magnetic flow]], [[Faraday Law Induction]]\n- induction of fem via variation of flux, Faucoult current, \n\n### 13.1 Practice Five\n1. [[Biot-Savart Law]]. Ask about the magnetic field on a semi wire.\n2. [[Ampere Law]]. A conductor with a positive current inside and a negative one. Ask for the magnetic field in all the points of the space. Zero outside.\n3. [[Magnetization]]. About the Fe, and then ask about the [[torque magnetico]] of this guy inside a magnetic field.\n4. (Maybe [[Hall Effect]] and **Mass Spectrometers**) A [[Solenoid]]. Asking about the [[Magnetic Permeability on the Vaccum]] but in another medium.\n\nI did it on one hour and thirty minutes, I should to obtain a perfect score.\n\n## Week 14: Inductors (Dec 01 - 07)\n- [ ] 14.1 Introducing inductor. RL Circuits, Exponential decay\n- [ ] 14.2 Ab initio RLC Circuits and [[Alternating Current]], Fasor Definition. [[RLC circuits]]\n\n### 14. 1 Laboratory about Transformers (I did not went)\n\n## Week 15: Maxwell Equations (Dec 7 - 12)\n\n- [ ]  15.1 Fasores, RLC circuits, fasor. [[Alternating Current]]\n- [ ]  15.2 [[Maxwell equations]], [[Ampere Maxwell Law]]\n\n### 15.1 Practice Six\n\n1.  **Faraday Law** over a square spire that is rotating, torque, electrical power disipated.\n2.  **Inductance definition**, mutual, equivalence.\n3. **RL Circuits**, over a more complicated circuit.\n4. **RLC Circuit**, resonance. [[RLC circuits]]\n\n## 16. Final Exams (Dec 19)\n\n- Mass spectrometer, about the Kripton and not radiactive.\n- RLC Circuits with alternating current.\n- Magnetic Flux and the relation with mutual inductance.\n- [[Faraday Law Induction]]. \n\nYeah, a almost perfect cycle I think.",
@@ -6524,7 +6504,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "652",
+    "id": "650",
     "title": "Doping Transistors",
     "excerpt": "Exist types of doping, the N-type (electron rich- phosphorus)  and P-type (electron poor - borus) of course making reference to negative to positive- ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-03-11 15:33\nmodified: 2025-09-14 06:43\n---\nExist types of doping, the N-type (electron rich- phosphorus)  and P-type (electron poor - borus) of course making reference to negative to positive- \nphosphorus (5) and borus (3)\n\nThe gate is made it by electron rich (P), and the gates with electric rich. \n\nI mean in the frontier between the P and N, there exist a flow a mean exist a differential of voltage but why electrons not pass trough there exist a kind of block for electrons? This \"block\" is called the depletion layer. That naturally forms when a _doped semiconductor material_ enter in contact with another of different charge.\n\ndue the depletion of carriers in this region\n\n",
@@ -6534,7 +6514,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "653",
+    "id": "651",
     "title": "Wave Particle Duality",
     "excerpt": "You can imagine a particle it's a wave and a wave it's a particle a complete madness.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-03-09 18:51\n---\nYou can imagine a particle it's a wave and a wave it's a particle a complete madness.\nOf course this say  a lot of the [[Nature of the light]].\n",
@@ -6544,7 +6524,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "654",
+    "id": "652",
     "title": "Geometrical Optics",
     "excerpt": "The founder of this field was [[Euclid]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-03-09 18:09\n---\nThe founder of this field was [[Euclid]]\n\nSomething interesting here is that we leverage _Geometry_ to prove-understand some concepts. \nHere it's [[Refraction]] and [[Lens]]. Here instead of over complicated us with the [[Electromagnetic Radiation]] part we treat light like lines.\n\n[[mirrors]]\n\n",
@@ -6554,7 +6534,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "655",
+    "id": "653",
     "title": "Optics, What It Is?",
     "excerpt": "Optics it's the field where we study the light from a view not engaged with [[Electromagnetic Radiation]] then we don't question about the [[Nature of...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-03-09 18:06\nmodified: 2025-09-08 15:22\n---\nOptics it's the field where we study the light from a view not engaged with [[Electromagnetic Radiation]] then we don't question about the [[Nature of the light|nature or origin of light,]] instead we answer questions about it's behaviour with the nature around.\n\nWe consider to Isaac Newton the pioneer of this field, and his book _Opticks_ is considered the bible of this field. Questions that fit well in this field are:\n- Why are are able to see colors?  \n- Why [[mirrors]] have this property of reflect so well the light?\n- What about the [[Rainbow a beautiful and interesting phenomena physic|rainbows]]. \n- Why [[Glass]] is transparent? \n- How interacts the light with another forms of energy and matter?\n- What about telescopes and microscopes?\n- [[How a camera works]]?\n\nNow the sub field that I already superficially studied is the [[Geometrical Optics]].\n\n[[Optica III.png]]\n\nAnd this experiment that I have been doing leads to another question why the sun it's in the position where exactly is. Of course it would be awesome that build something with mirrors to achieve this. Of course If you want to generalise this you have to known if the sun touch your window.\n\nAnd of course this that illuminate my room is because one property of the light \n\nI know that the positions of the suns respect our references changes. I see it in Pilcomayo, have the position of the sun when it's hiding or it's near  \nSome surfaces reflect light back toward the source instead of scattering it in random directions. Road signs,\n\n[[how we can simulate optics]]",
@@ -6564,7 +6544,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "656",
+    "id": "654",
     "title": "Refraction",
     "excerpt": "When a ray impacts on a mirror the this is reflected in such a way that ![[Optica.png|384x388]] the angles implies are the same, because the [[Fermat'...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-09 17:57\"\n---\nWhen a ray impacts on a mirror the this is reflected in such a way that ![Optica.png](Optica.png) the angles implies are the same, because the [[Fermat's Law]]",
@@ -6574,7 +6554,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "657",
+    "id": "655",
     "title": "Feynman Path Integral",
     "excerpt": "There is a beauty Verisatium video about this, but we can find.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-03-09 13:14\nmodified: 2025-09-09 13:16\n---\n\n\nThere is a beauty Verisatium video about this, but we can find.\nBut which is the way form?\n[[Angular Momentum]]\nThere is a pretty similar integral in [[Dirac's bra ket notation]] pp. 14:\n\n",
@@ -6584,7 +6564,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "658",
+    "id": "656",
     "title": "Byte",
     "excerpt": "A byte is a set of [[Bit Zero or One]], most specifically **eight bits**.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-03-06 12:17\nmodified: 2025-10-30 15:01\n---\nA byte is a set of [[Bit Zero or One]], most specifically **eight bits**.\n\n- Whit this we could represent $2^{8}-1$ numbers this is 255 numbers. The minus one to counting the zero.\n- But it's difficult to believe that a set of bites really represent information. \n- This frame work it's consequence of [[Information Theory]] \n- A set of bytes could represent more complex number for instance a integer is represented by $2^{32}$-1.\n[[Binary system]]\nA char is represented by a byte $2^{8}-1$, 255 numbers too represented all the characters.\n\nAnd if you ever wonder what means this of WindowsX32 or Windows X64\n\n\nI think it's the quantity of bits that a byte could perform. \nThe people says a integer it is a information of four bytes\nA float is of eight \nA of course you use more \n\nI think that it's like this: \n[[memory-RAM practical use]]",
@@ -6594,7 +6574,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "659",
+    "id": "657",
     "title": "Radios",
     "excerpt": "I mean when someone see a radio see something bored but how it works? ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-04 21:42\"\n---\nhow a radio works?\nI mean when someone see a radio see something bored but how it works? \n\nhere the work of [[Hertz]] it is all, and the man died saying that it's discovers on the theory of [[Electromagnetic waves]] don't have any application I mean ",
@@ -6604,7 +6584,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "660",
+    "id": "658",
     "title": "Sea Of Electrons Metals",
     "excerpt": "Ok the atoms of metals let the electrons fluid , this the electrons of valency of the metal can be everywhere but this is weird I mean then how a meta...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-04 21:31\"\n---\nOk the atoms of metals let the electrons fluid , this the electrons of valency of the metal can be everywhere but this is weird I mean then how a metal born, but we can not think a [[Electron]]\nlike a ball, how we can know that this electron belong origanally to this atom, it's impossible and who cares, the only important is give a metal I want to know the amount of distribution of electrons that this have. \n\nBut I imagine the electrons moving when exist differential of voltage, when don't exist I guess that there are practically still. I don't know man.",
@@ -6614,7 +6594,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "661",
+    "id": "659",
     "title": "Thermionic Diode",
     "excerpt": "Leveraging the [[Thermionic emission]], we could use this liberation of electron using a plaque if we charge positively the electrons get attracted bu...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-04 21:22\"\n---\nLeveraging the [[Thermionic emission]], we could use this liberation of electron using a plaque if we charge positively the electrons get attracted but if gets negative then the electrons get repelled, if the electrons get attracted the circuits get closed and the electricity passes, a doubt the material that is made this plaque, I mean it could be positive and negative and let electrons from the exterior passes how this is possible, and how a material could be possible charge, what this mean?\nand of course the first use that you give it's to amplificated signal I mean for that while the radios already exist , [[radios]]\n\nand of course you put one\nk, with this idea you have a _vaccum tube_ \n\n# YT\n\n![](https://youtu.be/FU_YFpfDqqA)",
@@ -6624,7 +6604,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "662",
+    "id": "660",
     "title": "Transistor Creation",
     "excerpt": "The transistor was created on 1946 at Bell laboratories for three guys, and about the the process of problem solution and of course know it's like cul...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-04 21:16\"\n---\nThe transistor was created on 1946 at Bell laboratories for three guys, and about the the process of problem solution and of course know it's like culture, it's the invention that define the next generations want it or not. \nAnd the proccess of creation it's one of the most amazing thing on earth, first you need [[silicon]] pure, and how you obtain it, using sand, you melted and in put it in a perfectly cylindrical ingot.\n\nYou have a cylindrical of pure silicon, then you slice it, like jam, the stick of one of this are of the size of 1 mm thick. This are called wafers and are super smooth. Exist a whole process to do it smooth.\n\nThen you use photo lithography, you now that there like this path of this electronic plaques, now we are going to do the same but for silicon. You put a mask and with [[UV light]] we do it, of course another whole process. Then you refine it more even , and [[Doping transistors]] comes, then you put layers and add wires, and repeat it dozens of times to add more and more transistor, you cut the good ones and there it's you have a chip for you CPU, GPU, and lot more.\n \n# YT\n\n![](https://youtu.be/f3IUVvJ2XgI)\n",
@@ -6634,7 +6614,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "663",
+    "id": "661",
     "title": "Apply The Boolean Algebra Logic Gate",
     "excerpt": "[[Claude Shannon]] in his thesis on MIT, demonstrated that we could use the [[Boolean Algebra]] to recreate _logic gates_ I mean we remember that befo...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-04 21:13\"\n---\n[[Claude Shannon]] in his thesis on MIT, demonstrated that we could use the [[Boolean Algebra]] to recreate _logic gates_ I mean we remember that before we use the [[Thermionic emission]] to ",
@@ -6644,7 +6624,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "664",
+    "id": "662",
     "title": "Apply The Boolean Algebra By Logic Gates Classic",
     "excerpt": "Claude Shannon in his thesis on MIT, demonstrated that we could use the [[Boolean Algebra]] to recreate _logic gates_.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-03-04 21:13\nmodified: 2025-10-01 19:30\n---\nClaude Shannon in his thesis on MIT, demonstrated that we could use the [[Boolean Algebra]] to recreate _logic gates_.\nI mean we remember that before we use the [[Thermionic emission]] and then [[Transistor]] born, that is not amazing.\n\n- One important matter (for me) is mention that they are **irreversible**, we can't know the inputs give the output!. There is a lack of information.\n- Important to mention that the **basis** are the [[universal classic gates]]",
@@ -6654,7 +6634,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "665",
+    "id": "663",
     "title": "Information Theory",
     "excerpt": "[[information theory like the first peek to the new era]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-03-04 21:05\nmodified: 2025-11-09 22:39\n---\n[[information theory like the first peek to the new era]]\n\n[[how threat to the information]]\n\n#pendent -> Re-frame on two, a literature, and permanent\n\nHere we need to make a distinction between Data and Information (from this context).\n- Data is redundant \n- Information is unique\nAnd here exist a clues how Compression of files works.\n\nThis theory says that every type of information, images , audios, videos, (and after expanded to everything) could be expressed in from of one and zeros.\n\nWell let's actually the images are basically matrix but let's thinking it like a black and white image, each point could be real natural number that represent a tone. Let's begin with eight tones, \n\nNow it was possible to audio also. \n\nWell in actually a normal image weight 232,752 bytes,\nwhat this means a bite could a zero or one let's divide this image for the size of this 540 x 960 pixels this means 518,400 pixel, if each pixel has tree bits, then we could say that x3, I don't understand how image works. But once you do it you also understand videos, that are a lot of images one after another. and for the sound it's the same.\n\nA number could be represented on bytes using the [[Binary system]]\n\nOf course this was theory was before the digitalization era.\n\nThis theory was presented by [[Claude Shannon]] when he was working on Bell Laboratories, of course she need the help of others like _Von Neuman_ and _Weber_ but Claude is the most resonated name, we could that this man it's a the hieght of Feynman, and other.\n\nData Note\nTheory of the information Formulas\n$$\n\\lim_{ p \\to \\infty } p \\log p=0\n$$\n$$\nH=-\\sum_{i}p_{i}\\log_{2}(p_{i})\n$$\n$$\nH(X)=\\mathbb{E}_{X}[I(X)]=-\\sum_{x\\in X}p(x)\\log p(x)\n$$\nI mean 3b1b has an excellent example of this. [^1]\nAnd here a bit it's not necessary a one or zero instead it's a representation a piece of information.\nHere Von Neumann says called it entropy, nobody know what entropy really it's \n[[Bytes for computation]]\n\n[^1]: [[Pattern recognition and machine learning]] pp.64\n[^2]: [[Deep Learning]] pp. 72",
@@ -6664,7 +6644,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "666",
+    "id": "664",
     "title": "Boolean Algebra",
     "excerpt": "For what reason Bool created it? I mean is completely mathematic, I don't know until what extent [[Logic]].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-04 18:48\"\n---\nFor what reason Bool created it? I mean is completely mathematic, I don't know until what extent [[Logic]].\n\n![[Logica Proposicional II.png]([Logica Proposicional II.png)]",
@@ -6674,7 +6654,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "667",
+    "id": "665",
     "title": "Analog Computer",
     "excerpt": "What we understand for an analog computer here don't exist [[Bytes for computation]], then how the calculus are made? Here the things are continuous? ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-03-04 18:08\nmodified: 2025-10-10 08:03\n---\nWhat we understand for an analog computer here don't exist [[Bytes for computation]], then how the calculus are made? Here the things are continuous? \n\n>We leverage the **intrinsic mechanic mechanism** for make operations.\n\n[[Transistor]]\n\nAbout this company Mythic doing chips bases in the analog, it's has potential?\n\n[Ver](https://youtu.be/qNtxODk_Lmk)\n\n[](https://youtu.be/PQeS7sfMxR4)",
@@ -6684,7 +6664,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "668",
+    "id": "666",
     "title": "Thermionic Emission",
     "excerpt": "In a [[incandescent bulb]], the filament gets hot and this creates this orange light, but ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-03-04 17:39\"\n---\nIn a [[incandescent bulb]], the filament gets hot and this creates this orange light, but \n\ntherefore freedom electrons why happens this no idea.\n\nI guess that the amount of energy is very much, then the electrons escape. \nThis effect is also called the Edison effect because was [[Thomas Edison]] that it realized but was know twenty seven years before for two physics but nobody cares.  \n\n\n",
@@ -6694,7 +6674,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "669",
+    "id": "667",
     "title": "Universal Approximation Theorem",
     "excerpt": "And this is a pretty result completely mathematician, but with an awesome application.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-03-02 13:46\nmodified: 2025-09-12 12:35\n---\nAnd this is a pretty result completely mathematician, but with an awesome application.\n\n>[!theorem]\n>A [[Feed Forward Neural Network]] with at least one hidden layer and **non-linear** activation functions can approximate any continuous function. [^1] (in what interval?)\n\n- But wait how is that function. I guess functions in the nice way. The friendly ones.\n- So this [[linearity on neural networks]]\n- Now what would be the reference which full contained.\n\n\n[^1]: [[Neural Networks and Deep Learning]] pp. 135\n",
@@ -6704,7 +6684,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "670",
+    "id": "668",
     "title": "Multimodal Large Language Model",
     "excerpt": "This model not only tries to understand the language but also the images, images 3d, sounds, videos, audio , everything that could be represented in a...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-02-28 18:29\n---\nThis model not only tries to understand the language but also the images, images 3d, sounds, videos, audio , everything that could be represented in a file. \n\nIs a subset of [[large language model]]\n\nImagine that exist a chatgtp but for videos, you give it a video and the model tell you with accuracy what's happening or a 3 dimensional file and the model tell you what represents. \n\nIt's something very crazy I mean actually exist model for image very goods @ferret\n\nData from sensors, GPS data, any tracker device, like movement of airplanes.  I mean the imagination is the limit.\n\n[[Birth of LLMs]]\n\n",
@@ -6714,7 +6694,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "671",
+    "id": "669",
     "title": "Inference Artificial Intelligence",
     "excerpt": "When we talk about inference in AI literature we refer when we use-test the model for the task that it was created.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-28 17:43\nmodified: 2025-12-25 21:59\n---\nWhen we talk about inference in AI literature we refer when we use-test the model for the task that it was created.\n\nLet's suppose that you already have a model specifically a $LLM$, now it's time of use and take advantage of it, I mean it's like a super person who knows all the information on Internet, now this persons have to be able to answer specific questions in different areas that you ask. They tell me that the _o1_ closed model of CHATgtp is the better, and its main method it's increasing the test time compute.\n\nNow when we use the model we known this process like _inference_.\n\n[[Feed Forward Neural Network]]",
@@ -6724,7 +6704,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "672",
+    "id": "670",
     "title": "Test Time Compute",
     "excerpt": "[[Inference Artificial Intelligence]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-28 17:43\"\n---\n\n\n[[Inference Artificial Intelligence]]\n\nOk, we call test time compute to the computational power that is used while inference.\nThe key here is that something interest happens, whereas the others models focus on improve its performance increasing the parameters o1 the model of ChatGTP improves its performance increasing the time that the machine think, of course in the inference time this is increasing the test time compute.\n\nIt's a shame that all the research that ChatGTP make it's closed. \n\n\nAnother important things is I heard about test time training, that instead of only answer better, it would be possible to that the parameters of the model change in real time. \n\nThis idea of the o1 it's applied only in the phase of inference that parameters stay in the equal form.\n\nBut of course also exist the problem that how far the model could increase its performance with modifying its parameters? I mean for still increasing the way would be modify the parameters and add new parameters, but of course with parameters we are referencing the all the matrix that are inside the FFN and head of attention increase the numbers of parameters it's not a trivial question, I guess that you can increase by blocks the numbers of parameters?\n\n\nAnd here exist another question how it's possible that Chatgtp remember what I said months before in time, well is not so complicated any ways.\n",
@@ -6734,7 +6714,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "673",
+    "id": "671",
     "title": "Using Your AI Inference",
     "excerpt": "Let's suppose that you already have a model specifically a $LLM$, now it's time of use and take advantage of it, I mean it's like a super person who k...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-28 17:43\"\n---\nLet's suppose that you already have a model specifically a $LLM$, now it's time of use and take advantage of it, I mean it's like a super person who knows all the information on Internet, now this persons have to be able to answer specific questions in different areas that you ask. They tell me that the _o1_ closed model of CHATgtp is the better, and its main method it's increasing the test time compute.\n\nNow when we use the model we known this process like _inference_.\n\n[[Feed Forward Neural Network]]",
@@ -6744,7 +6724,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "674",
+    "id": "672",
     "title": "Bayes' Theorem Idea",
     "excerpt": "The experience could be tricky and even a limitating.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-28 13:29\"\n---\nThe experience could be tricky and even a limitating.\nThe prior and the factuals give you the true ",
@@ -6754,7 +6734,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "675",
+    "id": "673",
     "title": "Idea Convergence",
     "excerpt": "When we talk on series",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-27 18:57\"\n---\nWhen we talk on series\nIf each time the adding is more tiny, thus when reach a adding that practically we are summing zero the sum stabilize , the sum **converges** , if the the sum never stabilize we say that the sum **diverges.**  \nBut if we",
@@ -6764,7 +6744,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "676",
+    "id": "674",
     "title": "Wallis Formula",
     "excerpt": ">$$ \\frac{\\pi}{2}=\\prod_{n=1}^{\\infty}\\frac{2n}{2n-1} \\frac{2n}{2n+1} $$",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-27 08:35\nmodified: 2025-08-16 15:38\n---\n>[!proposition]\n>$$ \\frac{\\pi}{2}=\\prod_{n=1}^{\\infty}\\frac{2n}{2n-1} \\frac{2n}{2n+1} $$\n\n- [[Weierstrass Factorization Theorem]] used, and also there is a integral where you \n- We use the Wallis formula to prove the  [[Stirling's Formula]] .\n\n[[Untitled438.png]]\n\n[[Untitled445-1.png]]",
@@ -6774,7 +6754,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "677",
+    "id": "675",
     "title": "Positional Encoding",
     "excerpt": "But no matter, all what at the end cares is the [[positional embedding matrix]].",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-02-25 23:57\nmodified: 2025-12-22 12:12\n---\nBut no matter, all what at the end cares is the [[positional embedding matrix]].\n\nIt's very important the position of the word (NLP), the most simply is assign a natural number according to the apparition of the word, I mean it's easiest way (complexity linear). But I think that emerges a problem how we relate the vector of a word to a number.\n\nWe can use RNN's that learn the position of the embeddings. \n\nUsing [[Convolution Neural Network]] also it's possible @gehringConvolutionalSequenceSequence2017\n\nUsing [[Transformer]] lack recurrence thus is not possibly to know the position of a word. @Vaswani2017\n\nDeep Seek use another form called Rotatory and decoupled rotatory position.",
@@ -6784,7 +6764,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "678",
+    "id": "676",
     "title": "Add And Normalize",
     "excerpt": "After apply the [[Self attention mechanism on one head|self attention mechanism]] and the [[FFN on Transformers|FFN]] we have add the vector to the ou...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-02-25 22:06\"\n---\nAfter apply the [[Self attention mechanism on one head|self attention mechanism]] and the [[FFN on Transformers|FFN]] we have add the vector to the output of these two.\nI mean \nResidual Connections\n\n[[batch normalization]]\n\nLayer Normalization\n",
@@ -6794,7 +6774,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "679",
+    "id": "677",
     "title": "AGI",
     "excerpt": "Artificial General Intelligence.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-02-25 17:28\"\n---\nArtificial General Intelligence.\nFrom the release of ChatGTP on 2022 we see a explosion of examples on this field. [[OpenAI, the first and most important company who begin the AI era]]\nBut we can't say that it was the first one, that was [[Alex Net]].\n\nThese aim to copy the intelligence human (but not emulate it?) for instance If I ask to Deep Seek to resolve a problem of physics the most probably is that it will, he will copy the steps that were shown in the [[Training Phase LLM |training phase]].\n\n ",
@@ -6804,7 +6784,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "680",
+    "id": "678",
     "title": "ASI",
     "excerpt": "Artificial Super Intelligence. **Surpass** the brain human.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-25 17:27\"\n---\nArtificial Super Intelligence. **Surpass** the brain human.\n\nI imagine a model able to create theorems itself, research for itself new areas of science, nobody ask to them, he do it for another reason. For it's own will. \n\nWe have punctual examples of this? We could consider the [[Multimodal Large Language Model]] a primitive version of this.\n\nThe [[AGI]] are a near step or we are very far?",
@@ -6814,7 +6794,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "681",
+    "id": "679",
     "title": "Artificial Narrow Intelligence",
     "excerpt": "Also known as **Weak AI**, the model are oriented to perform very specific tasks.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-25 17:26\"\n---\nAlso known as **Weak AI**, the model are oriented to perform very specific tasks.\n\n- First algorithm who beat Garry Kasparov the first or at least one of the firsts **algorithm to play chess** (in the actuallity we have stock fish and AI models), \n- Model to **play Go** with the release of _AlphaGo_ in 2015.\n- **Google translate** from 2016 (we can not forget that the Russian government invest million of dollars on a translate system in the 1980 approximately but they failed)\n- **Recognition of images** from 2012 with [[Alex Net]].\n- **Shakey** the robot and more able to recognise its environment.\n\nNow exist the question *What are the requirements to say that something is intelligent?* That is a more philosophical question who don't care.\n\nWe could say that this are samples of intelligence?, in this book (AI) explain it better.\n\nIf we want to give the next step creating models able to perform many tasks that a average person could, we need to see to the [[ASI]].\n\n",
@@ -6824,17 +6804,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "682",
-    "title": "Improving Large Language Models With Lora And Why You Shouldn'T Do It",
-    "excerpt": "So once that you understand how Large Language models works all the people are working on improve them (thus they can earn money).",
-    "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-25 11:29\nmodified: 2025-10-25 11:24\n---\n\nSo once that you understand how Large Language models works all the people are working on improve them (thus they can earn money).",
-    "uploadDate": "2025-02-25 11:29",
-    "readTime": "1 min read",
-    "fileName": "Improving Large Language Models with Lora and why you shouldn't do it.md",
-    "featured": true
-  },
-  {
-    "id": "683",
+    "id": "680",
     "title": "Reinforcement Learning",
     "excerpt": "Reinforcement learning is no a field of Artificial Intelligence. ",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-02-24 18:36\nmodified: 2026-01-15 21:51\n---\nReinforcement learning is no a field of Artificial Intelligence. \n\n\n, where an abstract object (an agent) learns. Here is such a nice excuse to [[Markov theory]]\n\nIt's like a student looking for his way to solve a problem, he has certain tools, examples and theory (_environment_).\n\nHe would take different actions depending on whether he is able to resolve it or not.\n\nIf we want to take it to the world of computing there exists three things to consider, _the sensation or stimuli , the action or answer to that sensation and the feedback or reward._\n\nIntroducing terminology used in this field:\n- **Agent** it's the student, in this case the one who is going to learn, we use it to refer to a model. [[Policy RL]]\n- **Policy** it's the way of behaving, it's a function that takes a state and turns it into an action.\n- **Reward** A real number that tells us how good the agent is doing. or if it is doing bad things/actions we don't reward them, instead we penalize them.\n- **Value Function** Thinking in a long term, change the way we see the rewards, therefore the actions also. -> [[Value Function]]\n- **Trajectory** [[Trajectory RL]]\n- _Model_ of the environment: where our agent is located.\n>Is full trial and error with feedback.\n\n[[reinforcement learning from human feedback]]\n[[State of the art agents]]\n\nApproach to machine learn\n- No value functions -> evolutionary methods\n- Policy gradients methods -> Use of parameters\n\nWe can't forget that exist this dilemma _Exploration or exploitation_.\n\nNow exist a whole theory on this how I should approached.\nI mean also there is a relation with Montecarlo Method, because you need to some random fluctiations to advance.\n\nIt's a branch of [[Machine Learning Classification]]\n\nAnd are amazing visualize it, there this videos where you could see it more specifically. How agents learn, there is this video of the car, is great example, and I don't know that it was a combination and of [[Feed Forward Neural Network]] and use of _Policy_. Of course they use a kind of evolutionary method.\nwe could say that this branch is one of the most used.\n\n[[Reinforcement Learning Lectures]]\n\n[You Tube Playlist](https://www.youtube.com/watch?v=2pWv7GOvuf0&list=PLqYmG7hTraZDM-OYHWgPebj2MfCFzFObQ) by David Silver ",
@@ -6844,7 +6814,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "684",
+    "id": "681",
     "title": "Supervised Learning",
     "excerpt": "Here we use label data, we say to the [[Model for predicting new data]] this is this , and that is that, then we expect that it make its things.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-24 18:34\"\n---\nHere we use label data, we say to the [[Model for predicting new data]] this is this , and that is that, then we expect that it make its things.\n\n\n, and we could think of one input and one output, we want that the model perform a task. Mostly we want that predict a word, a number, a win position of the game, etc.\n\nHere becomes Deep learning, the field which more innovation in the last years. ",
@@ -6854,7 +6824,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "685",
+    "id": "682",
     "title": "Unsupervised Learning",
     "excerpt": "Here doesn't exist labeled data, I think it like give to the model data and it will be able to find its way to a certain purpose.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-24 18:33\"\n---\nHere doesn't exist labeled data, I think it like give to the model data and it will be able to find its way to a certain purpose.\nIt's like this mathematical reasoning problems, that you need to find a pattern to obtain more from a arrange of symbols. \n\nAnd here the gap between saying it's right or wrong it's very thin, for example group person for it behaviour.\n\nFor that this is well for Classification task, clustering , etc. [[Classification of Machine Learning]]",
@@ -6864,7 +6834,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "686",
+    "id": "683",
     "title": "Classification Of Machine Learning",
     "excerpt": "Now inside Machine Learning we have many branchs and different specialities.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-24 12:52\n---\nNow inside Machine Learning we have many branchs and different specialities.\nHere we could find Deep Learning and more\n\n[[Machine Learning]]\n\n\n",
@@ -6874,7 +6844,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "687",
+    "id": "684",
     "title": "Machine Learning Classification",
     "excerpt": "When someone say [[Artificial Intelligence]], he is making reference to **Machine Learning**, it's important to know how this is divided to be conscio...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-02-24 12:52\n---\nWhen someone say [[Artificial Intelligence]], he is making reference to **Machine Learning**, it's important to know how this is divided to be conscious where one is working, thus we are able to relate ideas and concepts between them. Of course is kind of impossible to know very deeply and detailed each sub field but is like physics have the overall concept of each gives you this skill, to be able to get exciment.\n\nBroadly talking, [[Machine Learning]] is divided like follow:\n\t[[Unsupervised learning]]\n\t[[Supervised learning]]\n\t[[Reinforcement Learning]]\n\t[[Deep learning, what it is?]]\n\n> Also we can classify it for the direct _application or use_ of the models, [[Another uses of Artificial Intelligence|thus we can think how the model should be]]. Develop one [[Model for predicting new data]] cost hundred of thousand of dollars, a lot of time and hundreds of employees you naturally expect recieve moneynfor its use.\n",
@@ -6884,7 +6854,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "688",
+    "id": "685",
     "title": "Load Balancing Issue",
     "excerpt": "If the [[Sparse Moe]] behaviour make that only one certain experts are chosen, for that we have the follow.",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-02-24 12:39\"\n---\nIf the [[Sparse Moe]] behaviour make that only one certain experts are chosen, for that we have the follow.\n\nLet's say that you give it one prompt to a model, this for the model is a set of vector, called it $\\mathcal{B}=\\{ \\mathrm{x_{1},x_{2},\\dots ,x_{T}}\\}$. And let's say we have $N$ experts, (indexed). $T$ the number of tokens give it to the model.\n\nIn the [[Training Phase LLM]] \n\n\n$$\n\\mathcal{L}_{\\text{load-balancing}}=N\\sum_{i=1}^{N}\\mathcal{D}_{i}\\mathcal{P}_{i} \n$$\n\n$$\n\\mathcal{D}_{i}=\\frac{1}{T}\\sum _{x\\in \\mathcal{B}}\\mathbb{1}\\{ argmax\\mathcal{G}(x,\\Theta)=i \\}\n$$\n\n$$\n\\mathcal{P_{i}}=\\frac{1}{T}\\sum_{x\\in \\mathcal{B}}\\mathcal{G}(x,\\Theta)_{i}\n$$\n\nWe say that $\\mathcal{D}_{i}$ represents the proportion of tokens distributed to expert $i$and $\\mathcal{P_{i}}$ \n\n📖 [[A survey on Mixture of Experts]]",
@@ -6894,7 +6864,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "689",
+    "id": "686",
     "title": "Glass",
     "excerpt": "I mean there this material that is very known the glass, but there a few amount of people who ask about this material.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-22 18:07\n---\nI mean there this material that is very known the glass, but there a few amount of people who ask about this material.\nWhy is transparent? I could infer some things, first the light pass trough it then the atoms of what it's made are so well setting, with strange.\n\nWhy is so fragile? I guess that is for the same reason that could reflect the light well and works like a mirror. It's surface it's pretty smooth but mirror is kind of different colors are the same while at glass color modify.\nIt's mainly oxygen and silicon, Oxygen\nWell the process is basically like this \nSand is mainly made of quartz, silice, and rocks, then if you heat up the cristalline form of this break up and can take the form that you want, then if you cold rapidly the structure change forever, but if you wait then return to it's original form?\nOk the formula to create glass it's basically the same, silicon dioxide, sodium carbonate, and something else. why I dunno, but if you put more things transparent appears.\nIn venecia the glass apears.\n\nAnd now the explication of why is transparent in this video seems to be trivial but it's the more important I mean, how the photon know if gets absorbed or not, and here that the electrons could be in discreted levels of energy it's super important. But how that from passes bla bla. \n\nbut it could be calculated the amount of energy exactly need from pass? and why the material have to do? And what happens if all electrons passes, and what means pass? AAA\n\nand this lead to us to another questions how is that telescopic works and why I don't have one. or microscopic\n\t\n# YouTube Video\n\n ![](https://youtu.be/2oDXbFcHliM)\n\n",
@@ -6904,7 +6874,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "690",
+    "id": "687",
     "title": "Markov Theory",
     "excerpt": "[[Reinforcement Learning]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-20 19:34\nmodified: 2025-10-19 07:25\n---\n[[Reinforcement Learning]]\n\nWhat is a [[Markov Chain]] being more generall?\n\n$P(X_{n+1}|X_n,X_{n-1},...,X_0)=P(X_{n+1}|X_n)$\n\nMarkov says that no matter any states that it don't will be the last.\n\nFor instance no matter if yesterday I was hungry, or a month ago the important is that if today I have hungry. \nIt like if all the information of the system it's encode on the last state.\n\nA such a good video is Vers\n\n\nFourier Neural Operators For Parametric Partial Differential Equations\n",
@@ -6914,7 +6884,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "691",
+    "id": "688",
     "title": "Fermions",
     "excerpt": "The fermions are this particles that have mass, of course are named in honor to ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-19 18:58\nmodified: 2025-10-17 08:44\n---\nThe fermions are this particles that have mass, of course are named in honor to \nEnrico Fermi and the other hand we;have to the bosons which, the fermions are pretty bored brcuase the Pauli principle exist, but;the other can ocuppy;the same states at the same time. potential curve armonic.\n\nThey follow the [[Fermi Dirac Statistics]].\n\n[[bosons]] follow the [[bose-einstein statistics]]\n\n[[elementary particle]]\n[[Bose]]",
@@ -6924,7 +6894,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "692",
+    "id": "689",
     "title": "Pauli Exclusion Principle",
     "excerpt": "Pauli deity tell us that two [[Electron]] of the same [[Atom]] don't could occupy the same _quantum state_ at the same time. ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-19 18:50\nmodified: 2025-10-17 08:57\n---\nPauli deity tell us that two [[Electron]] of the same [[Atom]] don't could occupy the same _quantum state_ at the same time. \nWhat was the process what Pauli follow to say this? I have a vague idea.\n\nThe only say the version that talk about the electrons but the generalisation talk about more specific of [[Fermions]].\n\nThis close related with [[Slater Determinants]] [^1]\n\n[^1]: [[Quantum Mechanics Zettili]] pp. 486\n",
@@ -6934,7 +6904,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "693",
+    "id": "690",
     "title": "Temperature",
     "excerpt": "The temperature it's the measure of the [[Kinetic energy]] of the particles, if the particles of a body wiggling much then have a temperature, if don'...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-19 17:36\"\n---\nThe temperature it's the measure of the [[Kinetic energy]] of the particles, if the particles of a body wiggling much then have a temperature, if don't wiggle then the temperature is low. \n\nBut if a particle is completely stopped then the temperature is zero, but here something is doesn't add up.\n\nWhy is so difficult to reach to the a temperature of zero (talking in the Kelvin scale)",
@@ -6944,7 +6914,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "694",
+    "id": "691",
     "title": "Bohr Theory",
     "excerpt": "The Bohr theory is the solution to the next problem, the classic mechanics say that the electron is turning around the proton and neutron, but exist t...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-19 16:40\nmodified: 2025-10-29 08:28\n---\nThe Bohr theory is the solution to the next problem, the classic mechanics say that the electron is turning around the proton and neutron, but exist the [[Electrostatic force -electrical]] then inevitably the electron is going to crash with the proton, and this is another history. Any ways this can't happen because the electron only could be in specific circular orbit.\n\nBut we know that also the presence of another electrons prevents that this happens, this is known like the load shielding, of course we have to remember that the exist many atoms distributed his [[Quantum Numbers]] along the electron.\nRemember the effective charge?\n\nHe look at : [[rydberg ritz relation]]\n[[Photoelectric effect]]\n\n\nSo Bohr supposed that electrons just could live on specific orbits. and it work, why? Who knows\n\n[[bohr postulates]]\n\n",
@@ -6954,7 +6924,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "695",
+    "id": "692",
     "title": "Emission Spectrum",
     "excerpt": "This images of lines with colour next to the images of gases, tell me this represent a gass. What?",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-19 16:23\"\n---\nThis images of lines with colour next to the images of gases, tell me this represent a gass. What?\n\nInfrared region = Continuous?\n\nIs the spectrum of frequencies of electromagnetic radiation emitted due electrons making a transition from a high energy state to a lower energy state.\n\n[[Electromagnetic Radiation]]\n\n[[Quantum leap]]\n\n",
@@ -6964,7 +6934,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "696",
+    "id": "693",
     "title": "Use Of Trigonometric Function   Encoding",
     "excerpt": "Preserves relative positions??? But are vectors. Work for longer sequences during training. Smooth transitions between pairs I guess",
     "content": "---\ntags:\n  - baby\n  - atomic\nauthor: Jorge\ndate: \"2025-02-18 21:43\"\n---\nPreserves relative positions??? But are vectors. Work for longer sequences during training. Smooth transitions between pairs I guess\n\nAllows extrapolation, this is if we train with 100 like dimension model we could use the same data for 200. \n\n[[Tokenizer]]\n\n\n",
@@ -6974,7 +6944,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "697",
+    "id": "694",
     "title": "Positional Encoding   Sinuidal",
     "excerpt": "One way to approach the [[Positional encoding]] issue but we are covering the way give it by the and is used by different model like _GPT, Bert, T5_.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-18 21:14\nmodified: 2025-08-19 08:47\n---\nOne way to approach the [[Positional encoding]] issue but we are covering the way give it by the and is used by different model like _GPT, Bert, T5_.\n\nBasically we create a matrix $P$, (not surprises it's deep learning). The dimensions of the matrix, is the dimension of the model $d_{n}$ and the quantity of words that we want to encode. And the values are obtained by.\n\n$$\n\\begin{align}\nP(k,2i)=\\sin\\left( \\frac{k}{n^{2i/d_{n}}} \\right)\n \\\\ P(k,2i+1)=\\cos\\left( \\frac{k}{n^{2i/d_{n}}} \\right)\n\\end{align}\n\n$$\n\nWhere $0\\leq i\\leq \\frac{d_{n}}{2}$, $k$ is the index of the word the classic. It's like assign two functions (cos and sine) to a word. (Discrete case).\n\nThus we for each word we have a vector called ***Positional Vector***, the sum of the [[Tokenizer|embedding vector]] and this is called the **Positional Encoding** and with this we begin to work.\n\nNow why uses sines and cosines? [[Use of trigonometric function - Encoding]]\n\n",
@@ -6984,7 +6954,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "698",
+    "id": "695",
     "title": "Sinuidal Encoding",
     "excerpt": "One way to approach the [[Positional encoding]] issue but we are covering the way give it by the and is used by different model like _GPT, Bert, T5_.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-18 21:14\nmodified: 2025-08-19 08:47\n---\nOne way to approach the [[Positional encoding]] issue but we are covering the way give it by the and is used by different model like _GPT, Bert, T5_.\n\nBasically we create a matrix $P$, (not surprises it's deep learning). The dimensions of the matrix, is the dimension of the model $d_{n}$ and the quantity of words that we want to encode. And the values are obtained by.\n\n$$\n\\begin{align}\nP(k,2i)=\\sin\\left( \\frac{k}{n^{2i/d_{n}}} \\right)\n \\\\ P(k,2i+1)=\\cos\\left( \\frac{k}{n^{2i/d_{n}}} \\right)\n\\end{align}\n\n$$\n\nWhere $0\\leq i\\leq \\frac{d_{n}}{2}$, $k$ is the index of the word the classic. It's like assign two functions (cos and sine) to a word. (Discrete case).\n\nThus we for each word we have a vector called ***Positional Vector***, the sum of the [[Tokenizer|embedding vector]] and this is called the **Positional Encoding** and with this we begin to work.\n\nNow why uses sines and cosines? [[Use of trigonometric function - Encoding]]\n\n",
@@ -6994,7 +6964,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "699",
+    "id": "696",
     "title": "Elementary Particle",
     "excerpt": "This particle have no known substructure these particles are described by the Standard model of particle physics.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-18 18:58\nmodified: 2025-08-23 17:54\n---\n\nFe\n\nThis particle have no known substructure these particles are described by the Standard model of particle physics.\n[[Fermions]]\n- **FERMIONS MATTER\n\t-[[quarks]]\n\t-.LEPTONS\n\n- **BOSONS FORCE PARTICLES\n\t[[Photon]]\n\tGLUON\n\tW AND Z BOSSON\n\tGRAVITON\n\tHIGGS BOSON (2012) Thirteen years ago.",
@@ -7004,7 +6974,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "700",
+    "id": "697",
     "title": "Free Particle",
     "excerpt": "A free particle couldn't exist in this universe. (Possibly yes in a supposed universe)",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-18 18:52\"\n---\nA free particle couldn't exist in this universe. (Possibly yes in a supposed universe)\n\nA free particle in such a way that any force act on them. But every particle in this universe is the product of an alteration of a field of something like that. _quantum field theory_\n\nI mean even the observation implies a force. \n\nThe particle acts different when it's observed _quantum things_. The electrons of an atom, forces acts on the, and with force I referring everything that implies an alteration. a particle without forces on them. this particle does not exist.\n\nNow this lead to [[elementary particle]]",
@@ -7014,7 +6984,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "701",
+    "id": "698",
     "title": "Newton Second Law",
     "excerpt": "> Let a [[particle classic physics punctual]] who it was applied a force, then it's acceleration is [^1]:",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-18 18:49\"\n---\n>[!law]\n> Let a [[particle classic physics punctual]] who it was applied a force, then it's acceleration is [^1]:\n>$$\\vec{F}=m\\vec{a}$$\n\nDynamics study the **forces** that causes the [[Kinetics like one of the first topic of physics|movement]]. But what is this concept of force because all get's destroyed when we talk of [[Gravitation Potential]]\n\n[[Force definition]]\nAll is based on. [[particle classic physics punctual]]\n\n[^1]: [[Philosophae Naturalis Principia Mathematica]] pp.\n",
@@ -7024,7 +6994,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "702",
+    "id": "699",
     "title": "What Its Gravity",
     "excerpt": "There exist two approach classic [[Newton's Laws]] which says that gravity is a [[Force definition]].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-18 18:41\nmodified: 2025-08-12 13:21\n---\n\nThere exist two approach classic [[Newton's Laws]] which says that gravity is a [[Force definition]].\n\nAnd exist the another and our most accurate approach\n\nFor me gravity it's an amazing thing .\n\nwithout this would not exist life on earth, the things are stick to the floor, if we lift something this thing want to go to the floor.\n\nRequire effort to lift this is the [[Potential energy classic]].\n\nThe question is why mass \"creates\" gravity [[mass, everything have mass]].\n\nHow I love to know that exist a theory that explain something so hard to concieve\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n![](https://youtu.be/XRr1kaXKBsU) \n",
@@ -7034,7 +7004,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "703",
+    "id": "700",
     "title": "Quarks",
     "excerpt": "Now of what are made the quarks.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-18 18:39\"\n---\nNow of what are made the quarks.\n\nelectrons also are made it by quarks. It's related to the [[String Theory]]\nCould be proved that quarks exist",
@@ -7044,7 +7014,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "704",
+    "id": "701",
     "title": "Neutrons",
     "excerpt": "This is stick with the proton.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-18 18:31\"\n---\nThis is stick with the proton.\nExist particles without charges, we experiment [[strong force]]. And now what are the origins of a neutron?\n",
@@ -7054,7 +7024,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "705",
+    "id": "702",
     "title": "Electron",
     "excerpt": ">A **electron** is a [[particle physics]].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-18 18:30\nmodified: 2026-01-24 10:52\n---\n>[!definition]\n>A **electron** is a [[particle physics]].\n- Two importants quantities of it is its [[Charge]] and its mass.\n$$\n\\begin{align}\ne^{ - }=-1.60218\\times 10^{-19}C \\\\\nm_{e}= 9.109883\\times 10^{-31} kg\n\\end{align}\n$$\n\n**Ref**.\n[[Fisica para ciencias e ingenieria]]\n\nSee an electron lie a ball it's an insult. We already know that the electron it's turning around the center, [[protons]] and [[neutrons]]\n\nWhen they say that a body get's charged because have less or more electrons, the electron jump? To what velocity? There are times when this effect of have dipoles are momentary, at the end the quantity of electrons are the same, and that is the definition to be charged, At least for me. \n\nI mean for a better comprehension we have the [[Dirac's Equation]] and the [[Creation an Aniquilation of Pairs]]. But that comes later.\n\n\n$$\n$$\n\n[[particle physics]]",
@@ -7064,7 +7034,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "706",
+    "id": "703",
     "title": "Mass, Everything Have Mass",
     "excerpt": "Mass is molecules forming certain arranges, but molecules in essence are atoms. The [[molecular geometry]] determine certain characteristics. but atom...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-18 18:28\"\n---\nMass is molecules forming certain arranges, but molecules in essence are atoms. The [[molecular geometry]] determine certain characteristics. but atoms are nothing but [[Electron]] and [[protons]]\n\nDifferentiate between discrete and continuous , I mean Planck demonstrate that the energy is discrete, we know that the mass is distributed by atoms that are indivisible, of course exist but these act on a infra level. \n\nThere is something in the nature that don't will be discrete. I guess that the infrared region is continuous , Heisenberg talk about this.\n\nAnd one need to know that on physics could refer to two thing that numerically are practically the same but is an important and punctual difference. \n\nAnd also one need to realize the nuance when we enter to [[Special Relativity Theory]]\n\nReference Fin cap 163",
@@ -7074,7 +7044,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "707",
+    "id": "704",
     "title": "Protons",
     "excerpt": "Why a proton is practically wed with the neutron with the [[strong force]], being more specific  with the residual strong force binds protons and neut...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-18 18:03\"\n---\nWhy a proton is practically wed with the neutron with the [[strong force]], being more specific  with the residual strong force binds protons and neutrons together in the nucleus. \n\nAnd this force is mediated by _mesons_, such a _pions_.\n\nThey have a antiproton?\nWhat is the origin of a proton?\n\nThis are made by [[quarks]]",
@@ -7084,7 +7054,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "708",
+    "id": "705",
     "title": "Incandescent Bulb",
     "excerpt": "I mean I guess that this is pretty related to the [[Thermionic emission]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-18 10:08\"\n---\nI mean I guess that this is pretty related to the [[Thermionic emission]]",
@@ -7094,7 +7064,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "709",
+    "id": "706",
     "title": "LED S",
     "excerpt": "I mean when I see a light bulb, why light appears. It's a wonderful question.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-18 10:01\"\n---\n\nI mean when I see a light bulb, why light appears. It's a wonderful question.\nBut before led exist [[incandescent bulb]]\n\n\n Effectly there aren't infinite. but last a long time.  Led s last like 50,000 hours this is five years without interrumption.\n# YouTube Video\n\n![](https://youtu.be/AF8d72mA41M)",
@@ -7104,7 +7074,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "710",
+    "id": "707",
     "title": "Nuclear Fission",
     "excerpt": "Here instead of merge the atoms break up. And of course this liberate a huge quantity of energy give by [[Einstein Formula]].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-18 09:47\"\n---\nHere instead of merge the atoms break up. And of course this liberate a huge quantity of energy give by [[Einstein Formula]]. \n\n",
@@ -7114,7 +7084,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "711",
+    "id": "708",
     "title": "Einstein Formula",
     "excerpt": "I remember that Einstein. It's incredible that [[Speed Of Light]] appears ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-18 09:44\"\n---\n$$\nE=mc^{2}\n$$\n\nI remember that Einstein. It's incredible that [[Speed Of Light]] appears \n\n# YouTube Video\n\n![](https://youtu.be/llcJ5GfwC9Y)",
@@ -7124,7 +7094,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "712",
+    "id": "709",
     "title": "Nuclear Fusion",
     "excerpt": "The nuclear fusion occurs when two or more atoms merge to form only one atom. In this process it's freedom a huge quantity of energy. Now why. The [[E...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-18 09:43\n---\nThe nuclear fusion occurs when two or more atoms merge to form only one atom. In this process it's freedom a huge quantity of energy. Now why. The [[Einstein Formula]] answer.\n\nIt's the contrary of [[Nuclear fission]]\n# YouTube Video\n\n![](https://www.youtube.com/watch?v=Xzv84ZdtlE0&t)",
@@ -7134,7 +7104,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "713",
+    "id": "710",
     "title": "Sun What Is It",
     "excerpt": "Apart from light, there must be another thing there that give to us.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-18 09:37\"\n---\nWhat its the sun?\n\nApart from light, there must be another thing there that give to us.\n\nI understand that inside of the sun occurs this process [[Nuclear fusion]] \n\n\n\n# YouTube Video\n\n![](https://youtu.be/DxL2HoqLbyA)\n",
@@ -7144,7 +7114,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "714",
+    "id": "711",
     "title": "Another Uses Of Artificial Intelligence",
     "excerpt": "Artificial Intelligence  is not only focus on generate words, images, videos it also has more specific task, to this set of application we notated as ...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-15 17:25\nmodified: 2025-08-07 10:24\n---\nArtificial Intelligence  is not only focus on generate words, images, videos it also has more specific task, to this set of application we notated as [[ANI]]:\n\n_Study Cases:_\n- Google Translate for 2015 practically, \n- Proteins assembly ([[alpha fold]])\n- AlphaGo\n\nWe can consider all the specific [[Reinforcement Learning]] models here.",
@@ -7154,7 +7124,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "715",
+    "id": "712",
     "title": "Photon",
     "excerpt": "Is a elementary particle that is a quantum of the electromagnetic field. What?",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-15 11:27\"\n---\nIs a elementary particle that is a quantum of the electromagnetic field. What?\nThe photon are particles that transport electromagnetic radiation, ok, but. What is electromagnetic radiation then.\n\n[[The number of photons is not conserved]]\n\n[[Electromagnetic Field]] [[elementary particle]] _Quantum_",
@@ -7164,7 +7134,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "716",
+    "id": "713",
     "title": "Permutation",
     "excerpt": "Let $S$ be a set with $n$ elements. A permutation is a [[Bijective]] [[Map like the generalization of a function]] $\\sigma:S\\to S$. Thus to each eleme...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-14 20:24\"\n---\nLet $S$ be a set with $n$ elements. A permutation is a [[Bijective]] [[Map like the generalization of a function]] $\\sigma:S\\to S$. Thus to each element we associate to another element.\n\n>[!example]\n>$S=\\{ 1,2,3 \\}$\n$\\sigma(1,2,3)=(2,3,1)$ so ,$\\sigma(1)=2,\\sigma(2)=3,\\sigma(3)=1$.\n>\n\nWe often use the two line notation:\n$$\n\\pi=\\begin{pmatrix}\n1&2&3 \\\\\n2&3&1\n\\end{pmatrix}\n$$\nOr the representation of trough cycles.\n$$\n(1 \\ 2  \\ 3)\n$$\nA **transposition** is a unique permutation: So all cycle could be written in like a odd or even number of transposition ([[Parity of a Permutation]]) \n\n\n",
@@ -7174,7 +7144,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "717",
+    "id": "714",
     "title": "Concavity And Convexity",
     "excerpt": "No excerpt available",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-14 13:43\"\n---\n\n![[Concavidad y Epigrafo.png]([Concavidad y Epigrafo.png)]",
@@ -7184,7 +7154,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "718",
+    "id": "715",
     "title": "Molecular Geometry",
     "excerpt": "No excerpt available",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-14 13:41\"\n---\n![[Geometria Molecular.png]([Geometria Molecular.png)]",
@@ -7194,7 +7164,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "719",
+    "id": "716",
     "title": "Determinant Of A Matrix",
     "excerpt": "A **determinant** it's an _application_, $\\lvert \\cdot \\rvert:\\mathbb{K}_{n\\times n}\\to \\mathbb{K}$, [[Matrix what it is]] $\\mathbb{K}$ square.",
     "content": "---\ntags:\n  - baby\n  - atomic\nauthor: Jorge\ndate: 2025-02-14 10:42\nmodified: 2025-12-09 18:44\n---\nA **determinant** it's an _application_, $\\lvert \\cdot \\rvert:\\mathbb{K}_{n\\times n}\\to \\mathbb{K}$, [[Matrix what it is]] $\\mathbb{K}$ square.\n\nHere we have to represent to the matrices trough its column vector, this follow two properties: [^1]\n1. $\\lvert \\cdot \\rvert$ is n-lineal.\n2. $\\lvert \\cdot \\rvert$ is alternated. (From where I get that reference?)\n$$ \\det(A)=\\sum_{\\sigma \\in S_{n}} sgn(\\sigma)\\prod_{i=1}^{n}a_{i,\\sigma(i)} $$\n\n- This is more a mathematical definition the one that physics give us, the [[Cross product]].\n- Definition formal using [[Permutations in Combinatorics|permutations]] (century XIX). \n- Where $sgn$ represent the [[Parity of a Permutation]]\n- Now what if we want to derive a matrix? [[Jacobi's Formula Determinant Derivative]]\n- Recall that there exist another ways to look at a matrix.\n- [[Sign of a determinant]]\n\n[[Determinantes II.png]]\n[[Grafos.png]]\n\n[^1]: [[Linear Algebra Done Right]] pp. \n",
@@ -7204,7 +7174,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "720",
+    "id": "717",
     "title": "Invertible Matrix",
     "excerpt": ">A [[Matrix what it is|Matrix]] matrix $A$ is invertible if exist a matrix denote as $A^{-1}$, such that $AA^{-1}=I$.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-14 10:37\nmodified: 2026-01-14 11:33\n---\n>[!definiton]\n>A [[Matrix what it is|Matrix]] matrix $A$ is invertible if exist a matrix denote as $A^{-1}$, such that $AA^{-1}=I$.\n\n- If the [[Determinant of a matrix]] $A$ is zero then the matrix the _inverse_ doesn't exist. Called [[Singular Matrix]]\n- I'm going to this of [[Cramer Rule]].\n",
@@ -7214,7 +7184,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "721",
+    "id": "718",
     "title": "Invertible Matrix",
     "excerpt": "A matrix $A$ is invertible if exist a matrix denote as $A^{-1}$, such that $AA^{-1}=I$.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-14 10:37\nmodified: 2025-09-02 17:33\n---\nA matrix $A$ is invertible if exist a matrix denote as $A^{-1}$, such that $AA^{-1}=I$.\n\nIf the [[Determinant of a matrix]] $A$ is zero then the matrix the _inverse_ doesn't exist.\n\n[[Matrix what it is]]\n\nAnd here I'm going to this of [[Cramer Rule]]",
@@ -7224,7 +7194,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "722",
+    "id": "719",
     "title": "Factorization Theorem Linear Algebra",
     "excerpt": "Yeah there are some relations with the [[Kernel of Linear Map]] and the [[Range of a Linear Map]] but duh, I recall the analogy of where a dog can go.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-14 09:06\nmodified: 2025-08-30 11:22\n---\nYeah there are some relations with the [[Kernel of Linear Map]] and the [[Range of a Linear Map]] but duh, I recall the analogy of where a dog can go.\n\n[[Linear Map]]\n[[Quotient Space]] Yeah this is related to the quotient space.\n\nBut I don't have the reference \n\nI think that A linear space can be build it via quotient space.\n",
@@ -7234,7 +7204,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "723",
+    "id": "720",
     "title": "Multitoken Prediction",
     "excerpt": "Instead of only predict one token in to the future, predict more than one",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-02-12 22:03\"\n---\nInstead of only predict one token in to the future, predict more than one\n\nIs like you take a path and have different choices.\nFor training is delightful because you could use pretty well one unique sample.",
@@ -7244,7 +7214,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "724",
+    "id": "721",
     "title": "Multi Head Latent Attention",
     "excerpt": "It's pretty related to save memory [[Query and Key on Attention]], in each [[Self attention mechanism on one head]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-12 19:17\"\n---\nIt's pretty related to save memory [[Query and Key on Attention]], in each [[Self attention mechanism on one head]]\n\nWe compress in a way all the information in a latent space.\n\nApplied to keys and values [[Query and Key on Attention]] [[Values - LLM]], query do not use this mechanism of latent because we need them all the time. It's not necessary to be cached.\nDown Projection \n\nUp projection\n\n\n✅ En lugar de almacenar los **keys (K) y values (V) completos**, los proyecta a un espacio **latente más pequeño**.  \n✅ Usa **matrices de compresión WD,WUW_D, W_UWD​,WU​** para reducir el tamaño de los KV-cache y luego reconstruirlos cuando sean necesarios.  \n✅ **Ahorra memoria** y permite manejar **contextos más largos** sin perder precisión.\n",
@@ -7254,7 +7224,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "725",
+    "id": "722",
     "title": "Deep Seek",
     "excerpt": "And is not only Deep Seek is also ChatGTP, Gemini, Claude, and more LLM's. That we could use wisely. ",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-02-12 17:26\n---\n\nAnd is not only Deep Seek is also ChatGTP, Gemini, Claude, and more LLM's. That we could use wisely. \nAnd If I put it money I think  and integrate, use agents I guess for personal use. And that is what [[Linux change your view about software]] open. There are a lot of things to do.\n\nWhen you pay a lot of gates open, the first steps are use cursor and claude. how they could integrate to our work?\n\n[[prompt engineering]]\n\nDeep seek is a Chinese company that develops _open-source_ [[Birth of LLMs]] founded in July 2023 by _Liang Wenfeng_.\n\nIt's main product the DeepSeek-R1 model provides responses equal or better in certain aspects that other well known models like _GPT4_. The surprising is that to difference to another _LLM_ its training cost is considerable more lower, only six millions of dollars.\n\nThe context and the mind set of the company plays a role important to achieve thus success. \nI mean this product brings many good things too the A.I community \n\nOne of the innovations are:\n- [[Multi head latent attention]]\n\n- [[Mixture of experts]]\n\n- [[Multitoken prediction]]\n\n- FP8 quantization & hardware optimization\n\n- DualPipe [[Pipe Line and Dual Pipe Line]]\n\n[[Big Tech Companies]]\n\n# YouTube Video\n\n ![](https://youtu.be/Xk33QyjSIl0)\n\n\n![](https://youtu.be/hd1-CKDyHXE)\n\n![](https://youtu.be/zw-XrTmuirg)\n",
@@ -7264,7 +7234,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "726",
+    "id": "723",
     "title": "Transistor",
     "excerpt": "It's like an expansion to [[George Boole]] algebra. But here the size change all.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-12 17:22\n---\nIt's like an expansion to [[George Boole]] algebra. But here the size change all.\nI mean [[Claude Shannon]] was one of the first on apply the [[Boolean Algebra]].\n\nOf course without [[Doping transistors]]\n\n**N-P-N**\n\nHow works, you have three foots, in the middle you apply electricity, I guess that electricity comes for the capacitor, also exist the source and the drain, of course the source is like the start of the path of electrons and drain the end for say something. Of course when there it's open we say one otherwise zero.\n\nRight in the frontier the atoms cancels out, and it's like a neutral zone. Well is more that the electrons of the N going to fill the gaps of the P type.\n\nIf the gate don't have electricity, then Right in the frontier the atoms cancels out, and it's like a neutral zone. Well is more that the electrons of the N going to fill the gaps of the P type.\n\nFollowing to this the P side earns a electron and it's converts on a anion, and the N side lose it, forming and cation. (Being more specifically the molecules). Now this creates a electric field, think it in there are sufficient electrons and don't want more electrons, because the electric field.\n\nBut how you can apply a possitive voltage, I mean how that it's possible? Of course it's like the + and the other the ground, that is how works \n\nNow then why the apply a posstive voltage to the gate break the barrier, if we apply it  in this zone. What happens, the electrons that couldn't fill the gaps want are pushed by the magnetic field provocated for the voltage\n, forward bias apply positive to P side and negative to N side, reverse bias, positive to N-side and negative to to P, the depletion zone grows.  \n\n[[Electrical energy]]\n\n[[Transistor Creation]]\n\n[[Apply the Boolean Algebra by Logic Gates Classic]]\n\n[[Thermionic emission]]\n\n# YouTube Video\n\n ![](https://www.youtube.com/watch?v=IcrBqCFLHIY)\n\n\n\n",
@@ -7274,7 +7244,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "727",
+    "id": "724",
     "title": "Electrical Energy",
     "excerpt": "The [[cluster servers]] used a lot of energy, I mean each time the need of renovable energy are bigger.",
     "content": "---\ntags:\n  - baby\n  - atomic\nauthor: Jorge\ndate: 2025-02-12 17:14\n---\nThe [[cluster servers]] used a lot of energy, I mean each time the need of renovable energy are bigger.\nWhy GPU's consumed \n\nhow my cellphone gets charged. The idea that I have it's electrons in movement, but why they move and how that produce energy.  \n\n\n\nI mean this is a basis idea on [[Hardware one and zeros]]\n\nAlso this make born to [[LED s]]\n\nAlso it's important to differentiate between [[AC and DC]].\n\nI mean I have a computer and the we have a source of current flow , what we call current flow the electrons moving through the wires the electrical signal, AAA there are a lot of questions. Electrons couldn't be?\n\n[[Charge]]\n\n[I hate YT](https://www.youtube.com/watch?v=bHIhgxav9LY)\n\n[I hate YT, and persons on internet, we are monkeys](https://www.youtube.com/watch?v=oI_X2cMHNe0)\n\n[I hate YT, and my necessity of watch videos](https://www.youtube.com/watch?v=1TKSfAkWWN0)",
@@ -7284,7 +7254,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "728",
+    "id": "725",
     "title": "Memory RAM Practical Use",
     "excerpt": "They sat the information is capture on this hardware that could be a Hard disk , a SSD, or a nvm2, ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-12 17:08\"\n---\nThey sat the information is capture on this hardware that could be a Hard disk , a SSD, or a nvm2, \nwell this parts and there exist something also important that is:\n- Heap.- What is the difference I dunno I forget it, bad my \n- Stack.-\n\n[[Data]]",
@@ -7294,7 +7264,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "729",
+    "id": "726",
     "title": "GPU",
     "excerpt": ">The future is composed by the use of AI, it would be a good inversion buy GPU's. And of course the well use and maintenance. ",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-02-12 16:48\"\n---\n>The future is composed by the use of AI, it would be a good inversion buy GPU's. And of course the well use and maintenance. \n\nGraphics processing unit. Focus is render graphics but also widely applied to parallel task.\n\nOf course I know that a GPU is like the CPU but this it's oriented to graphics.\n\nNow why the [[CPU First Peek]] can not realize that task?\n\nSince when are they were used? \n\n[[Hardware one and zeros]]\n\nA GPU has thousands cores, this makes to repetitive task works well. Could perform a lot of [[Gpu paralellism-deep learning-computational costs]]\n\nOne instruction-task is divided in many pieces of data simultaneously.\n\nWe know that this have VRAM, that is practically the same for [[RAM]]\n\nAnd something that I didn't know is that behind of cuda exist a complex language programming called RTX. Mad there is a problems with the consum of energy and water this is a problem. that in a future, yes the sostenibility energetic. The data centers are good the problems is that ecologically are not good is a ton of scale.\n\nThe best way to measure the power is [[teraflops on GPUS]]\n\n[[What things we can actually do by using a GPU]]\n\n# YouTube Video\n\n![](https://youtu.be/WTuUExKW1OY)\n",
@@ -7304,7 +7274,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "730",
+    "id": "727",
     "title": "Maximum And Minimum Criteria Using The First Derivative",
     "excerpt": "here it's all the power of the [[First derivative on one dimension]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-12 11:23\"\n---\n\nhere it's all the power of the [[First derivative on one dimension]]\n\n![[T.V.M generalizado Cauchy Demons Criterio First Derivative.png]([T.V.M generalizado Cauchy Demons Criterio First Derivative.png)]",
@@ -7314,7 +7284,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "731",
+    "id": "728",
     "title": "Lebesgue Integral",
     "excerpt": "I wonder if computationally talking is useful?",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-12 10:44\"\n---\nI wonder if computationally talking is useful?\nmeasure theory\n\n\n",
@@ -7324,7 +7294,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "732",
+    "id": "729",
     "title": "Surface Integral (First Specie)",
     "excerpt": ">Let $f$ be a [[Scalar function]] $f(x,y,z)$ defined over $D$ such that the surface $S\\subset D$. The surface integral is: [^2].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-11 16:30\nmodified: 2025-08-26 07:43\n---\n>[!definition]\n>Let $f$ be a [[Scalar function]] $f(x,y,z)$ defined over $D$ such that the surface $S\\subset D$. The surface integral is: [^2].\n>$$\\iint \\limits_{S}f(x,y,z)dS=\\iint_{D}f(\\vec{r}(\\mu,\\nu))\\lVert r_{\\mu}\\times r_{\\nu} \\rVert d\\mu d\\nu $$\n- [[Surface on R3 via integrals]]\n- If you compare it with the approach that we have with [[Line Integral (first specie)|line integral]] is pretty similar. \n- Think it like if you want to calculate the area of a fabric, and you have the equation of it, note that the area not depend if the fabric is very tall.Is kind of a weight sum\n\n[^2]: [[Analisis Matematico III Calculo Vectorial]] pp. 770",
@@ -7334,7 +7304,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "733",
+    "id": "730",
     "title": "Flow Line",
     "excerpt": "Give it a [[Vector field]] $\\vec{F}$ , a trajectory is a [[Vector function over a real variable]] $\\alpha(t)$ in such a way that ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-11 15:42\"\n---\nGive it a [[Vector field]] $\\vec{F}$ , a trajectory is a [[Vector function over a real variable]] $\\alpha(t)$ in such a way that \n$$\n\\alpha'(t)=\\vec{F}(\\alpha (t))\n$$\n\n\n",
@@ -7344,7 +7314,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "734",
+    "id": "731",
     "title": "Second Derivative",
     "excerpt": "You derived two times and you have it. But what about the interpretation.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-11 15:12\"\n---\nYou derived two times and you have it. But what about the interpretation.\nThis leads to [[Concavity and convexity]]\n\n[[First derivative on one dimension]]",
@@ -7354,7 +7324,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "735",
+    "id": "732",
     "title": "Implicit Derivatives",
     "excerpt": "You can't know the form of the function but you can know the value of the its [[derivatives]]. I mean is quite similar to [[implicit function]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-11 15:08\"\n---\nYou can't know the form of the function but you can know the value of the its [[derivatives]]. I mean is quite similar to [[implicit function]]\n\nA relation it's a equation that relates two variables typically the $x \\text{ and }y$, this relation could be plotted in the two dimensional space and we can say that it's a curve. \nOf course all the the function are relations but not all the relations are functions here its possible that for one $x$ exist two $y$ that satisfy the relation.\n\nExist many interesting curves, one of the most interesting are the [[Elliptic Curves]].\n\nThe interesting here is that the slope in certain point could be infinite, thing that in function it's impossible to happen.\n\nWe are capable of deduct a [[First derivative on one dimension]] of a relation between two variables.\nIf two points fulfil the relation could be represented.",
@@ -7364,7 +7334,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "736",
+    "id": "733",
     "title": "Periodic Function",
     "excerpt": "A periodic [[Real function]] $f$ is such that for a real number $T>0$  the follow is true.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-11 14:08\"\n---\nA periodic [[Real function]] $f$ is such that for a real number $T>0$  the follow is true.\n$$\nf(x+T)=f(x) \\quad \\forall x\\in D_f\n$$\nThe example more know are the cosine and sine, and for example once you know the values of the function in one period you can, know the values any where by suming n times the period, and I guess that is how it works the machine calculators, to compute the the sine of number very large, all i'ts know the values in a the range from  minus pi to pi using the Taylor Polinomial and then a simple equation and like it's a equation of two variables I dont see it very clear altought you can use the roof function, elaborate an algorithm, and using the taylor expansion to large numbers is another problem beacuse the error that you are able to accept it's too large. A huge number. ",
@@ -7374,7 +7344,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "737",
+    "id": "734",
     "title": "Curl Idea",
     "excerpt": "If you drip a twig or a specie of compass, if this rotates clockwise the curl is",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-10 16:04\"\n---\nIf you drip a twig or a specie of compass, if this rotates clockwise the curl is\n\nBut wait a moment but the curl it's a vector\n\n# YouTube Video\n\n ![](https://youtu.be/rB83DpBJQsE)\n\n",
@@ -7384,7 +7354,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "738",
+    "id": "735",
     "title": "Curl",
     "excerpt": ">Give it a [[Vector field]] $A=(A_{x},A_{y},A_{z})$ the **curl** of $A$ is:",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-10 16:03\n---\n>[!definition]\n>Give it a [[Vector field]] $A=(A_{x},A_{y},A_{z})$ the **curl** of $A$ is:\n>$$\n\\nabla \\times A=\\begin{vmatrix} \n \\mathbf{i}&\\mathbf{j}&\\mathbf{k}\\\\ \n \\frac{\\partial }{\\partial x}&\\frac{\\partial }{\\partial y}&\\frac{\\partial }{\\partial z} \\\\\nA_{x}&A_{y}&A_{z}\n\\end{vmatrix}\n>$$\n\n- Is the [[Cross product]] between the [[Nabla Differential Operator]] and $A$. So it's is another vector perpendicular to both. But again that operator don't have sense by itself. Is better to think it like a combination between the coordinates.\n- **Property**: Let $A$ and $B$ two differentiable vector fields, then:\n$$\n\\nabla \\times (A\\times B)=B\\cdot( \\nabla \\times A)-A\\cdot(\\nabla \\times B)\n$$\n- A physical representation is [[Curl Idea]]",
@@ -7394,7 +7364,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "739",
+    "id": "736",
     "title": "Divergence Means Blue Or Red",
     "excerpt": "Consider a region on the space, if on all that region the [[Divergence - Nabla Operator]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-10 15:57\n---\nConsider a region on the space, if on all that region the [[Divergence - Nabla Operator]]\n\n- If it's positive is like a source of an explosion, \n\n- If it's negative is like an implosion, sink\n\nAnd it have sense because we have a sum of [[Partial derivative]].\n \n![](https://youtu.be/rB83DpBJQsE)",
@@ -7404,7 +7374,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "740",
+    "id": "737",
     "title": "Laplacian",
     "excerpt": "Give it a scalar function $f(x,y,z)$",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-10 12:00\nmodified: 2025-12-11 10:37\n---\nGive it a scalar function $f(x,y,z)$\n\n$$\n\\nabla^{2}f=\\nabla\\cdot(\\nabla f)=\\frac{\\partial^{2}f}{\\partial x^{2}}+\\frac{\\partial^{2}f}{\\partial y^{2}}+\\frac{\\partial^{2}f}{\\partial z^{2}} \n$$\n\nAnd for a vector field $A$.\n$$\n\\nabla^{2}A=(\\nabla^{2}A_{x},\\nabla^{2}A_{y},\\nabla^{2}A_{z})\n$$\n\n[[Laplacian log space]]",
@@ -7414,7 +7384,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "741",
+    "id": "738",
     "title": "Nabla Differential Operator",
     "excerpt": "$\\vec{\\nabla}$ is a [[Differential Operator]]. It's composed by the [[Partial derivative|partial derivatives]] of a [[Scalar function]].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-10 11:41\nmodified: \"{{2025-12-03}} {{19:36}}\"\n---\n>[!definition]\n$\\vec{\\nabla}$ is a [[Differential Operator]]. It's composed by the [[Partial derivative|partial derivatives]] of a [[Scalar function]].\n$$\n\\nabla =\\left( \\frac{\\partial }{\\partial x },\\frac{\\partial }{\\partial y}, \\frac{\\partial }{\\partial z } \\right)\n$$\nAnd for $g:\\mathbb{R}^{n}\\to \\mathbb{R}$. **Gradient**.\n\n$$ \\nabla=\\left[ \\frac{\\partial g}{\\partial x_{0}},\\frac{\\partial g}{\\partial x_{1}},\\frac{\\partial g}{\\partial x_{2}},\\frac{\\partial g}{\\partial x_{3}},\\dots \\frac{\\partial g}{\\partial x_{n} } \\right] $$\nSome important applications are:\n- [[Gradient]]\n- [[Divergence - Nabla Operator]]\n- [[Curl]]\n- [[Laplacian]]\n- [[Nabla Operator on Differents Coordinate Systems]]",
@@ -7424,7 +7394,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "742",
+    "id": "739",
     "title": "Context Size LLM",
     "excerpt": "Is like a boundary there we can apply all the related to the _context_. This is how many tokens the [[Birth of LLMs]] can attend on once.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-10 08:47\nmodified: 2025-08-09 15:57\n---\nIs like a boundary there we can apply all the related to the _context_. This is how many tokens the [[Birth of LLMs]] can attend on once.\n\nRespect the [[Self attention mechanism on one head|self attention mechanism]] with a context size of $n$ this scales like $O(n^{2})$. Thus is important to careful set this number.\n\nOf course the power computations is several affected for exaggeratedly numbers of the context size.\n\nThe network only can process a fix number of vectors at a time. Context size GPT3=2048\n\nNow Gemini (Google's model) achieve one million of tokens",
@@ -7434,7 +7404,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "743",
+    "id": "740",
     "title": "Values LLM",
     "excerpt": "Are obtained like the [[Query and Key on Attention]] but, for what are they for? (conceptually talking)",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-10 08:42\"\n---\nAre obtained like the [[Query and Key on Attention]] but, for what are they for? (conceptually talking)\n\nis for the need of update the embeddings remember this trick of use the dot product, the _query the key_ only give numbers, not vectors. We are dealing with vectors. We need some vectors.\n\nFor that purpose is necessary create another vector, how?\n\nWell, creating a _value matrix_ $W_{V}$. That multiplying this matrix to the vector creates a vector that put the adjective to the nouns. Of using the _formula_.\n\n**Value Down Matrix**\n\n**Value App matrix**\n\nThese raise to the _Output matrix_ pretty related to the block attention,\n\n\n",
@@ -7444,7 +7414,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "744",
+    "id": "741",
     "title": "Potential Energy Classic",
     "excerpt": "> [[potential conservative force]]",
     "content": "---\ntags:\n  - baby\n  - atomic\nauthor: Jorge\ndate: \"2025-02-08 18:42\"\n---\n>[!definition]\n> [[potential conservative force]]\nThis is defined by the [[Work]]\nThe potential energy measures how many [[Energy]] has a body \"inside\". of course only the once who can be liberated. \n\nThe most popular are the _Potential gravitational_:\n\n$$\nV=mgh\n$$\n\nAnd the elastic one:\n$$\nK=\\frac{1}{2}kx^{2}\n$$\n",
@@ -7454,7 +7424,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "745",
+    "id": "742",
     "title": "Lagrangian",
     "excerpt": "$$ \\mathcal{L}(q,\\dot{q},t)=T-V $$",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-08 18:38\nmodified: 2025-11-21 08:59\n---\n$$ \\mathcal{L}(q,\\dot{q},t)=T-V $$\n\nWhere $T$ is the [[Kinetic energy]] and $V$ [[Potential energy classic|potential energy]] and $q$ are the [[Generalized Coordinates]], $\\dot{q}$ generalized velocities, $t$ time. [^1] [^2] \n\nI defined this guy, what I make with it? First [[Euler-Lagrange Equations]] and [[Hamilton Equations]].\n\n[[Classical Mechanics]]\n\n[^1]: [[Feynman]] pp. 38\n[^2]: [[Classical Mechanics]] pp. 40\n",
@@ -7464,7 +7434,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "746",
+    "id": "743",
     "title": "Lagrangian Mechanics",
     "excerpt": "The action [[Functional]] is:",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-08 18:34\nmodified: 2025-08-23 14:27\n---\nThe action [[Functional]] is:\n$$ S[q]=\\int_{t_{1}}^{t_{2}}L(q,\\dot{q,t})dt $$\n\nWhere $L$ is the [[Lagrangian]]\n\n[[Generalized Coordinates]]\n[[Principle of Least Action]] Say that this integral must be minimize.\n\n[[Classical Mechanics]] pp. 53",
@@ -7474,7 +7444,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "747",
+    "id": "744",
     "title": "Functional Analysis",
     "excerpt": "I know that the first problem that initial this field was the brachistochrone",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-08 18:33\"\n---\nI know that the first problem that initial this field was the brachistochrone\n\n\n\n[[Functional]]\n[[Lagrangian Mechanics]]",
@@ -7484,7 +7454,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "748",
+    "id": "745",
     "title": "Norm Metric Space",
     "excerpt": "A norm induce a metric, suppose we have a norm $\\lVert \\cdot \\rVert$.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-08 18:21\"\n---\nA norm induce a metric, suppose we have a norm $\\lVert \\cdot \\rVert$.\nWe can define a metric like this $d(x,y)=\\lVert x-y \\rVert$\nI guess we are on a vector space or a space metric?\n\nThen a norm induced a metric. [[Norm]]",
@@ -7494,7 +7464,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "749",
+    "id": "746",
     "title": "Dot Product, Why Define It Like That?",
     "excerpt": "In English literature the call product is the simple **Euclid metric**, the question becomes more interesting when you abstract.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-08 18:08\nmodified: 2025-08-30 16:40\n---\nIn English literature the call product is the simple **Euclid metric**, the question becomes more interesting when you abstract.\n\nSo we know pretty well its definition, a interesting view is given by: @allohvkCosineDistanceVs2025.\n\nNow from this idea we could to another ones [[Dot product constraints to go to a certain spaces]]\n",
@@ -7504,7 +7474,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "750",
+    "id": "747",
     "title": "Norm",
     "excerpt": ">A **norm** is a [[Function]] $\\lVert \\cdot \\rVert:X\\to \\mathbb{R}^{+}$ which obeys the[^1].",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-02-08 18:06\nmodified: 2025-10-18 13:44\n---\n>[!definition]\n>A **norm** is a [[Function]] $\\lVert \\cdot \\rVert:X\\to \\mathbb{R}^{+}$ which obeys the[^1].\n>1. Non negativity.\n>2. Scale (Homogeniety)\n>3. Triangle of inequality\n\n- A [[Vector Space]] with **Norm** is called **Normed Vector Space**.\n- Not every norm comes from an [[Inner product]].\n\n>[!example]\n**Minkowski Norm**\n>$$\n\\lVert x \\rVert_{p}=\\left( \\sum_{i=1}^{n} \\lvert x _{i}\\rvert ^{p} \\right)^{\\frac{1}{p}}  $$\n\n[^1]: [[Linear Algebra Done Right]] pp. 186\n",
@@ -7514,7 +7484,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "751",
+    "id": "748",
     "title": "Basis Space Vector (Schauder)",
     "excerpt": "This is a infinite sequence of vector. Which have sense, and also have sense ask for the convergence of the some Norm",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-08 17:29\nmodified: 2025-08-23 15:04\n---\nThis is a infinite sequence of vector. Which have sense, and also have sense ask for the convergence of the some Norm\n\nIn such a way that every vector could be written like a [[Series]] that converges in norm.\n\nSo know about series is that important?\n\n\n\n[[Difference of Basis.png]]\n[[Banach Space]]\n[[Fourier Basis Complex Case]]",
@@ -7524,7 +7494,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "752",
+    "id": "749",
     "title": "Map",
     "excerpt": "When we talk about spaces more abstracts like _the space of all smooth functions_ or _the space of all polynomials_ is more usual to talk about a __ma...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-08 14:49\n---\n\n\nWhen we talk about spaces more abstracts like _the space of all smooth functions_ or _the space of all polynomials_ is more usual to talk about a __map__ when are referencing [[Function|a function]].\n\n\n",
@@ -7534,7 +7504,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "753",
+    "id": "750",
     "title": "Definition Set",
     "excerpt": "How we define a set, without reference a set.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-08 14:33\"\n---\nHow we define a set, without reference a set.\n[[Set]]\nExist one but I do not remember well. \n[[Georg Cantor]]\n\n\n>naive set theory, its informal ,use the natural language , human ",
@@ -7544,7 +7514,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "754",
+    "id": "751",
     "title": "Query And Key On Attention",
     "excerpt": "> The **key** and **query matrices** are [[Tensor - Computation|tensors]] that are obtained in the [[Training Phase LLM|training phase]]. They are imp...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-02-08 09:55\nmodified: 2025-10-19 15:45\n---\n>[!definition]\n> The **key** and **query matrices** are [[Tensor - Computation|tensors]] that are obtained in the [[Training Phase LLM|training phase]]. They are implicit on a [[Feed Forward Neural Network]]. [^1]\n\nTo resolve the [[Context Problem]] we have:\n- Let $\\mathbf{h}_{t}\\in \\mathbb{R}^{d}$ be the **hidden state**, $d$ the [[Embedding dimension]].\n- Let $W_{K},W_{V},W_{Q}\\in \\mathbb{R}^{d_{h}n_{h}\\times d}$, where $d_{h}$ is the **head dimension** and $n_{h}$ the **number of heads**.\n- Obtain the $q_{t},k_{t},v_{t}\\in \\mathbb{R}^{d_{n}n_{h}}$ via matrix multiplication.\n- Thus we slice these in $n_{h}$ parts in such a way:\n$$\n\\begin{align}\n[\\mathbf{q_{1},q_{2},\\dots ,q_{n_{h}}}]=\\mathbf{q} \\\\\n[\\mathbf{k_{1},k_{2},\\dots ,k_{n_{h}}}]=\\mathbf{k} \\\\\n[\\mathbf{v_{1},v_{2},\\dots ,v_{n_{h}}}]=\\mathbf{v}\n\\end{align}\n$$\n- And apply the [[Self attention mechanism on one head]]\n- Conceptually the [[Query and key Idea]]\n[[Cross attention]]\n\n\n\n[^1]: [[DeepSeek-V2 A Strong, economical, and efficient Mixture of Expert Language Model]] pp. 6",
@@ -7554,7 +7524,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "755",
+    "id": "752",
     "title": "Auto Regressive Generation",
     "excerpt": "**Auto-regressive generation** is a method where a model generates text **one token at a time**, using previously generated tokens as context for pred...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-07 15:27\nmodified: 2025-11-06 11:09\n---\n**Auto-regressive generation** is a method where a model generates text **one token at a time**, using previously generated tokens as context for predicting the next one.\n\n\n### **How It Works**\n\n1. **Start with an Input (Prompt):**\n    - Example: _\"The cat is on the\"_\n2. **Predict the Next Token:**\n    - The model computes the probability of possible next words (e.g., \"table\", \"roof\", \"moon\").\n    - It selects the most likely one (e.g., \"table\").\n3. **Append the New Token & Repeat:**\n    - The sequence becomes _\"The cat is on the table\"_.\n    - Now, the model predicts the next word using this updated context.\n4. **Continue Until Stopping Condition:**\n    - The process stops when reaching a **special token** (like `<EOS>` for end-of-sentence) or after a fixed length. \n\n### **Key Properties**\n\n✔ **Uses the last token to predict the next one** (causal).  \n✔ **Each step depends on previous outputs**, making it sequential.  \n✔ **Cannot revise previous words**, so errors can compound (exposure bias).\n\n\n### **Where It’s Used**\n\n- **GPT models (e.g., GPT-4, GPT-3, etc.)** → Text completion.\n- **Language modeling** → Predicting missing words.\n- **Music & Image Generation** → Generating content sequentially.\n",
@@ -7564,7 +7534,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "756",
+    "id": "753",
     "title": "Cross Attention",
     "excerpt": "Mathematically is the same from the [[Self attention mechanism on one head]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-07 15:16\nmodified: 2025-08-14 17:37\n---\nMathematically is the same from the [[Self attention mechanism on one head]]\n\n\n>**decoder** to attend to the **encoder’s outputs** instead of just self-attending.\n\n\n\n\nIt's basically the same but instead the [[Query and Key on Attention|query]] acts on different data sets.\n\nFor instance doing translation, \n\n>this remember, The Russians tried to create a translating system at eighties and inverted millions of dollars, but they failed. (I.A) book that I read.\n\n[[Self attention mechanism on one head]]",
@@ -7574,7 +7544,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "757",
+    "id": "754",
     "title": "Masking",
     "excerpt": "Now also exist a problem we don't want that later tokens influencing earlier ones, that would make sense linguistically talking, here enters we ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-07 15:16\"\n---\n\nNow also exist a problem we don't want that later tokens influencing earlier ones, that would make sense linguistically talking, here enters we \nGenerally talking is prevent the model from accessing certain tokens.\n\n1. _Casual Masking (Decoder Masking)_.- Don't see futures tokens, [[Auto regressive generation]]\n\n2. _Padding Masking_. Avoid apply attention on padding tokens, \n",
@@ -7584,7 +7554,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "758",
+    "id": "755",
     "title": "Multi Head Attention",
     "excerpt": "When we refer to multi-headed attention we are referring to a set of [[Self attention mechanism on one head|single heads]].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-07 15:16\n---\nWhen we refer to multi-headed attention we are referring to a set of [[Self attention mechanism on one head|single heads]].\n\nConceptually talking each _attention head_ focus in different aspect of the input.\nFor instance one can focus on the grammar, another in adjectives, another in places, of course like all the process this emerge from learning and it's implicit on the respective matrices.\n\nIt's the need extract the maximum quantity of context from many angles in parallel. Only use a head it would be very linear.\n\nIt's important to remember that each head had it's own parameter for the [[Query and Key on Attention]] and [[Values - LLM]], these are completely independently one form each other. One reasons that they finish with different values is that they born with _random initialisation_.(training define them) \n\n**Multi-head attention** works splitting the input into multiple parts and applies **separate attention mechanisms** in parallel once finish we know that each head \"return\" a vector, the sum of each of these vector is like the \"context\". The sum of the word and this vector return the true meaning of the word.\n\n[[Multi head latent attention]]\n\n[[Where do facts live]]\n[[Multitoken prediction]]\n[[Mixture of experts]]\n",
@@ -7594,7 +7564,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "759",
+    "id": "756",
     "title": "Self Attention Mechanism On One Head",
     "excerpt": "Is necessary interpret this idea. They key idea is:",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-02-07 14:22\nmodified: 2025-10-26 23:17\n---\nIs necessary interpret this idea. They key idea is:\n$$\nAttention(Q,K,V)=softmax\\left(\\frac{Q\\cdot K^T}{\\sqrt{ d_{k} }} \\right)V\n$$\nThus the change would be (represented very fuzzy) $\\vec{E_{i}}'=\\vec{E}_{i}+Attention(Q,K,V)$\n\nMore precisely:\n$$\n\\mathbf{o}_{t,i}=\\sum_{j=1}^{t}\\text{Softmax}\\left( \\frac{\\mathbf{q}^{T}_{t,i}\\mathbf{k}_{j,i}}{\\sqrt{ d_{h} }} \\right) \\mathbf{v}_{j,i}\n$$\n$$\n\\mathbf{u}_{t}=W^{O}[\\mathbf{o}_{t,1};\\mathbf{o}_{t,2};\\dots ;\\mathbf{o}_{t,n_{h}}]\n$$\n[^1]\n\n[[Self attention idea]]\n\nEach head act's over a dimension lower that the [[Embedding dimension]]. Let $d_{h}<d$ this dimension\nThe $Q$ and $K$ are the [[Query and Key on Attention]], $V$ are the [[Values - LLM]] and $d_{k}$ is the [[Context size LLM]], and the [[Soft-Max Activation peaks or smooth|Softmax function]] to bring it into a workable form.\n\n>The _dot product_ in the __formula__ represents how well a key answer a query, I mean it's the essence of **Self Attention***.\n\n[^1]: [[DeepSeek-V2 A Strong, economical, and efficient Mixture of Expert Language Model]]\n",
@@ -7604,7 +7574,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "760",
+    "id": "757",
     "title": "SoftMax Activation LLM Idea Abstraccion",
     "excerpt": "Here when we the temperature is higher, the text generated is nonsense",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-07 14:13\"\n---\n\nHere when we the temperature is higher, the text generated is nonsense\nTemperature colder more sense.\n[[SoftMax Function]]\n[[Statistics like the path for approach the chaotic of life]]",
@@ -7614,7 +7584,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "761",
+    "id": "758",
     "title": "Choose   Final Hidden State Of The Last Token",
     "excerpt": "Now the natural question is Why choose the final hidden state of the last token and not choose the one with the word that gives most context.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-07 13:35\"\n---\nNow the natural question is Why choose the final hidden state of the last token and not choose the one with the word that gives most context.\n\nThe reason is because the last contain all the contextual information of others.\nWe choose the final hidden state of the last token because contains all the textual information from the previous word.\nBecause text process is sequential. text generation\n(this is very related to _auto-regressive_ generation- masked tokens)\n\n\n**Auto-regressive generation** is a method where a model generates text **one token at a time**, using previously generated tokens as context for predicting the next one.\n\n\n[[Auto regressive generation]]",
@@ -7624,7 +7594,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "762",
+    "id": "759",
     "title": "Logit",
     "excerpt": "A vector which values can be negatives like also positives ones.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-07 13:32\"\n---\nA vector which values can be negatives like also positives ones.\n\nThe question is if you apply the [[SoftMax Function]] then they become outputs. With meaning.\n\n\nIn the talk of statistic is very called",
@@ -7634,7 +7604,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "763",
+    "id": "760",
     "title": "Tokenization   Unembedding   LLM",
     "excerpt": "Suppose that we have already a form of doing the [[Tokenizer|embedding]] (exist different methods).",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-07 13:16\"\n---\nSuppose that we have already a form of doing the [[Tokenizer|embedding]] (exist different methods).\nNow of course we have to be able to unembedding these vectors to bring it to human language.\nFirst we initialize a matrix at random values and we train it (_somehow_) in such a way that this matrix called ___unembedding matrix___ $W_{U}$ multiplied by the [[Choose - final hidden state of the last token|final hidden state of the last token that is vector]] give us a vector that applying the [[Soft-Max Activation peaks or smooth]] give us the _probability_ of the follow would appear.\n\nNaturally we choose the one with most probability, but also you can play with that.\n\nIn this process [[Logit]] appear, $h$ be said vector and $b$ a optional bias,  whose formula is:\n$$\nlogits=W_{U}\\cdot h+b\n$$\n\n>Now it's possible that $W_{U}=(W_{E})^{T}$ have its pros and cons\n\nIn the case that we have to train the unembedding matrix this would add new parameter, in the case of ChatGTP is :50,257 * 12,288 = 617,558,016 parameters.\n",
@@ -7644,7 +7614,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "764",
+    "id": "761",
     "title": "Types Of Neural Networks",
     "excerpt": "Different types of neural networks perform in specific task, we can see the big differences between one to each other by its _architecture_ and the _a...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-07 10:35\"\n---\nDifferent types of neural networks perform in specific task, we can see the big differences between one to each other by its _architecture_ and the _algorithms_ involved to find the _weights and bias_.\n\n - **Feed forward Neural Networks (FNNs)** →  The process is straightforward  , the inputs convert into the output [[FFN working|like water flowing]].\n- **Recurrent Neural Networks (RNNs)** → Have feedback loops, good for sequential data.\n- **Convolutional Neural Networks (CNNs)** → Designed for [[Convolution Neural Network|image processing]].\n- **Hopfield Networks & Boltzmann Machines** → [[Hopfield Networks|Energy-based models]] models with feedback.\n\n",
@@ -7654,7 +7624,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "765",
+    "id": "762",
     "title": "Training Phase LLM",
     "excerpt": "Ok, once you have all the structure ready, all the functions, you stablish all the connections between GPUs you stablish the [[checkpoint LLM]]",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-02-07 08:48\"\n---\nOk, once you have all the structure ready, all the functions, you stablish all the connections between GPUs you stablish the [[checkpoint LLM]]",
@@ -7664,7 +7634,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "766",
+    "id": "763",
     "title": "Choose The Model Architecture LLM",
     "excerpt": "Before 2017, when transformers didn't exist we use [[Recurrent Neural Network]], for what?",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-02-07 08:47\"\n---\nBefore 2017, when transformers didn't exist we use [[Recurrent Neural Network]], for what?\n\n[[Transformer]]",
@@ -7674,7 +7644,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "767",
+    "id": "764",
     "title": "Tokenization   Embedding   LLM",
     "excerpt": "Because you could train your own tokenizer , that is not amazing?",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: \"2025-02-07 08:34\"\n---\nBecause you could train your own tokenizer , that is not amazing?\n\nWe need to talk about the [[Bite Pair Algorithm]], that is the first part, once that you convert a \"line\" of words into tokens then you use that numbers to convert into to matrix or tensors ...\n\n>And just about this days days (12 July) there is another kind of technology that proposes to replace to Tokens, which is  H-NET [https://arxiv.org/abs/2507.07955](https://t.co/AVW1RtyRAY) I think that the most important relies on the optimization make more cheaper and fast.\n\nPractically only cares the [[Embedding matrix]]\n\nGive to each human word a number, of course the word must be in the most primitive form . The obvious problem is that in general one word has many means. The context, the other words around matter. And if it's a large text even more. \n\nThis is apart of only give a vector to a word is necessary to give the position in the text, add more complexity.\nBut I do not understand, what vector choose, to multiply this matrix?\n\n_We are going to talk first how could work a autocomplete._\n\nIf a word represents a vector we could see it, if the vector only have three parameters , the would a vector on three dimensional space that we know.\n\nAbout the nature of the vector, the vector home and the vector house would equal or similar?\n\nAre similar I think, if we would able to visualize it, they would have a similar \ndirections\n\nAnd I think that thinking it isolate is something that everyone could think. \n\nHow did it not occur to me before.?\n\nHow we could measure the similarity between two vector? [[Dot Product, why define it like that?]]\n\n[[Tokenization - Unembedding - LLM]]\n\n\n[[Sinuidal Encoding]]",
@@ -7684,7 +7654,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "768",
+    "id": "765",
     "title": "Tokenizer",
     "excerpt": "The **tokenizer** is the first step that [[LLM's]] use, transform a string chain into a chain of numbers called tokens, each token represent a \"word\" ...",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-02-07 08:34\nmodified: 2025-08-16 14:26\n---\nThe **tokenizer** is the first step that [[LLM's]] use, transform a string chain into a chain of numbers called tokens, each token represent a \"word\" or whatever \n\n\nWe need to talk about the [[Bite Pair Algorithm]], that is the first part, once that you convert a \"line\" of words into tokens then you use that numbers to convert into to matrix or tensors ...\n\n>And just about this days days (12 July) there is another kind of technology that proposes to replace to Tokens, which is  H-NET I think that the most important relies on the optimization make more cheaper and fast.\n\nPractically only cares the [[Embedding matrix]]\n\nGive to each human word a number, of course the word must be in the most primitive form . The obvious problem is that in general one word has many means. The context, the other words around matter. And if it's a large text even more. \n\nThis is apart of only give a vector to a word is necessary to give the position in the text, add more complexity.\nBut I do not understand, what vector choose, to multiply this matrix?\n\n_We are going to talk first how could work a autocomplete._\n\nIf a word represents a vector we could see it, if the vector only have three parameters , the would a vector on three dimensional space that we know.\n\nAbout the nature of the vector, the vector home and the vector house would equal or similar?\n\nAre similar I think, if we would able to visualize it, they would have a similar \ndirections\n\nAnd I think that thinking it isolate is something that everyone could think. \n\nHow did it not occur to me before.?\n\nHow we could measure the similarity between two vector? [[Dot Product, why define it like that?]]\n\n[[Tokenization - Unembedding - LLM]]\n\n\n[[Sinuidal Encoding]]",
@@ -7694,7 +7664,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "769",
+    "id": "766",
     "title": "Least Squares Algorithm",
     "excerpt": "This was discover by Gauss when he had problems with the prediction of an astro in the sky.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-06 10:59\"\n---\nThis was discover by Gauss when he had problems with the prediction of an astro in the sky.",
@@ -7704,7 +7674,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "770",
+    "id": "767",
     "title": "Deep Learning, What It Is?",
     "excerpt": "This is a subset of [[Machine Learning]]. Where [[Feed Forward Neural Network]] born, we make use of them to make [[Model for predicting new data|mode...",
     "content": "---\ntags:\n  - young\n  - ml\nauthor: Jorge\ndate: \"2025-02-05 18:41\"\n---\nThis is a subset of [[Machine Learning]]. Where [[Feed Forward Neural Network]] born, we make use of them to make [[Model for predicting new data|models]] learn. And now that we have already have the [[Birth of LLMs|LLM]] that is the best that this field give it to us, and shows intelligence we are trying to improve the efficiency, make them more cheap ([[Deep seek]]) and integrate to all parts possible of our lives, this last is very profitable,[[Big Tech Companies]] are the prove.  \n\nTo put in practice the theory and have notable results this field have some challenges.\n- The size of the data sets have to be extremely high, if we use a small one is probably that occurs **over fitting**. (Memorize and don't generalize)\n- Use of [[GPU]]'s t [[TPU]]'s, that are surprisingly expensive for the average person, only Big companies are able to create its own _models_ from scratch. The regular user only could use it or tweak minimal things.\n- _Black Box Problem_: Do you want convert word to vector and you need a matrix? Train it and that's all, what mean the matrix numbers, We don't know but works, that works is the important. How exactly the matrix know what it is and _adjective_? Who cares?\n\n\n\n\n",
@@ -7714,7 +7684,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "771",
+    "id": "768",
     "title": "Quantum Computing",
     "excerpt": "So here exist initiatives, differentiate between [[Quantum Mechanics MOC]], that are kind of different. ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-02-05 17:56\nmodified: 2025-10-06 12:58\n---\nSo here exist initiatives, differentiate between [[Quantum Mechanics MOC]], that are kind of different. \n\nYeah but all is about [[quantum circuits]].\n\nSuper Important manage IBM \nAWS quantum computing\nAnd google . [CIRQ](https://github.com/quantumlib/Cirq)\n\n\n\nHow you called to that python library?\n\n[](https://youtu.be/-UrdExQW0cs)\n[](https://youtu.be/tYeojFfToGA)\n[](https://youtu.be/dE-ldlu9BeU)\n[](https://www.youtube.com/watch?v=mVu_kOtuybM&t=18s)",
@@ -7724,7 +7694,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "772",
+    "id": "769",
     "title": "Training Your Neural Network",
     "excerpt": "Before to enter to the training phase to a [[Feed Forward Neural Network]] we have to have certain tools.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-05 17:39\"\n---\nBefore to enter to the training phase to a [[Feed Forward Neural Network]] we have to have certain tools.\n- [[Back propagation algorithm]].\nOnce that you have understand this you train your N.N using a data set. Thus we obtain the bias and the weights corrects. To this we called _Parameters_, the numbers of neurons and the amount of layers are implicit on the dimension of the matrices that make up the parameters. \n\n",
@@ -7734,7 +7704,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "773",
+    "id": "770",
     "title": "Taylor'S Polynomial Idea",
     "excerpt": "Now the idea it's break down a function using polynomials quite simple.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-05 15:04\"\n---\nNow the idea it's break down a function using polynomials quite simple.\n\nBut you can't simply that the polynomial is similar you need to prove it. For that is the prove. \n\nI mean when you are been introducing to first derivatives, you come across with the _equation of the line tangent in one point_. You think about it and all it's great.\nWhen we are close to said point, the line and the function become closer.\nBut who on earth can think of following that idea to reach a infinite polynomial. Adding more grade to that affine function.\n",
@@ -7744,7 +7714,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "774",
+    "id": "771",
     "title": "Fourier Series Idea",
     "excerpt": ">I remember quite well that I give a lecture of this topic, was that or talk about the _Least Action Principle_.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-05 14:48\"\n---\n>I remember quite well that I give a lecture of this topic, was that or talk about the _Least Action Principle_.\n\nThis is pretty the similar of [[Taylor's Polynomial]]. Approach a function. But here instead of using polynomial we use _trigonometrical polynomials_. [[Fourier Series]]\n\n\n[[Dot Product, why define it like that?]]\n\nThe ideas sounds well, but how one problem if the function is not [[Periodic Function]].\n[[Fourier]]\n\n\n\n[s](https://youtu.be/nmgFG7PUHfo)\n[s](https://youtu.be/Mdk6BWeVNIs)\n[s](https://youtu.be/r6sGWTCMz2k)\n[s](https://youtu.be/H4IK0-geQeE)\n \n",
@@ -7754,7 +7724,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "775",
+    "id": "772",
     "title": "Convolution Like A Forward Canvas",
     "excerpt": "For I understand is like wed combine two things, in math this resonates mores with combine two [[Real function]].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-04 11:57\"\n---\nFor I understand is like wed combine two things, in math this resonates mores with combine two [[Real function]].\nIts pretty fancy\n[[Convolution definition]]\n\nIs like go trough the function but only watch the neighborhood, not a big picture this for this case not matters.\n\nLet's only see the formula, is summing the multiplication of two function, one is normal to other one what happened, has been turned and transferred, how much has been transferred? in such a way the begin of the first f. its complemented with the end of the another one.\n\nBut only moves in this case only moves the function that have the variable, and the output of the convolution is the sum (integral) of the casual multiplication of the quiet functions and the moving function. But if you want to put up those you Flip and slide. \n\nit's like use a frame, but a special frame, and with the integral of result of use that frame\n\nThe frame not only frame instead the combine the values what frame, what values? the border of the frame and the another function\n## YouTube Video\n\n![](https://youtu.be/KuXjwB4LzSA)\n\n![](https://youtu.be/IaSGqQa5O-M)\n",
@@ -7764,7 +7734,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "776",
+    "id": "773",
     "title": "Affine Subspace Generalize The Affine F.",
     "excerpt": "We could think an [[Affine Subspace and maps|A affine subspace like]]  a [[Sub Vector Space]] that has been translated a step, is kind of obvious that...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-03 17:45\"\n---\nWe could think an [[Affine Subspace and maps|A affine subspace like]]  a [[Sub Vector Space]] that has been translated a step, is kind of obvious that this space don't \"touch\" the \"origin\" and its because has suffered a translation.  \nThen the natural consequence it is that the sum of two of its elements do not belong to the affine space (This space isn't linear).\n\nI mean even the name clearly refers to the ==affine== ==function==, is practically the generalization trough Linear algebra it's pretty simple.\n\n> But sum $x+x$ it shouldn't necessarily be twice $x$, that depends on the _product of the vector space._ But it is a question of notation, it makes more easy only write $2x$.",
@@ -7774,7 +7744,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "777",
+    "id": "774",
     "title": "Limit Reflects Well Infinitesimals",
     "excerpt": ">Well, begin our travel to the world of Calculus and inevitably to Analysis.",
     "content": "---\ntags:\n  - baby\n  - atomic\nauthor: Jorge\ndate: 2025-02-03 14:15\n---\n>Well, begin our travel to the world of Calculus and inevitably to Analysis.\n\nSeeing this [[Limits (One Dimension)]] _Now what want to say this definition?_   \nFirst why we need $a$ [[Accumulation Point - Real|accumulation point]] at the domain? \nI think it's for secure that that point belong to the domain or at least belong to its sides in such a way that in the around of that point the function is well defined, or at least on one side.\n\nAnd the main _insight_ of the limit is: that any positive number that you choose ($\\epsilon$) , always is gonna to exist a real number (radius for a neighborhood $\\delta$) that is gonna define a neighborhood, and evaluating the function there , the results are going to be near to the value of the limit, how close it's will depend on the number we choose ($\\epsilon$). \n\nWe never touch the point in question or evaluated in that point itself, only we secure that in the arounds both in domain and range are close that point and its image.\n\nThe idea of infinitesimal that was [[history of calculus|messed up the calculation]] was solved with this. ",
@@ -7784,7 +7754,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "778",
+    "id": "775",
     "title": "Functional",
     "excerpt": "Basically a function of functions",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-03 08:21\"\n---\nBasically a function of functions \n\n",
@@ -7794,7 +7764,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "779",
+    "id": "776",
     "title": "Degrees Of Freedom",
     "excerpt": ">Refer to the freedom that have a math or physical construction to realize an action.",
     "content": "---\ntags:\n  - baby\n  - atomic\nauthor: Jorge\ndate: 2025-02-03 07:15\nmodified: 2025-08-12 17:14\n---\n\n>Refer to the freedom that have a math or physical construction to realize an action.\n\nBut this is quite important.\n\n",
@@ -7804,7 +7774,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "780",
+    "id": "777",
     "title": "Uniqueness Of Power Series",
     "excerpt": "This pretty related to analytic functions.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-02 15:40\"\n---\n[[Series]]\n\nThis pretty related to analytic functions.\n",
@@ -7814,7 +7784,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "781",
+    "id": "778",
     "title": "Values Of The Riemann'S Zeta Function On The Even Integers",
     "excerpt": ">Let $k$ be a positive even, $\\zeta$ the [[Riemann's Zeta Function]] and $B$ the [[Bernoulli's Numbers]] then: [^1]",
     "content": "---\ntags:\n  - baby\n  - atomic\nauthor: Jorge\ndate: 2025-02-02 14:14\nmodified: 2025-09-07 11:09\n---\n>[!proposition]\n>Let $k$ be a positive even, $\\zeta$ the [[Riemann's Zeta Function]] and $B$ the [[Bernoulli's Numbers]] then: [^1]\n>$$\\zeta(k)=\\frac{1}{2}(-1)^{k/2+1}(2\\pi)^{k}\\frac{B_{k}}{k!}$$\n\n- Now the most important case is $\\zeta(2)=\\frac{\\pi^{2}}{6}$.\n- he Basel problem and not only that give to us a infinite family of solutions.\n- Completely amazing but, why [[The number Pi]] appears here. I mean the reference give two possible paths. \n\n\n\n",
@@ -7824,7 +7794,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "782",
+    "id": "779",
     "title": "Permutations In Combinatorics",
     "excerpt": "This represents the selections of elements from a set, where order matters.",
     "content": "---\ntags:\n  - baby\n  - atomic\nauthor: Jorge\ndate: 2025-02-02 10:23\n---\nThis represents the selections of elements from a set, where order matters.\nA _permutation_ (in this context) is a specifies grouping, a determined arrange of elements of the set. \n\n>[!example] \n>If you are going to decide the members of a neighborhood council, you have to decide who is going to be the mayor, the secretary and the spokesman. Here matter a lot the order, because exist hierarchy, order, relevance, sequence ,priorities.\n\nNow give it a set with $n$ elements the number of all its permutations is given by the [[Factorial]] in the follow way.\n\n$$\nV(n)=!n\n$$\n\nIt's the same of _factorial_ but here you give context, like an application.\nOr if you want the definition of factorial.",
@@ -7834,7 +7804,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "783",
+    "id": "780",
     "title": "Born Of The Integrals",
     "excerpt": "[[Exhaustion Method]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-01 12:46\"\n---\n[[Exhaustion Method]]\n\nFind areas, is the reason a lot of scientific tried but only N and L could resolve. ",
@@ -7844,7 +7814,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "784",
+    "id": "781",
     "title": "Use Of The Derivative",
     "excerpt": "Now we know  calculate derivative , then what?",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-01 12:39\"\n---\n\nNow we know  calculate derivative , then what?\n\n[[First derivative on one dimension]]\nThe derivatives open a new world. And give to the engineers and a lot of people the possibility to calculate extremes of a function.\n\nKnow if a function is increasing or decreasing. \nWe can derivate again and extract conclusions.\nConvexity and ",
@@ -7854,7 +7824,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "785",
+    "id": "782",
     "title": "Bolzano Weierstrass Theorem",
     "excerpt": "This theorem talk of [[Sequence]] and subsequence",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-01 11:59\"\n---\nThis theorem talk of [[Sequence]] and subsequence\n\n\n\n## Reference\n📚Differential Calculus and applications \n\n",
@@ -7864,7 +7834,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "786",
+    "id": "783",
     "title": "Extreme Value Theorem",
     "excerpt": "This theorem is pretty evident but necessary, also was hard to prove.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-02-01 11:55\"\n---\nThis theorem is pretty evident but necessary, also was hard to prove. ",
@@ -7874,7 +7844,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "787",
+    "id": "784",
     "title": "Use Of The Limit Of One Variable",
     "excerpt": "In the study of [[Limits (One Dimension)|limits]] is pretty usual talk about [[Asymptotes (two dimension)]].",
     "content": "---\ntags:\n  - atomic\n  - young\nauthor: Jorge\ndate: 2025-02-01 10:14\n---\nIn the study of [[Limits (One Dimension)|limits]] is pretty usual talk about [[Asymptotes (two dimension)]].\nMaybe it's because with this tool it is easy to talk about it. (I really want to see it in the case with dimension generalized) \n\nThe follow step once you understand the concept of limit is [[Continuity (One Dimension)]]. And the reason could be because the limit is the main tool to fully understand this topic, understand the essence, without this tool that concept do not have fundamental. \n\nAlso exist a vast amount of functions where directly evaluate the function at certain points leads to several problems, here is when calculate the limit there is our lifesaver. Free us from various restrictions imposed by the [[Real function]].\n\nThus the skill of calculate limits it's is an important section. \nWe mainly use two tools when things are complicated: the [[L'Hopital's Rule]] and [[Taylor's Polynomial]].",
@@ -7884,7 +7854,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "788",
+    "id": "785",
     "title": "Asymptotes (Two Dimension)",
     "excerpt": "Basically when infinite gets involved. ",
     "content": "---\ntags:\n  - baby\n  - atomic\nauthor: Jorge\ndate: 2025-01-31 17:57\n---\nBasically when infinite gets involved. \nExists asymptotes horizontal , vertical and oblique.\n",
@@ -7894,7 +7864,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "789",
+    "id": "786",
     "title": "Energy",
     "excerpt": "Why a car move, because use this all process with its motor. ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-01-31 08:13\"\n---\nWhy a car move, because use this all process with its motor. \n\nBut one main in the gasoline, but why the gasoline have this skill.\n\n\nIf a threw a ball, the movement is because I applied a force, and  that force is applied for my from my muscles, and from where I get energy we can say sleep and eat, sleep is a intern process but eat no. We can say that the aliments have this skill, but the aliments are in essence product of the [[Sun what is it]] on earth, without them there not exist life on earth.\n\n\nA problematic question. \n\n\n[[Fuel, cars moving with much energy]]\n[[soistaniable energy]]",
@@ -7904,7 +7874,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "790",
+    "id": "787",
     "title": "Fuel, Cars Moving With Much Energy",
     "excerpt": "This is a question, where comes fuel? Of dinosaurs? Why have so potential energy?",
     "content": "---\ntags:\n  - baby\n  - atomic\nauthor: Jorge\ndate: 2025-01-31 08:11\n---\nThis is a question, where comes fuel? Of dinosaurs? Why have so potential energy?\n\n[[Energy]]",
@@ -7914,7 +7884,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "791",
+    "id": "788",
     "title": "Expectations With Physics",
     "excerpt": "I mean it's kind of sad that I only could dedicate to work based on theory here in Peru, doesn't exist the practical work. Only in more developed coun...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2025-01-30 10:32\"\n---\nI mean it's kind of sad that I only could dedicate to work based on theory here in Peru, doesn't exist the practical work. Only in more developed countries we could talk about more laboratories and that kind of work.\n\nWell the theory comes from books.\n\nWell of course exist another path that is through computers. And that it's my only way of that my person could explore this world.\n\n[[Application of Physics]]\n[[earthquakes]]\n",
@@ -7924,7 +7894,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "792",
+    "id": "789",
     "title": "Why Exist Physics",
     "excerpt": "Physics exist because there are something inside humans called curiosity.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-01-28 09:55\n---\nPhysics exist because there are something inside humans called curiosity.\n\nThis open the door for physics and it would have been naturally the first note that I would have been created.\n\n\n[[My history and expectations with physics]]",
@@ -7934,7 +7904,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "793",
+    "id": "790",
     "title": "Euclid'S Axioms",
     "excerpt": "- Euclid resumed all the geometry until his age in his book **Elements**. Here proposed five axioms that rule all the geometry that we all known well.",
     "content": "---\ntags:\n  - atomic\n  - young\nauthor: Jorge\ndate: 2025-01-28 09:31\nmodified: 2026-01-21 20:11\n---\n- Euclid resumed all the geometry until his age in his book **Elements**. Here proposed five axioms that rule all the geometry that we all known well.\n\n- The first four axioms were pretty normal, telling things obvious but necessary but the five axiom was uniquely-peculiar. Many mathematicians for long ages try to proof this axiom from first principles but it was a huge task.\n\n>[!quote]\n>You must not attempt this approach to parallels. I know this way to the very end I have traversed this bottomless night, which extinguish all light and joy in my life. I intrigue you,leave the science of parallels alone, learn from my example.\n>_Father of Bolyai_\n\n- Janos Bolyai was one mathematician of the first to pull the thread that would reveal a fertile field.\n- So he write all his discoveries with a new type of geometry, and his father send it a to the GOAT of those times Carl Gauss\n- He also discover this new type of geometry, that he called [[Non Euclidian Geometry]] this field is one of the most fertile and it became the tools which open the doors to [[General Relativity Theory MOC]]\n",
@@ -7944,7 +7914,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "794",
+    "id": "791",
     "title": "Logic The Worst And Best Human Tool",
     "excerpt": "Why I put worst there?",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-01-27 16:55\n---\n\nWhy I put worst there?\n\nThe [[Logic]] I believe is something that differentiate us from animals.\n\nAnd for that we are at the top of the food chain.\n\nI mean I remember well to read a lot of philosophy in academic books in high school and enjoy it. All those topics.\n\nThe weight of the ignorance is much less than the weight of knowledge\n\n\n",
@@ -7954,7 +7924,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "795",
+    "id": "792",
     "title": "Why Mathematics Exists",
     "excerpt": ">The  Veritasium video about number complex is excellent and it resonated with me.",
     "content": "---\ntags:\n  - baby\n  - atomic\nauthor: Jorge\ndate: 2025-01-27 15:57\n---\n>The  Veritasium video about number complex is excellent and it resonated with me.\n\nGo to the question:\n\n>[!question] Why do numbers exist?\n\nAnswering this in a certain way also answers our initial question.\nThe human origin goes back to (informally talking) agriculture and cattle raising.\n\nWith these there is often going to be more than you need, and a way to manage this surplus is necessary.\nOne of the best ways of managing this surplus is creating numbers, numbers that we can assign to animals, lands, extension of lands, quantity of persons and more. \nThis is where manipulating these numbers became important and roughly talking mathematics was born.\n\nIt would be later after the Middle Ages when different personalities formalized and developed math with rigor driven for necessity, a huge curiosity and passion.\n\nThe first step is [[Zettelkasten/Permanent Notes/Logic|Logic]]\n",
@@ -7964,7 +7934,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "796",
+    "id": "793",
     "title": "Dense Sets",
     "excerpt": ">Is the generalization of the fact that the rationales are dense on the reals and all the stuff.",
     "content": "---\ntags:\n  - atomic\n  - young\nauthor: Jorge\ndate: 2025-01-25 18:51\n---\n>[!note] \n>Is the generalization of the fact that the rationales are dense on the reals and all the stuff.\n>I guess that it is a fact well know for a long time.\n\nGive a [[Metric Space]], ($X,d$) , $A\\subset X$ it is call dense on X if: $\\overline{A}=X$.\n\n>[!question] What this mean?\n\nThe [[Closure of a set|closure]] of A, this is the set and all its _accumulation points_ form the entire set.\n\nWhat better than an example, we know that the rational are dense on the reals, I imagine the real line with infinites open balls, the rational with its accumulation points form the real line.  \n",
@@ -7974,7 +7944,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "797",
+    "id": "794",
     "title": "Diameter Of A Set",
     "excerpt": ">The analogous of find two points of a subset and the distance of these point be the biggest. Do not exist two another points that its distance overco...",
     "content": "---\ntags:\n  - young\n  - atomic\nauthor: Jorge\ndate: 2025-01-25 18:36\n---\n>[!note]\n>The analogous of find two points of a subset and the distance of these point be the biggest. Do not exist two another points that its distance overcome this.\n\nGive it a [[Metric Space]] and a subset, the diameter ($\\partial$) of this subset is the maximum real value representing the distance of two points. \n\nObviously this exist if the family of reals numbers that represents the distance between two points in the subset is bounded.\n\n>Then how is bounded exists the diameter ($\\partial \\in \\mathbb{R}$) and we call to the ___bounded___ subset. \n\n**Ref**. [[Topologia de los espacios metricos]]",
@@ -7984,7 +7954,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "798",
+    "id": "795",
     "title": "Dimension What It Is",
     "excerpt": "Pensemoslo de la siguiente manera tienes una curva, y ahora quieres delinear esa curva",
     "content": "---\ntags:\n  - baby\n  - atomic\nauthor: Jorge\ndate: 2025-01-25 18:04\n---\nPensemoslo de la siguiente manera tienes una curva, y ahora quieres delinear esa curva\npara ello normalmente tendrias un lapicero y lo demarcas , pero ahora solo puedes una bola . Poner bolas en la curva, no va a ser muy preciso , lo normal es que se solapen, pero si vamos haciendo el radio de esas bolas  mas pequeño cada vez el afinamiento va a ser mayor, y si lo hacemos infinitesimalmente pequeño. \n\nThis video remembers me to [[Boundary of a set]]\n\n\n\n\n# YouTube Video\n\n ![](https://youtu.be/eKY_1j9VrEA)\n\n",
@@ -7994,7 +7964,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "799",
+    "id": "796",
     "title": "My History With Math",
     "excerpt": ">[!question] Why math is tought?",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-01-19 11:15\n---\n>[!question] Why math is tought?\n\nIt's a tool so good, for not use it, practically all around us in a certain way is product of this field \nFor me the most influents mathematicians are David Hilbert , John Von Neumann, Euler, Gauss\n\nMy entire life I liked the math, at least I didn't dislike it. I mean when I was more young I didn't have a very strong relation with this, because I was more into another activities (play video games, deports, PC assembly)  \nBut I know I think that math is pretty beautiful and a quote that reflected well this.\n\n>[!quote]\n>\"The essence of mathematics lies in its freedom\"\n>[[Georg Cantor]]\n\nIf you want to enter to math world you only need two thing, Critical Thinking and [[Logic]]\n##### Here a awesome map made by [[Dominic Walliman]]\n![[The map of mathematics.png]([The map of mathematics.png)]\n\n\n",
@@ -8004,7 +7974,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "800",
+    "id": "797",
     "title": "My History And Expectations With Physics",
     "excerpt": "Let's dive on this amazing world using the curiosity like a motor, when I think in Physics I imagine Relativity, Quantum Mechanics, Optics, Thermodyna...",
     "content": "---\ntags:\n  - baby\n  - connection\nauthor: Jorge\ndate: 2025-01-19 11:14\nmodified: 2025-08-23 10:22\n---\nLet's dive on this amazing world using the curiosity like a motor, when I think in Physics I imagine Relativity, Quantum Mechanics, Optics, Thermodynamics. And all the great physicist.\n\n[[Why exist physics|Physics exists]] because the humans have the capacity of wonder.\n\nWonder why the nature acts like acts, and from our observations we hardly try to explain how works this vast universe. \nFor me Feynman is the representation of the most genial extrovert physicist and [[Albert Einstein]]  represent all that a good physicist should have.\n\nThe first approach of me was reading memes that says Quantum Physics are quite difficult. Obviously I doesn't pay much attention to it, at that time I wouldn't never have thought of having a relationship with physics.\nThen the virtual courses of Zarate about physics was horrible by many factor. (Null interest or like of the professor for physics)\nThen in the high school I began to take it love gradually and specially with the professor of five grade I like physics.\n\nWhen I was studying at UTEC I saw a video of Veritasium video on Quantum Computing, I was at the library with my table at hand, that video sparks one me very emotions.\nAnother important event was when I came to Pilcomayo I saw a video of Quantum Fracture of the same topic, and again I felt those emotions.\nWhen I was in the beginning of the second academic cycle I felt really boring and a waste of time all the courses and I really dislike all about UTEC. It was in a class of History of Peru when I decided to join study physics at UNI I see the curriculum mesh at its virtual web and I like it, also I was seeing videos of the life here and the problems of the admission exam, I remember see it in the dinning room with my tablet, and after a make a horrible exposition about the book Solaris that I read and dedicate a lot of time, my teammates do not help all bad I shattered that day from the view to the sunset I called my mom and say to her, that I leave that place, a decision that was going to change my life.\nIn the path to join at UNI, I found really good professor like **Cuchio**, and inside **Acevedo**.\n\nThe books \"Big Ideas of the Science\" also made me see more about the prodigies of these field, I felt love and jealous for this persons, and with the time you dive more and more in this world.\n\nPhysics have a lot of practical use, you  can amaze you with their achievements and unexpected and vast applications. Nobel primes.\n\nPersonally I'm impressed about the future of this field.\n[[Expectations with physics]]\nTo enter to this world obligatory requirement is Math, here quote that reflects this.\n\n>[!quote]\n>I study _mathematics_ with passion because I consider it necessary for the study of the physics, to which I want to dedicate myself exclusively.\n>_Enrico Fermi_\n\nAnd of course have the sufficient skills at **programming** for strengthen this.\n##### Here a awesome map made by [[Dominic Walliman]]\n\n![[Map of physics.jpeg]([Map of physics.jpeg)]",
@@ -8014,7 +7984,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "801",
+    "id": "798",
     "title": "CPU First Peek",
     "excerpt": "Central Processing Unit ",
     "content": "---\ntags:\n  - baby\n  - ml\nauthor: Jorge\ndate: 2025-01-18 13:48\nmodified: 2025-10-31 17:59\n---\n[[Hardware for AI]]\n\nCentral Processing Unit \n\n1. Arithmetic Logic Unit (ALU)\n2. Control Unit (CU)\n3. Instruction Register\n\nThis is in charge realize of  arithmetical operations a huge amount of time and very faster.\nFirst one need to choose what operation make, if I open firefox, in the RAM appear the operations that Firefox need to work, the CPU, we send those operations to the CPU, it made and the result of that operation is sended to the place where need this operation in this case firefox.\n\nThis is what we called a cycle, the natural question is how long it takes to the CPU make this operation, well it could perform$3/times 10^{9}$ of this operation in one second, that is extremaly fast.\n\nWhat is the reason of this velocity? The ligth speed is involved? Remember how a transistor works, all relies on leaps, and there  are a lot of questions.\n\nIts structure is basically divided in a few amount of cores, for instance mine equips use two or four cores.\n\n- The process how this made it's operations it's sequential one by one.\n\n- Work well for heavy operations.\n\n[[Transistor]]\n[[Hardware one and zeros]]\n[[Bytes for computation]]\n",
@@ -8024,7 +7994,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "802",
+    "id": "799",
     "title": "Hardware",
     "excerpt": "I remember quite well that in pandemic I used to watch a lot of videos about hardware, I do not why I loose this gains to learn more about hardware it...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-01-14 10:28\n---\n[[RAM]]\n\nI remember quite well that in pandemic I used to watch a lot of videos about hardware, I do not why I loose this gains to learn more about hardware it is pretty interesting. (It was by enter to the dammit academy)\n\nIt's about wondering why things like our computer works of course this go with hand with [[Software]]\n\nIs not amazing that we can manipulate energy in this way?\n\nBut with energy in this context what I refer to? [[Electrical energy]]\n\nAll is about [[George Boole]]\n\nBut I think that all begins with the [[Transistor]]\nThe transistor the invent that change the nineteen century. And is based in chemistry and physics\n\nI mean NVidia has immensely developed the field of computer graphics. The things they do it are amazing. Obviously all is based in mathematics and C.C\n\nOne day I'm going to have the perfect setup for learn (using obsidian). In the principle I want to edit videos and actually for learn. One day\n\nBut here also a issue appear dependent on technology\n\n",
@@ -8034,7 +8004,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "803",
+    "id": "800",
     "title": "How A Camera Works",
     "excerpt": "Curiosity and did you see the videos of that girls are practically cine, obviously that the environment help her a lot.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-01-13 21:45\nmodified: 2026-01-20 16:18\n---\nCuriosity and did you see the videos of that girls are practically cine, obviously that the environment help her a lot.\nThis note is more about how light is capture and can how light can be made to be static. I mean [[James Clark Maxwell]] have similar questions and had amazing results. \n\n- **Lens** – The lens focuses light from the scene onto a sensor or film. It controls how much light enters the camera and can be adjusted to change focus.\n\n- **Aperture** – This is an adjustable opening in the lens that controls the amount of light passing through. A wider aperture lets in more light, while a smaller aperture lets in less.\n    \n- **Shutter** – The shutter controls how long light is allowed to hit the sensor or film. A fast shutter speed captures quick moments with less motion blur, while a slower shutter speed lets in more light but may cause blur due to movement.\n    \n- **Image Sensor (or Film)** – In digital cameras, a sensor (like a CMOS or CCD) converts light into an electronic signal. In film cameras, light chemically reacts with the film to create an image.\n    \n- **Processor** – In digital cameras, the processor converts the data from the sensor into a digital image file.\n    \n- **Viewfinder / Display** – This allows the photographer to see what they are capturing.\n    \n- **Storage** – Digital cameras save images to memory cards, while film cameras store images on film that needs to be developed.\n\n![[IMG_20260110_092834.jpg]([IMG_20260110_092834.jpg)]\n![[IMG_20260116_122953.jpg]([IMG_20260116_122953.jpg)]",
@@ -8044,7 +8014,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "804",
+    "id": "801",
     "title": "Limits (One Dimension)",
     "excerpt": ">Let $f$ be a real [[Real function]], with domain $D$, and $a$ an [[Accumulation Point - Real|accumulation point]] of domain, if $L$ is the limit on t...",
     "content": "---\ntags:\n  - atomic\n  - young\nauthor: Jorge\ndate: 2025-01-09 18:24\nmodified: 2025-10-30 11:04\n---\n>[!definition]\n>Let $f$ be a real [[Real function]], with domain $D$, and $a$ an [[Accumulation Point - Real|accumulation point]] of domain, if $L$ is the limit on the point $a$. Then: [^1]\n  $$\\lim_{ x \\to a }f(x)=L \\implies$$\n  $$\\forall \\epsilon>0 \\exists \\delta >0 / x \\in D \\land 0<|x-a|<\\delta \\implies |f(x)-L|<\\epsilon  $$\n\n- [[Lateral Limits]]\n- [[infinite limit]]\n-  [[Limits (Many dimensions)]]\n- [2](Pruebas_lim.png) [3](Suces_lim.png) [4](ProveCal.png) [5](Laterallim.png)\n\n[^1]: [[Analisis Real Elon Lages]]  pp. 81\n",
@@ -8054,7 +8024,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "805",
+    "id": "802",
     "title": "Holograms 3d Photos",
     "excerpt": "🎥 https://youtu.be/EmKQsSDlaa4 - # How are holograms possible? | Optics puzzles 5 - 3b1b",
     "content": "---\ntags:\n  - baby\n  - atomic\nauthor: Jorge\ndate: 2025-01-09 15:42\n---\n[[Speed Of Light]]\n## YouTube Video\n🎥 https://youtu.be/EmKQsSDlaa4 - # How are holograms possible? | Optics puzzles 5 - 3b1b\n\nThe first time that I saw a hologram in a 3b1b video was amazing. I remember pretty well that day!\nThe question is that we have pseudo holograms with [[Diffuman 4D]]\n\nHow powerful is the physics. Mind blowing\n\nI see this note relates with some ideas of optics and light in the future, \n\nTo that I will keep moving forward, until I destroy my enemies",
@@ -8064,7 +8034,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "806",
+    "id": "803",
     "title": "Three Body Problem",
     "excerpt": "Now this problem is the best example of [[chaos]], something that [[Pierre Simon Laplace]] know and kind of ignore.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-01-09 14:56\nmodified: 2025-08-29 09:18\n---\nNow this problem is the best example of [[chaos]], something that [[Pierre Simon Laplace]] know and kind of ignore.\n\nWith the language of the differential equation we are able to reduce this problem to a set of equation that are extremely hard to solve, then the mathematician [[Joseph-Louis Lagrange]] find that some configurations are accessible to solve, leveraging some discreet symmetries.\n\n>The video shows really beautiful cases \n\nhttps://youtu.be/427vNUBNguw, \n",
@@ -8074,7 +8044,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "807",
+    "id": "804",
     "title": "Fractals, What Are",
     "excerpt": "So what it would be the physical meaning of this, is just a mathematic thing?, For what reason I would define it? ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-01-09 14:38\nmodified: 2025-08-29 12:22\n---\n\nSo what it would be the physical meaning of this, is just a mathematic thing?, For what reason I would define it? \n\n\n[[Fraccionary Derivated]]\n[[Dimension what it is]]",
@@ -8084,7 +8054,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "808",
+    "id": "805",
     "title": "Sound",
     "excerpt": "The sound phenomena it's very strange I mean why if two thing enter in contact then sound get's produced and why have this velocity, our doubts Feynma...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2025-01-09 14:32\n---\nThe sound phenomena it's very strange I mean why if two thing enter in contact then sound get's produced and why have this velocity, our doubts Feynman answer.\nWhy the interaction of two materials generate sound? What percentage of sound absorve the generation of sound, Are vibrations of the air at a specific velocity? Why we are able eto generate words like another animals, whales and birds are the most interesting? What are thunders why is so strong? [[thunder]] \n\nAnd here I remember pretty well that Brocca teach to us the [[doppler effect sound]]\n\nSome basic [theory](Ondas.png)\n\n[Vi](https://youtu.be/P7iC-fbdKmQ)\n",
@@ -8094,7 +8064,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "809",
+    "id": "806",
     "title": "IA On My Field",
     "excerpt": "I't would be such a waste don't leverage this opportunity, that is appearing.",
     "content": "---\ntags:\n  - baby\n  - atomic\nauthor: Jorge\ndate: 2025-01-09 14:27\nmodified: 2025-10-16 12:12\n---\nI't would be such a waste don't leverage this opportunity, that is appearing.\n- Nvidia Nemo\n- Physics ML\n- Four Cast Net\n- OrbNet, use Graph Neural Operators.\n- [[Physical Artificial Intelligence]]",
@@ -8104,7 +8074,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "810",
+    "id": "807",
     "title": "Chernobyl Accident",
     "excerpt": "For me a great opportunity to learn about how works  nuclear power plants.",
     "content": "---\ntags:\n  - baby\n  - atomic\nauthor: Jorge\ndate: 2025-01-07 09:57\nmodified: 2025-08-28 08:51\n---\nFor me a great opportunity to learn about how works  nuclear power plants.\n\n![](https://youtu.be/P3oKNE72EzU) ",
@@ -8114,7 +8084,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "811",
+    "id": "808",
     "title": "Rainbow A Beautiful And Interesting Phenomena Physic",
     "excerpt": "First what is a rainbow, why actually in the place where it rains appears a rainbow?",
     "content": "---\ntags:\n  - baby\n  - connection\nauthor: Jorge\ndate: 2025-01-03 22:00\n---\nFirst what is a rainbow, why actually in the place where it rains appears a rainbow?\nThere are drops of water practically constant. The sun is in a well position, \nIf you think more about always when I see the rainbow the sun is in the position around the five hour .\n\nThe rays of sun are practically parallels because the sun is so far away, fact, but what if we have a sun more close.\n\nBut in essential what is a ray of sun , what it's light?\n[[Nature of the light]]\n\nThe title of this notes is for a book.\nToday I saw a double rainbow and it is inevitable to think about all the stuff of what versitarium talk is symply amazing\nI have to do, not the same study, but really understand a rainbow. How relates with other physics phenomens and try to innovate. That is how your learn.\n\n# YouTube Video\n\n\n![](https://www.youtube.com/watch?v=24GfgNtnjXc)",
@@ -8124,7 +8094,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "812",
+    "id": "809",
     "title": "Absolutely Convergent Series",
     "excerpt": ">Let $\\sum_{k=0}^{\\infty}a_{k}$ be a [[series]]. This is **absolutely convergent** if the **series** ",
     "content": "---\ndate: 2024-12-15\ntags:\n  - baby\nauthor: Jorge\nmodified: 2025-10-22 11:01\n---\n>[!definition]\n>Let $\\sum_{k=0}^{\\infty}a_{k}$ be a [[series]]. This is **absolutely convergent** if the **series** \n>$$\n\\sum_{k=0}^{\\infty}\\lvert a_{k} \\rvert \n>$$ \n>is [[Convergence In Series|convergent]].\n- It's clear that if $\\sum_{k=0}^{\\infty}\\lvert a_{k} \\rvert$ converges then $\\sum_{k=0}^{\\infty} a_{k}$ (Prove it) The norm tends to zero. \n- The other way around is not necessary true. In that case we called **conditionally convergent**. [^1]\n- The [[Harmonic Series]] multiply by $(-1)^{n}$ is conditionally **convergent**. [^2]\n\n\n[^1]: [[Analisis Real Elon Lages]]\n[^2]:  [[Criterios de convergencia en infinitas sumatorias]]",
@@ -8134,7 +8104,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "813",
+    "id": "810",
     "title": "Connectionism",
     "excerpt": "Born of the [[Feed Forward Neural Network|neural networks]], philosophically proposed by Walter Pitts and Warren McCulloch and practically made by __F...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-12-14 11:43\nmodified: 2025-09-14 06:29\n---\nBorn of the [[Feed Forward Neural Network|neural networks]], philosophically proposed by Walter Pitts and Warren McCulloch and practically made by __Frank Rosenblatt__ on a publication at 1958 \"The [[Perceptron]] A Probabilistic Model For Information Storage and Organization in the Brain\" [^1]\n\n- Inspired on Disorganized machines by Alan Turing\n- The information it's not on an unique place!\n\n[[A Curious Case of Connectionism]]\n\n[^1]: [[A Curious Case of Connectionism]]\n",
@@ -8144,7 +8114,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "814",
+    "id": "811",
     "title": "Radiation",
     "excerpt": "Radiation in the nuclear context is an amazing thing. When a nuclear process happens the normal is emit the [[alpha beta gamma particles]] particles. ...",
     "content": "---\ntags:\n  - atomic\n  - baby\nauthor: Jorge\ndate: 2024-12-12 14:23\nmodified: 2025-09-14 06:29\n---\nRadiation in the nuclear context is an amazing thing. When a nuclear process happens the normal is emit the [[alpha beta gamma particles]] particles. Can we think of these like radiation? Energy!\n\nWe could also that all body with [[Temperature]] emit radiation.\n\n[[Chernobyl accident]]\n[[Thermodynamics]]\n[[Cancer and radiation]]",
@@ -8154,7 +8124,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "815",
+    "id": "812",
     "title": "Cauchy Sequences Defining The Real Numbers",
     "excerpt": "A interesting thing about this is that sequence obeys certain properties and is one formal way to define the [[Real Numbers]].",
     "content": "---\ndate: 2024-12-07\ntags:\n  - atomic\n  - young\nauthor: Jorge\nmodified: 2025-10-22 10:25\n---\nA interesting thing about this is that sequence obeys certain properties and is one formal way to define the [[Real Numbers]].\n\nA real number can be defined as the limit of a **Cauchy sequence** of rational numbers.\n\n- Consider all Cauchy sequences of rationales.\n- Two sequences ${}\\{a_n\\}$ and $\\{ b_{n} \\}​$ are **equivalent** if $\\lim_{n \\to \\infty} |a_n - b_n| = 0$\n- Each equivalence class of these sequences defines a real number.\n\n**Example:** The number $\\sqrt{2}$​ can be approximated by the sequence: [^1]\n\n$$1,1.4,1.41,1.414,…\n$$\n\n>Basically the same of Cantor's Fundamental Sequence\nAny ways the properties that follow a Cauchy Sequence are:\n- The sequence is bounded\n- Converges in $\\mathbb{R}$ (What about $\\mathbb{C}$?)\n- Are useful at the moment of talk about the [[Complete Metric Space]]\n\n[^1]: [[The real Numbers and Real Analysis]] pp. 72\n",
@@ -8164,7 +8134,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "816",
+    "id": "813",
     "title": "Cauchy'S Criterion For Sequences",
     "excerpt": ">Let $a_{n}$  a  sequence  of real numbers  is convergent  in $\\mathbb{R}$ if only if: [^1]",
     "content": "---\ndate: 2024-11-30\ntags:\n  - atomic\n  - young\nauthor: Jorge\nmodified: 2025-10-11 16:08\n---\n>[!definition]\n>Let $a_{n}$  a  sequence  of real numbers  is convergent  in $\\mathbb{R}$ if only if: [^1]\n$$ \\forall \\epsilon >0,\\exists N \\in \\mathbb{N} \\text{ such that } \\forall m,n\\geq N,\\lvert a_{n}-a_{m} \\rvert < \\epsilon $$\n- Then we call to the [[Sequence]], [[Cauchy Sequences defining the real numbers]]\n- It's a necessary and sufficient condition for sequence to converge.\n- Now this is proposition is very **useless** in the practice, we need concrete actions that we could make for know about the convergence. Using the [[Criterions for Convergence]].\n- **In plain english** To say that a series is *convergent*, the following proposition must be fulfilled, that a series be convergent ensures that no matter what positive number we choose ,there exists n and m natural numbers such that **the difference between the elements corresponding to those is less than the chosen number** and if we make the number so small, that practically the difference becomes an equality, the series ***stabilizes**.\n\n\n[^1]: [[Analisis Real Elon Lages]] pp. 50\n",
@@ -8174,17 +8144,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "817",
-    "title": "Demistifying Lie Algebras",
-    "excerpt": "I mean there are a ton of beauty ideas.",
-    "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-11-25 11:29\nmodified: 2025-10-25 11:24\n---\nI mean there are a ton of beauty ideas.\n\nintuitive introduction to Lie algebras and explains why they matter so much in physics. It aims to bridge the mathematical definition and the standard physical applications (symmetries, conservation laws, quantum mechanics, and gauge theories).\n\n## What is a Lie algebra?\n\nA Lie algebra is a vector space g over a field (usually R or C) equipped with a bilinear operation [ , ]: g × g → g called the Lie bracket, satisfying two properties:\n\n- Antisymmetry: [X, Y] = −[Y, X]\n- Jacobi identity: [X, [Y, Z]] + [Y, [Z, X]] + [Z, [X, Y]] = 0\n\nThe bracket encodes an infinitesimal notion of commutation. Lie algebras are the “linearized” versions (tangent spaces at the identity) of Lie groups — continuous groups of transformations.\n\n## Basic examples\n\n- Matrix algebras with the commutator bracket: if M_n(F) is the space of n×n matrices, then g = M_n(F) with [X, Y] = XY − YX is a Lie algebra.\n- so(3): real 3×3 antisymmetric matrices; describes infinitesimal rotations in 3D. Generators satisfy [J_i, J_j] = ε_{ijk} J_k (up to factors).\n- su(2): 2×2 traceless anti-Hermitian matrices (physicists often use Hermitian generators with an i); su(2) is the double cover of so(3) and is central in spin/angular momentum.\n- Heisenberg algebra: generated by position x and momentum p with [x, p] = iħ (plus central element). This algebra sits at the heart of quantum mechanics.\n\n## Why physicists care — an overview\n\n1) Symmetries and conservation laws\n\n  - Continuous symmetries of a physical system form Lie groups (e.g., rotations, translations, gauge transformations). The associated infinitesimal generators form a Lie algebra.\n  - Noether's theorem links continuous symmetries to conserved quantities; Lie algebra generators are directly tied to conserved currents (e.g., angular momentum, linear momentum, charge).\n\n2) Linearization and computation\n\n  - Lie algebras are linear spaces; working with them is usually easier than with the full nonlinear Lie group. The exponential map relates algebra elements (infinitesimal generators) to finite transformations: exp(tX) ∈ G.\n  - Structure constants (defined by [T_a, T_b] = f_{ab}^c T_c) encode the algebra and are used extensively in calculations (commutation relations, Feynman rules, coupling terms).\n\n3) Quantum mechanics and representation theory\n\n  - Observables and symmetry generators are represented by operators on Hilbert space. A key task in quantum physics is to find the representations of a Lie algebra — how abstract generators act on quantum states.\n  - Particles and fields organize into irreducible representations of symmetry algebras: e.g., spin-1/2 lives in the fundamental representation of su(2), photons correspond to representations of the Poincaré group (massless representations), etc.\n\n4) Gauge theories and the Standard Model\n\n  - Gauge symmetries are local Lie group symmetries; the gauge bosons themselves are connection fields taking values in the Lie algebra (e.g., the gluon fields are valued in su(3)).\n  - Yang–Mills Lagrangians are built from Lie-algebra-valued gauge fields and their field strengths. Structure constants f_{abc} appear in interaction terms and determine self-interactions of the gauge bosons.\n\n5) Practical calculations: commutation relations and selection rules\n\n  - Selection rules, allowed transitions, and degeneracies often follow from the underlying Lie algebra and its representations. For example, Clebsch–Gordan decomposition in su(2) tells you how angular momentum adds.\n\n6) Quantization and classical limits\n\n  - Poisson brackets of classical mechanics form a Lie algebra; upon quantization Poisson brackets turn into commutators. Lie algebras provide a conceptual bridge between classical conserved charges and quantum operators.\n\n## Short worked examples\n\n- Angular momentum (so(3)/su(2)): the generators J_x, J_y, J_z have commutation relations\n\n  [J_i, J_j] = i ħ ε_{ijk} J_k\n\n  These algebraic relations determine spectra, ladder operators (J_±), and selection rules.\n\n- Heisenberg algebra: the canonical commutation relation [x, p] = iħ encodes the uncertainty principle and is the simplest nontrivial Lie algebra in quantum mechanics.\n\n- su(3) in QCD: the eight generators T_a of su(3) satisfy [T_a, T_b] = i f_{abc} T_c; the f_{abc} determine the nonabelian self-coupling of gluons.\n\n## Why “algebra” instead of group — a pragmatic note\n\n- The Lie algebra is the tangent space at the group identity. Many computations (perturbation theory, conserved charges, classification) are local/infinitesimal and naturally live in the algebra.\n- Classifying Lie algebras (simple, semisimple, solvable) helps physicists classify possible symmetry groups and construct model Lagrangians with desired properties.\n\n## Further reading (short list)\n\n- H. Georgi, \"Lie Algebras in Particle Physics\" — physics-focused, practical.\n- B. C. Hall, \"Lie Groups, Lie Algebras, and Representations\" — a clear mathematical introduction with physics motivation.\n- A. Zee, \"Group Theory in a Nutshell for Physicists\" — physics intuition and examples.\n- J. Fuchs & C. Schweigert, \"Symmetries, Lie Algebras and Representations\" — useful for conformal/gauge contexts.\n- Online: lecture notes (MIT, Harvard), nLab/Wikipedia entries for concrete quick references.\n\n## Closing remarks\n\nLie algebras are an indispensable toolkit for modern theoretical physics. They encode infinitesimal symmetries, simplify calculations, and their representation theory underlies the classification and behavior of quantum states and particles. Whether you are studying angular momentum, quantizing a field, or building gauge theories, Lie algebras appear everywhere and understanding them pays large dividends.\n",
-    "uploadDate": "2024-11-25 11:29",
-    "readTime": "4 min read",
-    "fileName": "Demistifying Lie Algebras.md",
-    "featured": true
-  },
-  {
-    "id": "818",
+    "id": "814",
     "title": "Perceptron Encapsulates Well Linear Decision",
     "excerpt": "Let's say that you are deciding if you wanna hang out with your friends or stay at home and study. To take the decision exists some factors. ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-10-30 10:36\nmodified: 2025-08-18 22:13\n---\nLet's say that you are deciding if you wanna hang out with your friends or stay at home and study. To take the decision exists some factors. \nFor instance how is the weather? Do you have exams? Do you have money? Each of these factors are not equally important.  (Three factors)\n\nSo let's assign to each decision a **weight**, and for simplicity the answers are , yes or no, one or zero. \n\nIf the sum of the weight/answer is greater than a certain threshold you go out, if not stay at home studying.\n\nHow could this be viewed?\n\nThree input and one unique output that depend on the inputs, each arrow reflects a weight and the output has it own **threshold**.\n\n\nHere those parameters are decided by you,\n\nbut if you want a better generalization about the matter of study or hang out, you would need to ask hundreds of people ,the information of the answer to the question is your data set. \n\nYou would ask the three questions, annotate the yes or not and the final output. So that would be your training data set, you don't know the values of the weights and the threshold. \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSo in deep learning literature we notate:\n\nBias.- is a measure of how easy it is to get the neuron to fire, remember the bias is the negative of the threshold , then if is it _very positive is very easy_ to get fire, and if it is _very negative is hard_ to the perceptron get fire.\n\nWeights.- Like the humans give more priority to specific factors to take decision, the weigh reflect the same.\n",
@@ -8194,7 +8154,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "819",
+    "id": "815",
     "title": "Coefficient Viscosity",
     "excerpt": "Why, this exist and I guess that this in some way is the same of the friction the air produces.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-10-30 10:30\"\nmodified:\n---\nWhy, this exist and I guess that this in some way is the same of the friction the air produces.\nA, but I recall that this is kind of different, that is why go after the [[Young Module]]",
@@ -8204,7 +8164,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "820",
+    "id": "816",
     "title": "Fundamental Theorem Of Algebra",
     "excerpt": ">Every [[Polynomial]] over $\\mathbb{C}$ has at least one root. ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-10-14 11:46\nmodified: 2025-10-16 19:22\n---\n>[!theorem]\n>Every [[Polynomial]] over $\\mathbb{C}$ has at least one root. \n\n\nAnd the prove it is done using all minus pure algebra we need to appeal to _analysis_.\n\n\n$p\\in P(\\mathbb{C})$ no constant, $p$ has unique factorization (salvo el orden de los factores)\n\n$$\np(z)=C(z-\\lambda_{1})\\dots(z-\\lambda_{m})\n$$\n\n$c,\\lambda_{1},\\dots,\\lambda_{m}\\in \\mathbb{C}$\n[Prove](fundamenta_a1.jpg)\n\nFactorizacion de polonimios on R\n\nTheorem. $p \\in P(\\mathbb{C})$ has all its coefficients real. Si $\\lambda \\in \\mathbb{C}$ is root of $p$ then $\\overline{\\lambda}$ also is a root of $p$.\n\nTheorem. $p \\in P(\\mathbb{R})$ not constant,  $p$ has unique factorizacion,\n\n$$\np(x)=c(x-\\lambda_{1})\\dots(x-\\lambda_{m})(x^{2}+bx+c_{1})\\dots(x^{2}+bx+c_{m})\n$$\n\n$\\forall i\\in \\{ 1,\\dots,M \\} \\ b_{i}^{2}<4c_{i}$\n\n",
@@ -8214,17 +8174,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "821",
-    "title": "Neural Networks From Where They Come From",
-    "excerpt": "So for reason I'm reading the book from Nielsen Neural Networks and Deep Learning (this guy explain pretty well).",
-    "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-10-13 11:29\nmodified: 2025-10-25 11:24\n---\nSo for reason I'm reading the book from Nielsen Neural Networks and Deep Learning (this guy explain pretty well).\n\n\n\n",
-    "uploadDate": "2024-10-13 11:29",
-    "readTime": "1 min read",
-    "fileName": "Neural Networks from where they come from.md",
-    "featured": true
-  },
-  {
-    "id": "822",
+    "id": "817",
     "title": "Polar Equations",
     "excerpt": "When you are on the [[Polar Coordinate System]] you.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-10-04 10:33\nmodified: 2025-10-13 08:15\n---\nWhen you are on the [[Polar Coordinate System]] you.\nSo you could make a relation such that.\n$$\nr=f(\\theta)\n$$\nOr if you want:\n$$\n\\theta=f(r)\n$$\nAnd it really exist beauty plots. of this thing. \nWe can establish an analogy to [[Complex number angle and radius]]\nAnd naturally questions appears, like how you plot this, purely by hand!\n\nHow you find the derivative?\n\n What about integrals.",
@@ -8234,7 +8184,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "823",
+    "id": "818",
     "title": "Orientation Of A Vector Space",
     "excerpt": "Give it a [[Linear Map]] if the [[Determinant of a matrix]] is less than one or I don't recall! There the inversions who [[Parity Law]].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-09-23 17:58\nmodified: 2025-12-09 18:47\n---\nGive it a [[Linear Map]] if the [[Determinant of a matrix]] is less than one or I don't recall! There the inversions who [[Parity Law]].\n\nRecall",
@@ -8244,37 +8194,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "824",
-    "title": "Trying To Modelate The Complexity Of Threes (Doesn'T Work)",
-    "excerpt": "So I see the threes and I wonder how you can create computationally one three.",
-    "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-09-13 11:29\nmodified: 2025-10-25 11:24\n---\nSo I see the threes and I wonder how you can create computationally one three.\n\nDifferent ideas run on my mind. And randomess should be here.\n\nWell at least I know SimLink and MatLab.\n",
-    "uploadDate": "2024-09-13 11:29",
-    "readTime": "1 min read",
-    "fileName": "Trying to modelate the complexity of threes (Doesn't work).md",
-    "featured": true
-  },
-  {
-    "id": "825",
-    "title": "Bernoulli Numbers And The Gamma Function And The Beauty On It",
-    "excerpt": "No excerpt available",
-    "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-08-28 11:29\nmodified: 2025-10-25 11:24\n---\n\n",
-    "uploadDate": "2024-08-28 11:29",
-    "readTime": "1 min read",
-    "fileName": "Bernoulli Numbers and the gamma function and the beauty on it.md",
-    "featured": true
-  },
-  {
-    "id": "826",
-    "title": "The Big Minds Of Science Dirac Fermi Feynman Cantor And All That People",
-    "excerpt": "So I read a ton of biographies and of course I am going to talk about it. ",
-    "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-08-28 11:29\nmodified: 2025-10-25 11:24\n---\nSo I read a ton of biographies and of course I am going to talk about it. \n\nThe epoch of my time where I read the most! \n\nThis books are from the Series \"Grandes Ideas de la Ciencia\" and I read the follow biographies:\n\nDirac, Fermi, Neumann (Partially) , Cantor (The first one), Feynman (The best I think), Einstein, Newton, Leibniz (Partially), Hilbert, ",
-    "uploadDate": "2024-08-28 11:29",
-    "readTime": "1 min read",
-    "fileName": "The big minds of science Dirac Fermi Feynman Cantor and all that people.md",
-    "featured": true
-  },
-  {
-    "id": "827",
+    "id": "819",
     "title": "Hilbert Space",
     "excerpt": "- So you take a [[Hermitian space]] and give some properties of differentation.",
     "content": "---\ntags:\n  - baby\ndate: 2024-08-23 09:42\nmodified: 2025-11-20 11:18\n---\n- So you take a [[Hermitian space]] and give some properties of differentation.\n- But wait you can't work with finite dimensional vector spaces so you need [[Basis Space Vector (Schauder)]]\n\nMore formal definition. [^1]\n\n\n> Hilbert pp.95\n> The problem becomes in solve the a system with infinite linear equations with infinite variables.\n> Hilbert got the idea of consider a special system of functions that obeys certain properties and reduce the resolution of the equation (integral) to find the coefficients. Respect that system.\n\n[^1]: [[Quantum Mechanics Zettili]] pp. 98\n",
@@ -8284,7 +8204,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "828",
+    "id": "820",
     "title": "Riemann'S Zeta Function",
     "excerpt": ">Let $s$ be a [[Complex Numbers]] then we define the **Riemann's zeta function** [^1]:",
     "content": "---\ndate: 2024-08-03 15:23\ntags:\n  - baby\n  - atomic\nauthor: Jorge\nmodified: 2025-09-14 06:29\n---\n>[!definition]\n>Let $s$ be a [[Complex Numbers]] then we define the **Riemann's zeta function** [^1]:\n>$$\\begin{align}\\zeta(s)=\\sum_{n=1}^{\\infty}\\frac{1}{n^s}\\end{align}$$\n\n- Is clear that is pretty complicated find the values of this function.\n- Is a very important number for [[Number theory]].\n- [[Riemann Hypothesis]], a quite important result.\n\n[^1]: [[Mathematical Methods for Physicist]] pp.342\n",
@@ -8294,7 +8214,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "829",
+    "id": "821",
     "title": "Energy Of Electrons",
     "excerpt": "The [[EigenValues]] of the [[Hamiltonian Operator]] are the allowed energy levels of the system.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-08-02 21:40\"\n---\nThe [[EigenValues]] of the [[Hamiltonian Operator]] are the allowed energy levels of the system.\n[[Time Independent Schrödinger Equation]]\n\nThe problem is why! [[Electron]]",
@@ -8304,7 +8224,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "830",
+    "id": "822",
     "title": "Fermi Dirac Statistics",
     "excerpt": "Basically like in quantum mechanics nothing is perfectly determined, if we have two electrons.",
     "content": "---\ntags:\n  - baby\ndate: 2024-08-01 09:39\nmodified: 2025-11-13 08:10\n---\nBasically like in quantum mechanics nothing is perfectly determined, if we have two electrons.\nThe state of the first and the second electron could occupy the same state. The Inverse state.\nThink at the microscope level is hard to indistingishable particles, they are not too deterministic, so the wave function is the same. Why co\n\nFor us this translate into: [^2] [^3] [[Slater Determinants]]\n\n$$\n\\psi(\\dots,\\mathbf{x}_{i},\\dots,\\mathbf{x}_{j},\\dots)=-\\psi(\\dots ,\\mathbf{x}_{j},\\dots ,\\mathbf{x}_{i},\\dots)\n$$\n\nThus the [[Wave Function]] should be antisimmetry when you interchange the positions of two electrons.\n\n\n> Otra propiedad esencial del mundo cuántico es que las partículas idénticas son indistinguibles. En la física clásica la posición de una partícula y su estado de movimiento están perfectamente determinados, de modo que, aun teniendo varias partículas idénticas, se podría conocer en qué posición se encuentra cada una de ellas. Por el contrario, en el mundo cuántico la posición no está claramente definida, y por consiguiente, si tenernos dos electrones (llamémosles $a$, $b$) y dos estados cuánticos determinados ($m$, $n$ ), no podemos conocer en qué estado concreto se encuentra cada electrón. De hecho, la situación correspondiente al electrón a en el estado $m$ (lo denotamos como $a_{m}$) y el electrón $b$ en el estado $(b_{n})$ es igualmente probable a la combinación inversa a,.brn· Usando una terminología algo más técnica, ambas combina- ciones representan el mismo estado cuántico y por tanto, deben ser proporcionales, siendo la constante de proporcionalidad + 1 o -1. Nótese que si permutamos dos veces seguidas la posición de ambos electrones, la combinación resultante debe ser idénticaa la inicial.[^1]\n\n[^1]: [[Dirac]] pp. 56\n[^2]: [[Ab Initio Solution of the Many Electron Schrodinger Equation with Deep Neural Networks]]\n[^3]: [[Quantum Mechanics Zettili]] pp.  484\n",
@@ -8314,7 +8234,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "831",
+    "id": "823",
     "title": "Snell Law",
     "excerpt": "[[Optics, what it is?]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-07-31 21:01\"\n---\nThe \n\n![[Demonstracion Ley de Snell Parcial.png]([Demonstracion Ley de Snell Parcial.png)]\n[[Optics, what it is?]]",
@@ -8324,7 +8244,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "832",
+    "id": "824",
     "title": "Dot Product Measures The Similarity Between Vectors",
     "excerpt": "[[Dot Product, why define it like that?]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-07-30 10:37\nmodified: 2025-08-10 11:07\n---\n[[Dot Product, why define it like that?]]\n\nAnd there are a lot of ideas about this,\nyou have two vector on a $\\mathbb{R}^{n}$ space, and is naturally want to compare it, how you do it; when $n<4$ you can say that two vectors are equal if have the same direction and the same length. \nThe question is that you can actually compute that comparation by using the dot product.\n\nBut not only vectors in the classic view, but every mathematical object.\n\nMaybe the best application of this is the [[Fourier Series]].\n\nBecause ok I am able to know how they differ and then what? use the [[Parseval Identity]]",
@@ -8334,7 +8254,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "833",
+    "id": "825",
     "title": "Hamiltonian Operator",
     "excerpt": ">The Hamiltonian Operator is defined as (?).",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-07-30 10:35\nmodified: 2026-01-23 09:12\n---\n>[!definition]\n>The Hamiltonian Operator is defined as (?).\n>$$ \\hat{H}=\\frac{\\hat{\\vec{{P}}}^{2}}{2m}+\\hat{V} $$\n- Closely related to the momentum operator $\\vec{P}$. [[Broglie's Relation]] [[Hamiltonian Matrix]] Now for some reason you have. Is just the total energy of the system! But recall that this is a [[Differential Operator]].\n- [[Momentum Operator in the Position Representation]]\n$$ \\hat{H}=-\\frac{\\hbar^{2}}{2m}\\nabla^{2}+\\hat{V} $$\n- I will earn insight by looking the demonstration of the Schrodinger Equation.\n$$ \\hat{H}\\psi=E\\psi $$\n- With $\\nabla^{2}$ is the [[Laplacian]] and that $E$ represent the Energy of the system.  Psi is a eigen function (also called) or [[Wave Function]]. \n- [[Hamiltonian Operator for Molecules]]\n\n[[The Feynman Lectures On Physics Vol 3]] pp. 195\n",
@@ -8344,7 +8264,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "834",
+    "id": "826",
     "title": "Lorentz Factor",
     "excerpt": "\\gamma=\\frac{1}{\\sqrt{ 1+\\frac{v^{2}}{c^{2}} }}",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-31 21:12\nmodified: 2025-09-30 16:47\n---\n$$\n\\gamma=\\frac{1}{\\sqrt{ 1+\\frac{v^{2}}{c^{2}} }}\n$$\nThis is key for [[Special Relativity Theory]]\n\nWe could prove it. from certain suppositions.\nHendrik Lorentz.\n[[Fisica Alonso Finn]] pp. Relativity",
@@ -8354,7 +8274,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "835",
+    "id": "827",
     "title": "Alkanes",
     "excerpt": "Let's dive on organic chemistry.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nLet's dive on organic chemistry.\n\nStructure: Single bonds between carbon atoms.\n\n**General** **Formula**: C_nH_2n+2(Easy to prove when looking the molecules)\n\n\n\nLet introduce some terminology [[nomenclature]]\n\nBut one need to remember that carbon have four principal properties.\n\nThe question relies how I could obtain alkanes in nature, and How I could play with that?\n\n[[carbon atom]]",
@@ -8364,7 +8284,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "836",
+    "id": "828",
     "title": "Alternating Current",
     "excerpt": "So a good place where introducing him is using a circular coil with the existence of a [[Magnetic Field]], and there is a water flow which is making t...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-12-06 08:31\n---\nSo a good place where introducing him is using a circular coil with the existence of a [[Magnetic Field]], and there is a water flow which is making turn it around.\n\nSo if you put some wires to it, then a voltage is induced, the interesting here is that the voltage can be negative!\n\nUsing the [[Faraday Law Induction]] we obtain that:\n$$\n\\varepsilon = -\\frac{d}{dt}BA\\cos (\\theta_{(t)})=BA\\omega \\sin(\\omega t) \n$$\nSo the maxima current is:\n$$\n\\varepsilon_{0}=BA\\omega\n$$\nAnd then it behaves periodically.  The current is just scaled up to a constant. \nAnd it's interesting talk about the potency. \nWe know that is defined as:\n\nFor a resistance where an **Alternating Current** is passing trough.\n$$\nP=IV=I^{2}V\n$$\n\n![[Corriente Alterna.png]([Corriente Alterna.png)]\n[[Electromagnetic Field]]",
@@ -8374,7 +8294,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "837",
+    "id": "829",
     "title": "Arg Min And Max",
     "excerpt": "This is a notation pretty common on [[Machine Learning]] literature.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nThis is a notation pretty common on [[Machine Learning]] literature.\nRecalling the notions of supreme and infimum.\n\nIs pretty easy observe that is the arg which a function get minimize, or the set of of values who optimize a function, a global exist only a unique, a local maybe one.\n$$\n\\underset{\\Omega}{\\text{argmin}}F=\\bigcap_{u>\\text{inf}F}[F\\leq u]_{\\Omega}\n$$\n\nThe possibly set of minimizers and in its respective maximizers.\n\nRecall that all function have \n\n[[Supreme and Infimum]]",
@@ -8384,7 +8304,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "838",
+    "id": "830",
     "title": "Atom",
     "excerpt": "No excerpt available",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-08-11 22:42\n---\n\n![[Estructura Atomica.png]([Estructura Atomica.png)]",
@@ -8394,7 +8314,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "839",
+    "id": "831",
     "title": "Bernoulli Equation",
     "excerpt": "When talking about fluids on a pipe or a imaginary region.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-08-13 16:42\n---\nWhen talking about fluids on a pipe or a imaginary region.\nI mean they are based on the [[energy conservation principle]]. [^1]\n\n[^1]:  [[Fisica Universitaria]] pp. 469\n",
@@ -8404,7 +8324,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "840",
+    "id": "832",
     "title": "Bijective",
     "excerpt": "A bijective function is an **injective function** and **surjective**.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-08-28 09:26\n---\nA bijective function is an **injective function** and **surjective**.\n\nEasy to understand but if you want a more detail explain Analisis Real can explain it.\n\n\n![[Tipos de Funciones II.png]([Tipos de Funciones II.png)]",
@@ -8414,7 +8334,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "841",
+    "id": "833",
     "title": "Chemical Table",
     "excerpt": "History showns that many tables have been created but only one has survived to the flow of time. The one made it by Mendeliev. This one organized elem...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-10-17 17:37\n---\nHistory showns that many tables have been created but only one has survived to the flow of time. The one made it by Mendeliev. This one organized elements by rows and columns. The 118 [[chemical elements]] form 18 columns and  10 rows.\n\n![PeriodicTableoftheElements.pdf](PeriodicTableoftheElements.pdf)\n\nAdding a $2\\times 10$ elements called \n\nExist four main groups that depends if end on s,p,d,f. This are the [[Quantum Numbers]]\n\nThe most important element is the [[carbon atom]]",
@@ -8424,7 +8344,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "842",
+    "id": "834",
     "title": "Compression Of Files",
     "excerpt": "I mean there is a complete course from Stanford on that matter.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-08-16 18:06\n---\nI mean there is a complete course from Stanford on that matter.\n",
@@ -8434,7 +8354,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "843",
+    "id": "835",
     "title": "Cryptography",
     "excerpt": "All our data is encripted",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nAll our data is encripted ",
@@ -8444,7 +8364,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "844",
+    "id": "836",
     "title": "Data Augmentation To Increase The Volume And Generalization",
     "excerpt": "I mean is not only about increase the volumen of the data set but also the generalization of the model , thus we avoid the ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nI mean is not only about increase the volumen of the data set but also the generalization of the model , thus we avoid the \n\n\noverfitting -> the model memorizes from the data set that you give it\nunderfitting -> the model hallucinates, or not is not the sufficent accuracy? ",
@@ -8454,7 +8374,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "845",
+    "id": "837",
     "title": "Data Science",
     "excerpt": "I mean this is not that new, for instance Gauss use to predict the appearance of this star in the sky, and he only use the few data available. And inv...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nI mean this is not that new, for instance Gauss use to predict the appearance of this star in the sky, and he only use the few data available. And invented the Least Square Method but of course that is debatable. \n\nAnd of course the most useful of data is it's predictive power, for instance the news could anticipate that a war could begin it's pretty easy to observe this, if a pandemic would disappear or extend, but numerical data the most reliable, because we know that exist quantitative and qualitative data, and the most easy to process is the first one, for the qualitative data exist the LLM. \n\nAnd we could imagine a lot of more examples using data, if you have the position of an electron and velocity you could know where it will be with a huge accuracy the follows moments of time. \nOf course all the calculus you have to do it in a computer using a language, the most common on this days is Python for its ease and support of the community. \n\nThe science of [[Data]]",
@@ -8464,7 +8384,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "846",
+    "id": "838",
     "title": "Data Storage",
     "excerpt": "The storage of [[Data]] is super important, ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nThe storage of [[Data]] is super important, \nwhen a person dies all his acknowledges that learn on life die also with they. That all this information disappear generate a question: All our acknowledges have physical and once the system that perform those leave of work your acknowledges disappear? If we suppose that have physical form it convert on another form of matter, probably one most mundane ,but if don't have what are? electric pulses?\n\nOf  course what we consider data, text, videos, images, symbols, anything that could be interpreted.\n\nAnd not only related to persons but also historical events get storage, \n\nThe most known way of leave your acknowledges and have the certainty  that will be last the enough it's trough a book.\n\nAnd about this once you die all the information that you know disappear, it's a huge problem, it's really impossible to inherit information of our ancestor? If that were the case the human would evolve in a huge rating. But of course the only information that human inherit it is in the ADN. And there are only biological information like skin color, What bored. \n\nAnd this open [[Inherit]]\n\n\nThe data I think it's the more important thing that humanity have, and there is a pretty question, if all the data would be dissapear what statement you would recover, Feynman says all is compuested of atoms, this triviality now before was a huge things we can not forget how Boltzmann fight with rivals about this statement.\n\nIt's curious to think that before practically all the data was trough books and now all is about zeros and ones, in the future quantum computing change this?",
@@ -8474,7 +8394,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "847",
+    "id": "839",
     "title": "Differential Equation",
     "excerpt": "[[parameterized differential equation]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-10-17 09:26\n---\n[[parameterized differential equation]]\n[[Partial Differential Equation, what are]]\nSo we need to learn two path ways, the classical one which is analytically and the other one is via approximations. This is computationally.\n\nYeah is clear that the most of the differential equations comes from physics,  so we can simulate those.\n\nYou can do it via.\nAnd I don't know how to do it. \n\nFor my work I need to understand [[boundary condition]], [[initial condition]], and is that the domain works.\n\n\n",
@@ -8484,7 +8404,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "848",
+    "id": "840",
     "title": "Double Integral Resolution",
     "excerpt": "> What it matters it's not if it is convenient threat the integral like a function of $x$ or $y$.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\n> [!method]\n> What it matters it's not if it is convenient threat the integral like a function of $x$ or $y$.\n> If the function is over $x$ then the first integral is over $y$ the other case way around.\n> The most important is define pretty well the region where we want to evaluate the [[Double Integral]].\n> When the integral is pretty hard, is useful apply the [[Fubini's theorem]] or apply a ",
@@ -8494,7 +8414,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "849",
+    "id": "841",
     "title": "Goal Of Mathematics",
     "excerpt": ">[!quote] The goal of math is ~~answer questions~~ develop new ideas.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\n>[!quote] The goal of math is ~~answer questions~~ develop new ideas.\n\nUse math tools to resolve problems trough different fields is something amazing. For instance use the complex numbers in a complete real problem is the show and deploy of an amazing brain.\n\nA physicist use the mathematics to take down the beauty of the nature into equations, an exactly way.\n\nA **Fermi** quote:\n\n*I study mathematics with passion because I consider it necessary for the study of the physics, to which I want to dedicate myself exclusively.*\n \n\nMath is not a race or a contest; it’s just you playing with your own imagination. Have a wonderful time!\n\nThe first maintain that mathematics describe the real world, whereas the seconds believe that only are limited to predict the result of experiments, being the reality of world that it describe something without any importance. This is, the theory's mathematics is nothing but a medium to obtain experimental predictions, being the reality's existence a faith question something that don't have any relevance in the activity scientific.\n\nTheory with mayor explication power must be that one what adopted\n\n\n[[Zettelkasten/Permanent Notes/Why mathematics exist]]",
@@ -8504,7 +8424,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "850",
+    "id": "842",
     "title": "Hall Effect",
     "excerpt": "And you could create a [[Electromotive Force]] from that let's say that you have a [[Magnetic Field]] well you could produced. and a conductor you cou...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\nAnd you could create a [[Electromotive Force]] from that let's say that you have a [[Magnetic Field]] well you could produced. and a conductor you could induce a [[electric field]] on that conductor with a value of:\n$$\nE=v_{d}B \n$$",
@@ -8514,7 +8434,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "851",
+    "id": "843",
     "title": "Hard Disk Drive",
     "excerpt": "_Definition.-_ A hard disk is a _data storage system_, the type of not _memory volatile_, now there are a lot of things to say, basically works like t...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\n_Definition.-_ A hard disk is a _data storage system_, the type of not _memory volatile_, now there are a lot of things to say, basically works like this, you have a platter that is recovered by a magnetic material, let's suppose that the surface could be discretized, imagine that in circle of definite radius exist a integer number of blocks, now this block could be \n[[Data]]\n[[data storage system]]",
@@ -8524,7 +8444,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "852",
+    "id": "844",
     "title": "History Of Optics",
     "excerpt": "From ancient Greece until the modern era.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nFrom ancient Greece until the modern era.\nOf course there exist two main points of view\n",
@@ -8534,7 +8454,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "853",
+    "id": "845",
     "title": "Inherit",
     "excerpt": "I always have this thought that you only inherit biological trait and never something related to the way of being.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nI always have this thought that you only inherit biological trait and never something related to the way of being.\n\nBut of course we can say that we also inherit the way of being trough interact with our environment. There I believe that the first twelve or even until the fifteen years practically  all is inherit and you can't \"decide\" how you are being. Of course exist some cases that the child perform certain activities that are not normal, but there are few cases, we call to those child genius.\n\nAnd also that I learn is that exist a bidirectional relation. Of course one more direct and the other generate doubt.\n\nI guess that the father the half of the information is encoded on this spermatozoon and from the mother in this ovum. And there are all the enough [[Data]].\n\nBut how the ADN contain that information, I guess that the a specific arrange of this represent a ADN unique. I mean the anatomy is my third branch favorite, because how it's possible have so complex structures inside us.",
@@ -8544,7 +8464,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "854",
+    "id": "846",
     "title": "Interesting Moving Of Electrons   In The Actual",
     "excerpt": "the another I was talking with Chatgtp and I read something interesting, and here we have to make differentiation between an electronic pulse that tra...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nthe another I was talking with Chatgtp and I read something interesting, and here we have to make differentiation between an electronic pulse that travels at velocities near to the light like 70% -90%, (and why in this range and not 20-25%??).\n\nWhen a differential of voltage is applied, the electrons moved of course when we are talking about a conductor material like bronce, and here I have more doubts, we known that a material distingsh for the electrons of valency that have, the questions it's that electrons begin to move at a velocity of milimeters for second, but here exist a lot of questions, if the travel are travel where are its start point and it finish point? the same for the the electric pulse, \n\n[[Electron]]",
@@ -8554,7 +8474,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "855",
+    "id": "847",
     "title": "Kirchhoff Law",
     "excerpt": "Measure how many [[Current Intensity]] per your resistor and how measure the [[Potential (Voltage)]] in each [[Resistors]].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-11-21 07:17\n---\nMeasure how many [[Current Intensity]] per your resistor and how measure the [[Potential (Voltage)]] in each [[Resistors]].\n$$ V_{a}+\\sum IR=V_{b} $$\nThe sign is a important matter, you have to consider the follow: (For mesh, because at the end you sum up zero)\n- If the direction of the current go **against** of the direction of the potential that you consider then is **positive**.\n- if the current goes in the **same** direction then is **negative**. [^1]\n\n- Label the nodes. (ABCDE)\n- Choose an arbitrary path for the nodes. Current.\n- Apply the Kirchhoff law.\n- Create a [[system equation]] to obtain each $I$. And that's it. \n---\nI have a question this also work with [[Capacitors]]. Consider it like a variant.\nIs something to worry about, and I guess that you could make something similar with \n\n[^1]: [[Fisica para ciencias e ingenieria]] pp. 724\n",
@@ -8564,7 +8484,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "856",
+    "id": "848",
     "title": "MAS Equation Oscilator",
     "excerpt": "We we have a [[Differential Equation]] that it comes from the fact that a mass is attached to a resort. On of course it have some energy for this move...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-11-21 08:13\n---\nWe we have a [[Differential Equation]] that it comes from the fact that a mass is attached to a resort. On of course it have some energy for this move. \n\nThen from the [[Newton Second Law]] or using the [[Hamilton Equations]] you obtain:\n$$\n\\begin{align}\nm\\ddot{x}=-kx \\\\\nm\\ddot{x}+kx=0\n\\end{align}\n$$\nA pretty equation because is you put a $x$ term then it transform in the [[Damped Harmonic Motion]], now if want to add more polynomials then it would be possible find a solution? Well that is join to [[Differential Equation]] theory.\nAnd the solution of this equation is: (or also it could be $\\cos$) or maybe both , I think that the most general in both.\n$$\n\\vec{x}=A\\sin(wt+\\phi)+B\\cos(wt+\\phi)\n$$\nWhat about $\\phi$ is the angle called emphases and here sin and cos could have different angle but that would make sense? because the equation don't depends on that angle, doubts.\nThe question if you take some of [[Circular Motion]] you could obtain the solution of that equation that is something like. Well that is a good strategy to solve that equation, I mean exist a physical meaning, but I guess that not all the ED have a meaning, so your unique case is go ahead. And try to solve it by brutal force.\n\nHere I don't have any reference. I mean the fin introduce it very gross and fisica universitaria do it better. And yes \n\n\nRef. [[Fisica Alonso Finn]] ",
@@ -8574,7 +8494,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "857",
+    "id": "849",
     "title": "Magnetic Moment",
     "excerpt": "And is amazing that exist that exciting relation between this two.  a.k.a dipolar magnetic moment. [^1]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-11-17 16:30\n---\nAnd is amazing that exist that exciting relation between this two.  a.k.a dipolar magnetic moment. [^1]\n\n\n\nIs defined as \n>[!definition]\n>Is defined as:\n> $$ \\vec{\\mu}=I\\vec{A}=IA\\hat{n} $$\n\n- Defined as \n[^1]: [[Fisica para ciencias e ingenieria]] pp. 759\n",
@@ -8584,7 +8504,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "858",
+    "id": "850",
     "title": "Monthe Carlo Method",
     "excerpt": "I mean when you can't choose all the values because it's computationally expensive then you have to choose randomly on the set of options.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-10-19 17:20\n---\nI mean when you can't choose all the values because it's computationally expensive then you have to choose randomly on the set of options.\n\nAnd this a very used technique. \n\nAnd here randomness becomes a key to resolve problems. Born in the second world war because in that time computers were.\n\n[[Variational Monte Carlo]]",
@@ -8594,7 +8514,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "859",
+    "id": "851",
     "title": "Neural Networks And Physical Systems With Emergent Collective Computational Abilities",
     "excerpt": "> Published by John Hopfield in 1982",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\n> [!reference]\n> Published by John Hopfield in 1982\n\nBasically threat about how a [[Neural Network]] could memorize patterns in data.\n\nUse \"energy concepts\" to explain it.\n\nThis work worth a Nobel prize?.\n\n@hopfieldNeuralNetworksPhysical",
@@ -8604,7 +8524,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "860",
+    "id": "852",
     "title": "Partial Differential Equation, What Are",
     "excerpt": "A differential equation is defined by doing.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-10-17 09:27\n---\nA differential equation is defined by doing.\nWith $f$ [[Differential Operator]]\n$$\n\\begin{align}\nf\\left( x,t,\\frac{\\partial y}{\\partial t},\\frac{\\partial y}{\\partial x},\\dots,\\mu   \\right) & =0  &  x\\in\\Omega, t\\in[0,T] \\\\\ny(x,t_{0}) &  =h(x) & x\\in \\Omega \\\\\ny(x,t) & =g(t) & x\\in \\partial\\Omega, t\\in[0,T]\n\\end{align}\n$$\n\n- [[Solve PDEs numerically]]\n\n[[Partial derivative]]",
@@ -8614,7 +8534,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "861",
+    "id": "853",
     "title": "PeerToPeer",
     "excerpt": "This system allows amazing thing I mean the union makes the force.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nThis system allows amazing thing I mean the union makes the force.\n\n ",
@@ -8624,7 +8544,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "862",
+    "id": "854",
     "title": "Physics Equations",
     "excerpt": "$$G_{\\mu \\nu}+\\Lambda g_{\\mu \\nu}=\\kappa T_{\\mu \\nu} $$",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nEinstein Equation\n$$G_{\\mu \\nu}+\\Lambda g_{\\mu \\nu}=\\kappa T_{\\mu \\nu} $$\nRotational Kinetic Energy\n$$\nK_{rot}=\\frac{1}{2}I\\omega^{2}\n$$\nTorque\n$$\n\\vec{\\tau}=\\vec{r}\\times \\vec{F}=I\\alpha\n$$\nAngular Momentum\n$$\n\\vec{L}=I\\omega\n$$\nGravitational Potential Energy (two masses)\n$$\nU=-G \\frac{m_{1}m_{2}}{r}\n$$\nFirst Law of Thermodynamics\nEnergy Conservation\n$$\n\\Delta U=Q-V\n$$\nWork done during expansion/compression\n$$\nW=\\int_{V_{i}}^{V_{f}}PdV\n$$\n$$\nW=P\\Delta V\n$$\nIsobaric:\n$$\nQ=nC_{P}\\Delta T\n$$\nIsochoric:\n$$\nQ=nC_{V}\\Delta T\n$$\nIsothermal (ideal gas):\n$$\nQ=W=nRT\\ln\\left( \\frac{V_{f}}{V_{i}} \\right)\n$$\nSpecific Heats:\n$$\nC_{P}-C_{V}=R\n$$\n$$\nPV=nRT\n$$\nSecond Law of Thermodynamics\nEntropy Change: \n$$\n\\Delta S=\\int \\frac{dQ_{\\text{rev}}}{T}\n$$\nEntropy change for ideal gases (reversible):\n$$\n\\Delta S=nC_{V}\\ln\\left( \\frac{T_{f}}{T_{i}} \\right)+nR\\ln\\left( \\frac{V_{f}}{V_{i}} \\right)\n$$\n",
@@ -8634,7 +8554,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "863",
+    "id": "855",
     "title": "RAGflow",
     "excerpt": "Man I am strongly powerful.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nMan I am strongly powerful.\n\n![ragflow](https://github.com/infiniflow/ragflow.git)",
@@ -8644,7 +8564,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "864",
+    "id": "856",
     "title": "Solenoid",
     "excerpt": "What happens when a solenoid get put in a sphere concentric and exist a [[Magnetic Field]] How a force appears in that case.I really don't understand ...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\nWhat happens when a solenoid get put in a sphere concentric and exist a [[Magnetic Field]] How a force appears in that case.I really don't understand that problem.\nBut first you need to understand how this produce the mag field.\n\nWell the basic cases where thing begins to seems nice is:\n\nThat comes from the fact of apply the [[Ampere Law]].\n$$\nB=\\frac{\\mu NI}{L}\n$$\nWhere $\\mu$ is the [[Magnetic Permeability on the Vaccum]], $N$ the number of **Spires** ,$I$ the **Current intesity** and $L$ the length of your Solenoid.\n\nThat is the module. What we can say about the direction? Is left or right, depends on the direction of the [[Current Intensity]].\n\nOutside is almost uniform and continuous, outside is almost zero. (Model)\n\n",
@@ -8654,7 +8574,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "865",
+    "id": "857",
     "title": "State Of The Art Agents",
     "excerpt": "Actual agents are powered by [[Neural Network]] and using Q-learning. Not the agents.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-10-16 19:47\n---\nActual agents are powered by [[Neural Network]] and using Q-learning. Not the agents.\nSo they actually put a NN to the policy function.\nThis is called Deep Q-Networks.",
@@ -8664,7 +8584,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "866",
+    "id": "858",
     "title": "Theory Of Probability",
     "excerpt": "For what reason on earth one wants probability, it is actually a branch inside [[Statistics like the path for approach the chaotic of life]], and this...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-09-13 11:22\n---\nFor what reason on earth one wants probability, it is actually a branch inside [[Statistics like the path for approach the chaotic of life]], and this is actually more a philosophic question I think.\n\nThe theory of probability search model a environments, and how we can't predict what is going to happen we use randoms variables to try to predict what is gonna to happen. Exist a clear distinction between statistics, I see it like compare topology from physics. Or calculus from integral, one compare it by understanding the concepts. \n\nMaybe together with statistics is one of the more practical fields from math since finds ways to approach the complexity of our world is one approach! \n\nThere is [[stochastic]] that don't let you know what is gonna to happen in the future how the analytic system.\n\nSo the basis is [[Probability Space]]",
@@ -8674,7 +8594,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "867",
+    "id": "859",
     "title": "Transformers Electric",
     "excerpt": "I remember pretty well that Cuchio talk about this, he was pretty good explaining",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nI remember pretty well that Cuchio talk about this, he was pretty good explaining\n\n\n\n[[Electric Field]]\n\n![[Transformadores.png]([Transformadores.png)]",
@@ -8684,7 +8604,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "868",
+    "id": "860",
     "title": "Variance Many Dimensions",
     "excerpt": "The variance of a [[Multivariate random variable]] $X$ is the [[covariance multivariate variable|covariance]] of itself.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-11-09 09:31\n---\nThe variance of a [[Multivariate random variable]] $X$ is the [[covariance multivariate variable|covariance]] of itself.\n\nIn many variables the variance matrix is [^1] :\n$$=\\text{Cov}[x_{i},x_{j}]$$\n - For two variables, maybe is clear that four more variable you use [[Tensor via Manim]]. \n- [[correlation]]\n- What does it mens? [[Variance One Dimension]]\n\n[^1]: [[Mathematics for Machine Learning]] pp. 190\n",
@@ -8694,7 +8614,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "869",
+    "id": "861",
     "title": "Where Do Facts Live",
     "excerpt": "How it's capable ChatGTP to remember certain facts?",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nHow it's capable ChatGTP to remember certain facts?\n\nUntil know are only see how regenerate words.\n\nThe answer is here\n[[FFN on Transformers]]\n",
@@ -8704,7 +8624,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "870",
+    "id": "862",
     "title": "Alpha Fold",
     "excerpt": "The question to know the 3D structure of a protein is very important.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nThe question to know the 3D structure of a protein is very important.\nAnd what alpha fold did was simply amazing\n\nUnderstand a protein like chain of amino acids. And this aminoacids are molecules that one study on [[organic chemistry]] |",
@@ -8714,7 +8634,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "871",
+    "id": "863",
     "title": "Archimede'S Principle",
     "excerpt": "Okay when we treat [[An introduction to fluids]] is very important to notice this.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nOkay when we treat [[An introduction to fluids]] is very important to notice this.\n\nAnd this is the basics of a lot of amazing things that humanity has like **air ballon** and more amazing even **planes**. Why planes float? That is basically a consequence of \n\nsustentation force over the wings of the plane, the [[Bernoulli Equation]]",
@@ -8724,7 +8644,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "872",
+    "id": "864",
     "title": "Bio Mathematics",
     "excerpt": "Today, and well long time ago big part of the one who study physics and math, that stuff of science, don't know the applications and also the stuff re...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nToday, and well long time ago big part of the one who study physics and math, that stuff of science, don't know the applications and also the stuff related. I think that are a key point when study math, I mean, when they ask, what do you study. you need to answer like if you would memorize it. And I'm really interesting about the vocabulary and the possibilities. but not that engaged. ",
@@ -8734,7 +8654,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "873",
+    "id": "865",
     "title": "Bottlenech Von Neumann",
     "excerpt": "This is pretty related to the bus of [[Hardware]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nThis is pretty related to the bus of [[Hardware]]",
@@ -8744,7 +8664,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "874",
+    "id": "866",
     "title": "Bubble",
     "excerpt": "Is a good starting point to understand surface but the question is .",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nIs a good starting point to understand surface but the question is .\n\nAnd this is something amazing\n\nI mean one could make calcium carbonate. And is necessary ask about the process of saponification. CaCO\n\nThis are making from basically [[soup]]\n\nAh chemistry is amazing. \n",
@@ -8754,7 +8674,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "875",
+    "id": "867",
     "title": "Carbon Atom",
     "excerpt": "The most important element that exist on nature. This have important four important properties.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-11-18 19:22\n---\nThe most important element that exist on nature. This have important four important properties.\n\n- Autosaturation\n- Forms covalence atoms \n- And another two\n\nAn understanding of this atom open the doors to [[organic chemistry]]\n\nIt has six electrons and six protons.\n\n2 electrons is the 1s shell, and four electrons in the 2s/2p shell.\n\nFor isotope carbon-12 it has 6 neutrons. Recall:\n$$\nN_{\\text{neutrons}}=A-Z\n$$\n",
@@ -8764,7 +8684,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "876",
+    "id": "868",
     "title": "Center Of Mass Idea",
     "excerpt": "In physics is a constast that you ask; why would",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nIn physics is a constast that you ask; why would\n",
@@ -8774,7 +8694,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "877",
+    "id": "869",
     "title": "Challenges When Using Boltzmann Machines",
     "excerpt": "This is for write what ever you want.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nThis is for write what ever you want.\nWhy actually nobody use it? That is my question. ",
@@ -8784,7 +8704,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "878",
+    "id": "870",
     "title": "Change Of Variable",
     "excerpt": "I mean this is one key when you resolve integrals. [[integral]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nI mean this is one key when you resolve integrals. [[integral]]\n",
@@ -8794,7 +8714,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "879",
+    "id": "871",
     "title": "Chemical Elements",
     "excerpt": "This are the brick of the universe, basically are a set of [[Electron]], [[protons]] and [[neutrons]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nThis are the brick of the universe, basically are a set of [[Electron]], [[protons]] and [[neutrons]]",
@@ -8804,7 +8724,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "880",
+    "id": "872",
     "title": "Chemical Table",
     "excerpt": "History showns that many tables have been created but only one has survived to the flow of time. The one made it by Mendeliev. This one organized elem...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-10-17 17:37\n---\nHistory showns that many tables have been created but only one has survived to the flow of time. The one made it by Mendeliev. This one organized elements by rows and columns. The 118 [[chemical elements]] form 18 columns and  10 rows.\n\n![PeriodicTableoftheElements.pdf](PeriodicTableoftheElements.pdf)\n\nAdding a $2\\times 10$ elements called \n\nExist four main groups that depends if end on s,p,d,f. This are the [[Quantum Numbers]]\n\nThe most important element is the [[carbon atom]]",
@@ -8814,7 +8734,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "881",
+    "id": "873",
     "title": "Circuit",
     "excerpt": "A circuit is the union of an [[conductor]] a battery and some optional elements like [[Resistors]] [[Capacitors]] and [[Inductors]].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nA circuit is the union of an [[conductor]] a battery and some optional elements like [[Resistors]] [[Capacitors]] and [[Inductors]].\nAnd here people use some conventions that are important to notice, the most important is respect the flow of [[Current Intensity]].\n- We know that one battery has a positive and a negative what does mean? \n- The positive of the circuit is ",
@@ -8824,7 +8744,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "882",
+    "id": "874",
     "title": "Classifiers On Math",
     "excerpt": "We need it extended are like work frames but that this don't limit your skill of abstract. ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nWe need it extended are like work frames but that this don't limit your skill of abstract. \nTo be consistent math need: And not only on math I think that on life is super necessary.\n- Definitions.- You can define everything you want, but it have to be sense an be fertile\n- Theorem.- From your definitions and a sets of rule you can state sentences propositions. \n- Laws.- A pattern in the nature, observed and described\n- Theory.- A whole structure\n- Corollary.- A direct consequence from a theorem, just apply it.\n- Proposition.- Are also propositions like theorem but they are not that important. \n- Practice.- The applications of our theory\n- Method.- A process that you can follow to reach to something. \n- Criterion.- A test that we make to something to reach to somewhere\n- Axioms.- Is a assumption that you accept, are the start point from where you could define things.\n- Principle.- More broader than law, in our cases something about nature.\n- Postulates.- When we start a theory we need to make some assumptions, those are the postulates.",
@@ -8834,7 +8754,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "883",
+    "id": "875",
     "title": "Computational Physics",
     "excerpt": "Maybe this is where I belong.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-10-18 09:13\n---\nMaybe this is where I belong.",
@@ -8844,7 +8764,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "884",
+    "id": "876",
     "title": "Corollary Maxwell Boltzmann'S D",
     "excerpt": "No excerpt available",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\n>[!corollary]\n>\n\n\nFrom that piece of ",
@@ -8854,7 +8774,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "885",
+    "id": "877",
     "title": "Corriente Alterna",
     "excerpt": "[[Electromagnetic Field]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\n![[Corriente Alterna.png]([Corriente Alterna.png)]\n\n[[Electromagnetic Field]]",
@@ -8864,7 +8784,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "886",
+    "id": "878",
     "title": "Cumulative Distribution Function",
     "excerpt": ">Give it a [[random variable]] $X$ which is continuous (necessarily it should to be modeled by a continuous function?) we define the **cumulative dist...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-08-12 17:13\n---\n\n>[!definition]\n>Give it a [[random variable]] $X$ which is continuous (necessarily it should to be modeled by a continuous function?) we define the **cumulative distribution function** as (for uni-variate): [^1]\n>$$\nP(a\\leq X\\leq b)=\\int_{a}^{b}f(x)dx $$\n>The multivariate case is clear that you need to define each uni-variate in the same manner \n\n[^1]: [[Mathematics for Machine Learning]]\n",
@@ -8874,7 +8794,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "887",
+    "id": "879",
     "title": "Derivative Encode Information",
     "excerpt": "Ok the idea of put the information on the derivative on a [[Matrix what it is]] it seem it to me simply awesome now, my professor say that Pita found ...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nOk the idea of put the information on the derivative on a [[Matrix what it is]] it seem it to me simply awesome now, my professor say that Pita found a meaning about when multipliying matrices that is super wow!\n\nI mean the gradient is quite the same [[Gradient]]",
@@ -8884,7 +8804,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "888",
+    "id": "880",
     "title": "Derivatives Idea",
     "excerpt": "No excerpt available",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\n[[derivatives]]\n",
@@ -8894,7 +8814,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "889",
+    "id": "881",
     "title": "Dipolar Magnet Moment",
     "excerpt": "And is amazing that exist that exciting relation between this two.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nAnd is amazing that exist that exciting relation between this two.\n\nIs defined as \n>[!definition]\n> $$\n\\vec{\\mu}=I\\vec{A}=IA\\hat{n}\n$$\n\n",
@@ -8904,7 +8824,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "890",
+    "id": "882",
     "title": "Electric And Magnetic Field",
     "excerpt": "Man is quite amazing that amount of similarities that exist between this two I mean they are strongly attached I am gonna to mention only a few.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-09-29 10:24\n---\nMan is quite amazing that amount of similarities that exist between this two I mean they are strongly attached I am gonna to mention only a few.\n- If you understand electric field you understand a [[Capacitors]] \n- If you understand the magnetic field you understand a [[Inductors]].\n- Both they have constant, the union of those constants are [[Speed Of Light]]\n- One create to the another, why?\n- Both depends on [[Charge]], one its mere existence and the another necessarily moving.",
@@ -8914,7 +8834,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "891",
+    "id": "883",
     "title": "Exact One Differential Form",
     "excerpt": "If is exact then is conservative? If we talk about [[Simply connected region]], test question! show counter example.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nIf is exact then is conservative? If we talk about [[Simply connected region]], test question! show counter example.\n",
@@ -8924,7 +8844,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "892",
+    "id": "884",
     "title": "Generalized Chain Rule",
     "excerpt": ">Give two a [[composition]] $f \\circ g$ where $f$ and $g$ are vector fields. We  could obtain the [[Jacobian Matrix]] of that like follow.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\n>[!proposition]\n>Give two a [[composition]] $f \\circ g$ where $f$ and $g$ are vector fields. We  could obtain the [[Jacobian Matrix]] of that like follow.\n\nNow we could the bigger generalization of ",
@@ -8934,7 +8854,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "893",
+    "id": "885",
     "title": "Hall Efect",
     "excerpt": "And you could create a [[electromotive force]] from that o",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nAnd you could create a [[electromotive force]] from that o\nlet's say that you have a [[Magnetic field]] well you could produced. and a conductor you could induce a [[electric field]] on that conductor with a value of:\n$$\nE=v_{d}B \n$$",
@@ -8944,7 +8864,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "894",
+    "id": "886",
     "title": "Hyperparameters Using Lora",
     "excerpt": "No excerpt available",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nalpha-lora\ndropout\nthat stuff\n",
@@ -8954,7 +8874,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "895",
+    "id": "887",
     "title": "Inner Product, Distance On The Space",
     "excerpt": ">We need to understand the generality of this definition, in this course we are not using considerating the other propierties this ones are stablish w...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\n[[Inner product]]\n>We need to understand the generality of this definition, in this course we are not using considerating the other propierties this ones are stablish when we define the _spaces_.\nwe could that this induce a notion of angle (angles between matrices?) and length a metric in the space $(V,\\langle , \\rangle)$ geometric space?",
@@ -8964,7 +8884,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "896",
+    "id": "888",
     "title": "Integral",
     "excerpt": "The integral is just the anti derivative of a function",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nThe integral is just the anti derivative of a function",
@@ -8974,7 +8894,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "897",
+    "id": "889",
     "title": "Law Snell",
     "excerpt": "[[Optics, what it is?]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\n![[Demonstracion Ley de Snell Parcial.png]([Demonstracion Ley de Snell Parcial.png)]\n[[Optics, what it is?]]",
@@ -8984,7 +8904,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "898",
+    "id": "890",
     "title": "Layer AI",
     "excerpt": "So what is block_size the ... batch size? the [[Context size LLM]]!! but what. ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified:\n---\n\nSo what is block_size the ... batch size? the [[Context size LLM]]!! but what. \n\nthe context size????\nA layers or a block is ... ",
@@ -8994,7 +8914,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "899",
+    "id": "891",
     "title": "Linear Regression",
     "excerpt": "Is clear that one try to predicts a variable dependent $Y$ by using a dependent variable $X$.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nIs clear that one try to predicts a variable dependent $Y$ by using a dependent variable $X$.\n\nSo like we have to define a [[Loss function]] and try everything possible to minimaze that function. [[Arg min and max]]\n\n>[!definition]\n>Standard linear model ; a family of affine functions on its more general form using a [[Inner product]].\n>$$\n\\mathcal{F}=\\{ f(x)=a_{0}+b^{T}x|a_{0}\\in \\mathbb{R}^{q},b\\in \\mathcal{M}_{d,q}(\\mathbb{R})\\} $$\n",
@@ -9004,7 +8924,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "900",
+    "id": "892",
     "title": "Linux And Nvidia",
     "excerpt": "I saw that is hard to use the NVIDia drivers on the Linux environments so that is a problem with specilization it could be easily resolved.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nI saw that is hard to use the NVIDia drivers on the Linux environments so that is a problem with specilization it could be easily resolved.\n\nOf course that if that happens to me is in the future with ML stuff, now with gaming.\n\n",
@@ -9014,7 +8934,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "901",
+    "id": "893",
     "title": "Magnetic Field Production",
     "excerpt": "Now we ask about how we can create [[Magnetic Field]].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nNow we ask about how we can create [[Magnetic Field]].\nWe can do by using [[Current Intensity]] using the [[Biot-Savart Law]]",
@@ -9024,7 +8944,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "902",
+    "id": "894",
     "title": "Mirrors",
     "excerpt": "No excerpt available",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\n![[Espejos Concavos.png]([Espejos Concavos.png)]![[Optica II.png]([Optica II.png)]![[Fisica Optica Geometrica Momento.png]([Fisica Optica Geometrica Momento.png)]",
@@ -9034,7 +8954,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "903",
+    "id": "895",
     "title": "Newton Method",
     "excerpt": ">There are already two names for that one is for generate [[fractals, what are]] and the another is used on [[numerical calculus]]. [^1]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-11-18 07:04\n---\n>There are already two names for that one is for generate [[fractals, what are]] and the another is used on [[numerical calculus]]. [^1]\n\nSo this works like follow , you have a function and you want to know where it minimize, which is very common, so what you make is compute the derivative in one point, you use the line attached, (who would say that line is useful) you find the point where that line touch the x axis, you evaluate the function is that point, and repeat the process, now how you ensure that said point is going to near or be the local, no idea. \n\nBut let's say that you can visualize what is that point, if in all the iterations that points get repeated so that should be.\n\n\n\n[^1]: [[Numerical Analysis]] pp. 657\n\tReference: Deep Learning.",
@@ -9044,7 +8964,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "904",
+    "id": "896",
     "title": "Nomenclature",
     "excerpt": "I mean is something complex when is nomenclature inorganic.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nI mean is something complex when is nomenclature inorganic.\nI remember that I fell fear.\n\nExist UIPAC nomenclature, another that I don't remember well the nam, systematical maybe. \n\n\nnomenclature \n\nMet -\nEt -\nProp -\nBut -\n",
@@ -9054,7 +8974,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "905",
+    "id": "897",
     "title": "Numerical Calculus",
     "excerpt": "When in life we practically we could never to obtain exact solutions, because is that complex so numerical calculus is used for real life problems, is...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nWhen in life we practically we could never to obtain exact solutions, because is that complex so numerical calculus is used for real life problems, is something that all scientist make so let's go.\n\nSo [[approximations]]\n\n[[stochastic]]",
@@ -9064,7 +8984,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "906",
+    "id": "898",
     "title": "Organic Chemistry",
     "excerpt": "When we are gonna to put in practice all this acknowledge? In thirty years, when I have my labo, my library and my taller. That is the only I want.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nWhen we are gonna to put in practice all this acknowledge? In thirty years, when I have my labo, my library and my taller. That is the only I want.\n\nWe owe so many thing to this branch of science, that is really unfair. That all the citizen don't care about it maxima development.\n\n[[Alkanes]]\n",
@@ -9074,7 +8994,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "907",
+    "id": "899",
     "title": "Particle Classic Physics Punctual",
     "excerpt": "a particle doesnt ocuppy a space; doesnt have volume; so it's not very practical in real life but work perfects to model specific situations. You coul...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\na particle doesnt ocuppy a space; doesnt have volume; so it's not very practical in real life but work perfects to model specific situations. You could buy a basis of the theory; then you could expanded to the [[particle system]] case. Think it like a dot on the space with mass",
@@ -9084,7 +9004,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "908",
+    "id": "900",
     "title": "Particle System",
     "excerpt": "Is a configuration of [[particle classic physics punctual|particle]] on the spaces; basically you superpones all and is not that interesting. This is ...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nIs a configuration of [[particle classic physics punctual|particle]] on the spaces; basically you superpones all and is not that interesting. This is the discret case.\nBut when we work with the continuos case that sumatory becomes integral and is exciting when you need to find clever ways to find the integral.\nExist many cases.\n[[center of mass]]",
@@ -9094,7 +9014,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "909",
+    "id": "901",
     "title": "Path In Topological Spaces",
     "excerpt": "Give it a [[Topological Space]] $X$, a path in $X$ is defined as a continuous function:",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nGive it a [[Topological Space]] $X$, a path in $X$ is defined as a continuous function:\n$$\n\\gamma:[0,1]\\to X\n$$",
@@ -9104,7 +9024,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "910",
+    "id": "902",
     "title": "Properties The Environ",
     "excerpt": "For that reason we have different constants referring to certain properties of the environment that , of course, are obtained by experiments. One of t...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nFor that reason we have different constants referring to certain properties of the environment that , of course, are obtained by experiments. One of the most easiest to obtain are the properties of the vacuum because it's simplicity, and this is very useful for us because actually we use it like reference.\nIs clear that each environment is basically made by the particles that are there floating or only existing, the properties of these react to a certain external components. ",
@@ -9114,7 +9034,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "911",
+    "id": "903",
     "title": "Radial Force",
     "excerpt": "and this is related to [[Angular Momentum]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-08-29 12:19\n---\n#pendent \nWhat\nand this is related to [[Angular Momentum]] ",
@@ -9124,7 +9044,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "912",
+    "id": "904",
     "title": "Random Variable",
     "excerpt": "A **random variable** is a function $X$ that takes elements from the sample space and take it to the **target space** $\\mathcal{T}$, this **target spa...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nA **random variable** is a function $X$ that takes elements from the sample space and take it to the **target space** $\\mathcal{T}$, this **target space** is the set of the quantity of interest, so is a subset of $\\mathcal{A}$.\nToy example!\nLet $\\Omega$ be the set of all the states that throw two coins can be, and the let $\\mathcal{T}$ be number of of heads. So is clear that $\\Omega=\\{ hh,ht,th,tt \\}$ where $t\\text{:tails}$ and $h\\text{:heads}$, now the random $X:\\Omega\\to \\mathcal{T}$ is:\n$$\nX(hh)=2,X(ht)=X(th)=1,X(tt)=0\n$$\nSo is clear that $\\mathcal{T}=\\{ 0,1,2 \\}$.\nRealize that this random variable is well defined once that the **target space** is well defined.\nLet's say that we want to know the numbers of hours studied for a student so:\n$$\nX(\\text{David})=2\n$$\nSo the event space are all the students, is the target is the numbers of hours studied.",
@@ -9134,7 +9054,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "913",
+    "id": "905",
     "title": "Resistance On A Fluid",
     "excerpt": "**Intuition**: If a object has a very low velocity, then the fluid molecules have the time sufficient to leave pass the object trough the path. ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-08-29 09:42\n---\n\n\n\n**Intuition**: If a object has a very low velocity, then the fluid molecules have the time sufficient to leave pass the object trough the path. \nIn the other hand if we go to a high speed is like they were acting as wall, they don't have the sufficient time so they impact over us with more agressitivity.\n\nWhen the [[An introduction to fluids]] is [[Viscosity]]",
@@ -9144,7 +9064,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "914",
+    "id": "906",
     "title": "Resort",
     "excerpt": "well this are a good example when talking of [[Young Module]] and energy stuff because all we already seen one in our lives.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nwell this are a good example when talking of [[Young Module]] and energy stuff because all we already seen one in our lives.",
@@ -9154,7 +9074,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "915",
+    "id": "907",
     "title": "Series Idea",
     "excerpt": "A series is a sum, in such a way that each adding changes ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nA series is a sum, in such a way that each adding changes \nfollowing a rule, this rule is give by a [[Sequence]]. This is:\n\n$$\n\\sum_{k=0}^{\\infty}a_{n}=a_{0}+a_{1}+\\dots\n$$\n\n\nEach $a_{n}$ is called a term of the serie. \n\nWe can only view a certain part of this serie. For instance $\\sum_{k=0}^{n}a_{n}$, then we define a **partial sum** like $s_{n}=\\sum_{k=1}^{n}a_{n}$. And of course we can make a [[Sequence]] from this called the **sequence of partial sums**.\n\nThe most important of one serie is determinate if the series [[Convergence In Series|converges or  diverges]] .\nFor that reason Agustin Cauchy developed and widely use the [[Cauchy's Criterion For Sequences]].\n## Reference\n\n@blochRealNumbersReal2011 pp.444",
@@ -9164,7 +9084,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "916",
+    "id": "908",
     "title": "Shell",
     "excerpt": "Understanding shells like programs that acts like interface between the [[Operative System OS]] and the user.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nUnderstanding shells like programs that acts like interface between the [[Operative System OS]] and the user.\nBASH stands for __Bourne Again SHell__, what is a shell I don't know, but I know that is a command-line shell. I could say that is basically a [[Language Program]], this is very used on Linux or Unix systems.\n\nThis are basically shells, well command line shell,  difference of the not that friendly _Graphical Shell_ (GUI).\n\nAnd is amazing the difference that exist between gui and command line commands, respect velocity. if you add autocomplete and scripts, gui in low resources machines are quite a lot. ",
@@ -9174,7 +9094,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "917",
+    "id": "909",
     "title": "Silicon",
     "excerpt": "This is one of the elements that need a note, why is so special, exist a lot, it's a semiconductor, this is it could block the current flow of pass it...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nThis is one of the elements that need a note, why is so special, exist a lot, it's a semiconductor, this is it could block the current flow of pass it depends how you treat it. (Of course after passing the process of Doping). Have four valency electrons. }\n\nI mean I actually see it in chips and glasses.\n[[Glass]]\n[[Transistor]]",
@@ -9184,7 +9104,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "918",
+    "id": "910",
     "title": "Soup",
     "excerpt": "Is amazing how say goodbye to the [[surface tension]], and of course another detergents. The question relies on the process of saponification and why ...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nIs amazing how say goodbye to the [[surface tension]], and of course another detergents. The question relies on the process of saponification and why exactly this reduce the surface tension. It's possible to create my own soup? And what about detergents, those only make that? Anything else?\nAnd what about those things that smell well? Enjuage? And why we say that soup works well against bacteria, that is true or only is a consequence of the low surface tension?\nWash clothes could be a more complex process?",
@@ -9194,7 +9114,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "919",
+    "id": "911",
     "title": "Stochastic",
     "excerpt": "Okay this is word is pretty used in [[computational physics]], computer science, and programming related to math because here we care a lot of the sca...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-30 10:30\nmodified: 2025-08-17 11:20\n---\n\nOkay this is word is pretty used in [[computational physics]], computer science, and programming related to math because here we care a lot of the scale of our algorithms.\n\nIn the most of the cases the stochastic path is quite better than the analytical path.\n\nStochastic is non deterministic you can't predict exactly what is gonna to be the result, because exist some randomness. And here the [[Monthe Carlo Method]]",
@@ -9204,7 +9124,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "920",
+    "id": "912",
     "title": "Sumatory Using Bernoulli Numbers",
     "excerpt": "\\sum_{i=1}^{N}i^{N}=\\frac{B_{n+1}(m+1)-B_{n+1}}{n+1} ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\n$$\n\\sum_{i=1}^{N}i^{N}=\\frac{B_{n+1}(m+1)-B_{n+1}}{n+1} \n$$",
@@ -9214,7 +9134,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "921",
+    "id": "913",
     "title": "System Equation",
     "excerpt": "Here there are a ton to say because who it would that a [[Matrix what it is]] would appear.",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nHere there are a ton to say because who it would that a [[Matrix what it is]] would appear.\nSimply amazing, and this is interest room for research in the sense that we need to be the more rapidly possible. There are tons of ways to resolve one of these system.\n\nTriangular Upper and Lower, Gauss, and tons of algorithms for square matrices, because the rectangular ones are very trivial to determinate if exist a solution or not.\n\nOn Linear Algebra 0 2024 - I exist interesting content. \n\nOne of them is the [[Cramer Rule]]\nAnd my question is if all this methods are really useful, this remember to me, when a kid asking on the school if all of what they learn is gonna to be useful, and someone answering that yes but only to smart kids. jaja.",
@@ -9224,7 +9144,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "922",
+    "id": "914",
     "title": "Time   Physics",
     "excerpt": "Well we are pretty costume to this concept, but is important to define it well or at least be sure of this basis behind behind when we introduce to us...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nWell we are pretty costume to this concept, but is important to define it well or at least be sure of this basis behind behind when we introduce to us to [[General Relativity Theory MOC]] things get wierd.\n\nFor now I will defined it like the grow of [[Entropy as a measure of tidy]], with that we have a basis to define a direction of the time.\n\n[[Stephen Hawking]] in his book A Brief Essay about Time what things he would say.\n\nF\n\n\n\n> A ode to time:",
@@ -9234,7 +9154,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "923",
+    "id": "915",
     "title": "Vector Data Base",
     "excerpt": "When talking about [[Tokenizer]]. ",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2024-04-30 10:30\"\nmodified:\n---\n\nWhen talking about [[Tokenizer]]. \n\nThis idea of put words like vectors over enormous vectors spaces is simply amazing, and I need one that scales pretty well over the time. \n\nhave the word cat and \"near\" there is another words like dog, pet, animals, types of cats, it's amazing that in such a way those words get agroup, of course that I don't know how it is that you make that with training. It will be something natural or force?\n\nI think that this is a problem of a [[Data Science]]. ",
@@ -9244,7 +9164,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "924",
+    "id": "916",
     "title": "Pendulum",
     "excerpt": "is nothing but a [[MAS equation oscilator]]",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2024-04-09 13:14\nmodified: 2025-09-09 13:16\n---\n\n\nis nothing but a [[MAS equation oscilator]]",
@@ -9254,7 +9174,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "925",
+    "id": "917",
     "title": "Overclock",
     "excerpt": "And this is basically take your [[CPU First Peek]] to its limits to improve the performance of it, the bigger problems are the refrigeration and elect...",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: \"2023-07-31 21:07\"\n---\nAnd this is basically take your [[CPU First Peek]] to its limits to improve the performance of it, the bigger problems are the refrigeration and electricity dangerous. Is like a sport do this I think.",
@@ -9264,7 +9184,7 @@ export const blogPosts: BlogPost[] = [
     "featured": false
   },
   {
-    "id": "926",
+    "id": "918",
     "title": "Matrix What It Is",
     "excerpt": ">A matrix is arrangement of numbers of if you want to be more general then elements from a [[Field]].",
     "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2023-07-23 10:19\nmodified: 2025-08-24 19:40\n---\n>[!definition]\n>A matrix is arrangement of numbers of if you want to be more general then elements from a [[Field]].\n>And there exist different notations.$$\n[A]=a_{ij}\\text{ if this have a nice form who are function of } i \\lor j. $$\n>And the most important $A\\in \\mathbb{R}^{m\\times n}$ where $m$ means the quantity of **rows** and $n$ the the quantity of **columns**.\n\n- I would say one of the most important theory on math, physics and even computer science. \n- And one discover this  powerful when one study linear algebra.\n- And I don't if the definition only talk about the a shape with two orders, for that we have [[Tensor via Manim]], that are a generalization of matrices.\n\n**Some handwritten notes**\n[[Descomposicion de Lu, Definiciones.png]]\n[[Matrices II.png]]\n[[Matrices III.png]]\n[[Algebra Lineal Semana II.png]]\n[[Algebra Lineal Semana I.png]]",
@@ -9272,36 +9192,6 @@ export const blogPosts: BlogPost[] = [
     "readTime": "3 min read",
     "fileName": "Matrix what it is.md",
     "featured": false
-  },
-  {
-    "id": "927",
-    "title": "Assembling A Car With Omnidireccional Wheels And An Arduino And Why It'S A Bad Idea Do It In Peru",
-    "excerpt": "Building an Omnidirectional Mine‑Exploration Car with Arduino",
-    "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2023-06-28 11:29\nmodified: 2025-10-25 11:24\n---\nBuilding an Omnidirectional Mine‑Exploration Car with Arduino\nIntroduction\nEver wondered how to build a robot that can glide sideways, pivot on the spot, and creep through narrow corridors? In this guide we will design and build a small electric car capable of omnidirectional motion using Mecanum wheels, controlled by an Arduino microcontroller. Because the car is intended for exploring mines, we will equip it with a smoke/gas detector and other sensors. The emphasis will not simply be on following instructions; instead, the goal is to understand the physics and electronics behind each component. By the end you should be able to adapt the design for your own experiments and venture beyond the obvious.\nRichard Feynman famously insisted that true understanding comes from being able to explain things in simple language. Throughout this report you will find analogies, sketches of ideas, and invitations to think deeply about the forces, currents and code at work. Don’t be afraid to ask “why?” at every step – the joy of discovery often lies just beneath the surface.\n1. Understanding Omnidirectional Wheels\n1.1 What is a Mecanum Wheel?\nA Mecanum wheel is a conventional wheel with a twist: along its circumference there are small rollers oriented at 45°. When the wheel spins, the roller orientation causes the force to be directed partly forward/backward and partly sideways. This means that a single wheel can exert a diagonal force on the ground. When four of these wheels are arranged in a square and each is driven independently, the diagonal forces can sum or cancel to produce forward, sideways, diagonal or rotational motion[1][2]. This design provides true omnidirectional movement without needing steering mechanisms.\nTo visualise this, imagine pushing a heavy box across a floor while wearing shoes with ball bearings on the soles: you can push forward, but the ball bearings allow lateral slip. Each Mecanum wheel is like a row of ball bearings; by controlling each wheel’s rotation you steer the combined friction forces.\n\n\n1.2 Left‑ and Right‑Handed Wheels\nBecause the rollers must point at 45° relative to the axis, there are two types of Mecanum wheels: left‑handed and right‑handed (often called Type A and Type B). The orientation of the rollers determines the direction of the diagonal force. To achieve true omnidirectional movement, you must install the wheels in an alternating ABAB pattern: one left‑handed wheel at the front left, a right‑handed wheel at the front right, a left‑handed wheel at the back right, and a right‑handed wheel at the back left[3][4]. This ensures that the diagonal forces cancel when the robot moves forward but reinforce when moving sideways.\nIf you don’t alternate the wheels correctly, the sideways forces may cancel incorrectly, causing the robot to twist instead of strafing. Always pay attention to the orientation of the rollers: viewed from above, the front wheels’ rollers should point toward the center of the robot, and the rear wheels’ rollers should mirror this.\n1.3 Vector Forces and Control Equations\nWhen all four Mecanum wheels spin forward, the sideways components cancel out and the robot moves forward. If the front right and rear left wheels spin forward while the front left and rear right spin backward, the forward components cancel and the sideways components add, causing the robot to slide sideways. By controlling each wheel’s speed and direction, one can create any motion vector, including rotation[5].\nThis is codified in control equations often used in programming:\nLeftFrontWheel  = Speed + Strafe − Turn\nRightFrontWheel = Speed − Strafe − Turn\nLeftBackWheel   = Speed − Strafe + Turn\nRightBackWheel  = Speed + Strafe + Turn\nThese equations combine translational speed along the forward axis (Speed), sideways motion (Strafe), and rotation (Turn)[6]. Understanding these relationships encourages you to think beyond simple forward/backward control and to visualise the forces at play. If you have ever added vectors on graph paper, you will recognise this as a vector addition problem: each wheel contributes a vector, and the sum determines the robot’s movement.\n2. Planning the Mine‑Exploration Car\n2.1 Features and Requirements\nOur mission is to create a small vehicle that can navigate the confined spaces of a mine, detect hazardous gases or smoke, and avoid obstacles. The design should be:\n    • Omnidirectional: able to move in any direction, pivot in place, and strafe sideways for precise positioning.\n    • Sensor‑equipped: carry a gas sensor (MQ2) to detect smoke or flammable gases, and an ultrasonic range finder (HC‑SR04) to detect walls and obstacles.\n    • Modular: use a protoboard (breadboard) for prototyping circuits without solder, allowing modifications.\nIn addition, the car should be sturdy, have a low center of mass for stability, and use components that are readily available.\n2.2 Bill of Materials\nBelow is a summary of the main components you will need. The table lists only keywords and numbers; detailed explanations follow in the text.\nComponent\tQuantity\tPurpose\nArduino Uno or Mega\t1\tMicrocontroller; brain of the robot\nMecanum wheels (Left & Right)\t4\tProvide omnidirectional motion\nGeared DC motors or steppers\t4\tDrive each wheel; choose motors with sufficient torque\nL293D motor driver or shield\t1\tInterface between Arduino and motors; allows direction control[7]\nBreadboard / protoboard\t1\tSolderless board for wiring sensors and electronics[8]\nMQ2 gas/smoke sensor\t1\tDetects LPG, smoke, hydrogen, etc. over a range of 200–10000 ppm[9]\nHC‑SR04 ultrasonic sensor\t1\tMeasures distance using sound pulses[10]\nServo motor\t1\tRotates the ultrasonic sensor to scan the surroundings\nBattery pack (7.4 V Li‑Ion)\t1\tPower supply for motors and electronics\nVoltage regulator or buck converter\t1\tSteps down battery voltage to 5 V for sensors/Arduino\nJumper wires, resistors, LEDs\tMisc\tWiring and status indicators\n3. Breadboard Basics and Prototyping\nA breadboard, or protoboard, is a solderless board that allows you to prototype circuits quickly. Inside each row are metal clips connecting five adjacent holes; the long power rails on the sides are connected horizontally, but you must link the two rails with a jumper if you need both sides[11]. The central “ravine” separates the two halves so that DIP ICs (like the L293D) can straddle the gap, allowing each pin to connect to a different row[12]. Because the connections are temporary, breadboards are ideal for testing sensor circuits before committing to a printed circuit board[8].\nUnderstanding the internal structure of a breadboard encourages you to think carefully about how current flows. For example, connecting a voltage regulator incorrectly might short two rows; by peeking under the plastic you will notice the metal clips. Feynman’s curiosity about how things work at the microscopic level is a useful mindset when prototyping.\n4. Motors and the L293D Motor Driver\n4.1 Why Do We Need a Motor Driver?\nElectric motors draw significant current. Connecting a DC motor directly to an Arduino pin is not safe; the microcontroller pins can only supply about 20 mA, while a motor can draw hundreds of milliamps or even an amp when starting up. Driving a motor directly may damage the chip[7]. The solution is to use a motor driver, such as the L293D, that acts as an intermediary between the low‑current control signals and the high‑current motors.\n4.2 The H‑Bridge Concept\nThe L293D contains two H‑bridge circuits. An H‑bridge is like a set of four switches arranged in an “H” shape; by closing different pairs of switches you can drive current through the motor in either direction[13]. When you imagine current as water in pipes, the H‑bridge controls which way the water flows through the motor. Using this arrangement you can make the motor spin forward or backward without physically swapping wires.\nThe L293D can handle motor supply voltages between 4.5 V and 36 V and deliver up to 600 mA per channel, with short peaks up to 1.2 A[14]. It also includes flyback diodes that safely divert the voltage spikes generated when the motor coils are switched off[15] and thermal protection that shuts down the outputs if the chip overheats[16]. These features protect your Arduino and motors.\n4.3 Using a Motor Shield\nThere are several pre‑assembled motor shields based on the L293D. These shields plug directly on top of the Arduino and include connectors for motors, servos, and sensors. The shields typically use two L293D chips plus a shift register to expand the number of control lines[17]. They also break out power rails and servo connectors. Using a shield reduces wiring complexity; however, you can also build the circuit on a breadboard if you want to understand each connection.\nWhen using a motor shield, connect the external motor power supply (such as a 7.4 V Li‑Ion pack) to the shield’s motor power input. Do not power motors from the Arduino’s 5 V rail, or the voltage regulator will overheat. Always connect the grounds of the motor supply and the Arduino together so that the control signals have a common reference.\n4.4 Choosing Motors\nFor a mine‑exploration robot, torque is more important than speed. Choose geared DC motors with metal gearboxes or stepper motors that can deliver enough torque to carry the robot and sensors. Stepper motors require dedicated drivers such as DRV8825; DC motors are easier to drive with the L293D but may need a gearbox. The size of the wheels also matters: larger wheels provide greater ground clearance but require more torque. It’s a trade‑off you must evaluate.\n5. Sensors for Exploration\n5.1 Ultrasonic Distance Sensor (HC‑SR04)\nThe HC‑SR04 ultrasonic sensor measures distance by sending out a short burst of 40 kHz sound via its Trig pin and listening for the echo on its Echo pin. The travel time of the sound pulse is measured, and distance is computed using the relation:\ndistance = (speed_of_sound × time) / 2\nbecause the sound travels to the object and back[10]. At 20 °C the speed of sound is about 343 m/s, so the sensor can measure from 2 cm to 400 cm with roughly 0.3 cm resolution[18]. The module has four pins: VCC (5 V), Trig, Echo, and GND[19]. Its effectual beam angle is about 15°, which means it can detect objects within that narrow cone.\nTo scan the surroundings, you can mount the ultrasonic module on a small servo motor. By rotating the sensor and taking readings at different angles, the robot can build a rudimentary map of obstacles. This scanning method is used in many DIY robots, including an automated navigation robot where the sensor is attached to a servo on an L293D shield[20].\n5.2 Gas/Smoke Detection (MQ2 Sensor)\nThe MQ2 is a metal–oxide semiconductor gas sensor. Inside, there is a tin dioxide coating on a ceramic tube and a heating element; when the heater warms the sensing element, different gases can reduce the resistance of the coating. The sensor is sensitive to combustible gases such as LPG, propane, methane, hydrogen, smoke, and alcohol in the range of 200–10000 ppm[9]. However, the sensor cannot identify a specific gas; it simply indicates a change in concentration[21].\nThe MQ2 outputs both analog and digital signals depending on gas concentration[22]. There is typically an onboard comparator with an adjustable threshold; if gas concentration exceeds the threshold, the digital output goes high. The sensor includes a stainless steel mesh to prevent ignition of flammable gases and to filter out dust[23]. For accurate readings, the sensor must warm up for at least 5 minutes, and for calibration, a 24‑hour burn‑in at nominal conditions is recommended. Because the sensor draws about 150 mA for the heater (approximately 800 mW)[9], it should be powered from the motor battery via a regulator rather than the Arduino’s 5 V supply.\nUnderstanding gas sensors helps one think about chemical kinetics. The sensitivity arises from oxidation and reduction on the surface of the sensing element; by thinking like Feynman you can imagine molecules colliding with the heated tin dioxide and changing its resistance. The sensor does not “smell” gas in the human sense; it measures how easily electrons flow through the oxide.\n6. Building the Chassis\n6.1 Chassis Materials\nYou can fabricate the robot chassis from plywood, MDF (medium‑density fibreboard), acrylic, or 3D‑printed plastic. The design should support the four Mecanum wheels, the motors, and the electronics. Many hobbyists design two plates: a bottom plate for motors and wheels and a top plate for sensors and the battery. The ultrasonic sensor often sits on a small tower or bracket so it can rotate freely.\nThe mechanical assembly steps are:\n    1. Wheel Placement: Install the left‑handed (A) and right‑handed (B) wheels in the ABAB pattern. When you look at the wheels from the top, the rollers on the front wheels should angle toward the center of the robot[4]. The rear wheels should mirror this pattern. Orient the motors so that the left and right sides have the same orientation relative to the chassis; this simplifies wiring.\n    2. Motor Mounting: Secure the motors to the chassis using brackets or screw holes. Ensure the shafts align with the wheel hubs. Use thread‑locking compound so screws don’t loosen due to vibration.\n    3. Frame Assembly: Attach any standoffs to support the top plate. Create openings for wires, sensors, and the battery. Keep the center of mass low by placing heavy components (battery, motors) near the bottom.\n    4. Sensor Mounts: Mount the MQ2 gas sensor where airflow is unobstructed but away from the motors (to avoid interference from heat or oil). Mount the ultrasonic sensor on a servo bracket at the front of the robot. Optionally, include LED indicators or a small buzzer for alarms.\n6.2 Avoiding Mechanical Pitfalls\nMecanum wheels rely on friction between the rollers and the ground. If the surface is too smooth or dusty, the wheels may slip. In a mine environment, the floor may be uneven; consider using rubber‑coated rollers to improve traction. Keep the robot’s center of mass low to prevent tipping when strafing. In Feynman fashion, you can test your robot on different surfaces and note how friction affects motion; this will deepen your understanding of mechanics.\n7. Wiring and Circuit Assembly\n7.1 Power Distribution\n    • Motor Power: Connect the battery (e.g., two 18650 cells in series) to the motor driver’s supply input. Use a power switch to isolate the battery when not in use. Because the L293D can handle up to 36 V, 7.4 V is safe; do not exceed the motor’s rated voltage.\n    • Logic and Sensors: Use a buck converter to step the battery voltage down to 5 V. Supply the Arduino and sensors from this regulated 5 V. Ensure the grounds of the battery, the motor driver, the Arduino, and the sensors are connected together.\n7.2 Connecting the L293D\nIf you use a shield, follow the shield’s pin assignments. If building on a breadboard, wire the L293D as follows (see the datasheet for pin numbers):\n    • Pin 1 (Enable 1–2): Connect to Arduino digital pin (e.g., 9) and tie high (via Arduino) to enable channels 1 and 2.\n    • Pin 2 (Input 1): Connect to an Arduino digital pin controlling motor 1 direction.\n    • Pin 3 (Output 1): Connect to motor 1 terminal A.\n    • Pin 4/5 (Ground): Connect to ground.\n    • Pin 6 (Output 2): Connect to motor 1 terminal B.\n    • Pin 7 (Input 2): Connect to Arduino digital pin controlling motor 1 direction.\n    • Pin 8 (Motor VCC): Connect to battery positive (motor supply).\n    • Pins 9–11: Similarly for motor 2.\n    • Pin 16 (VCC1): Connect to 5 V from regulator (logic supply).\nRepeat for the second L293D if controlling four motors. Alternatively, use two L293D chips on a shield that already routes these pins.\n7.3 Wiring the Sensors\n    • MQ2 Gas Sensor: Connect VCC to 5 V, GND to ground, and the analog output (A0) to Arduino analog pin A0. Adjust the onboard potentiometer to set the digital output threshold; optionally use the digital output (DO) for simple detection.\n    • HC‑SR04 Ultrasonic Sensor: Connect VCC to 5 V, GND to ground, Trig to an Arduino digital pin (e.g., 11), and Echo to another digital pin (e.g., 12). If scanning with a servo, connect the servo signal wire to a PWM pin (e.g., 6) and provide power from the buck converter.\n    • LED Indicators: Connect each LED in series with a resistor (typically 220 Ω) from an Arduino digital pin to ground. Use them to show sensor status or battery level.\n7.4 Breadboard Layout\nPlace the L293D across the breadboard’s central ravine so that each pin sits on its own row; this isolates the two sides of the chip. Use the power rails for 5 V and ground; tie them together across the board if necessary[11]. To keep the wiring neat, group wires by function (motors, sensors, power) and label them. Feynman would recommend colour‑coding wires and drawing a schematic to visualise the circuit.\n8. Programming the Arduino\n8.1 Software Tools\nUse the Arduino IDE or PlatformIO to write and upload code. Ensure you have the Servo library (if using a servo) and any necessary motor driver libraries. The code will:\n    • Read joystick or command inputs (you can use Bluetooth or a wired joystick).\n    • Calculate each wheel’s desired speed using the control equations.\n    • Generate appropriate PWM signals for the motors.\n    • Read sensors (ultrasonic distance, gas concentration) and respond to hazards.\n8.2 Basic Motor Control\nThe simplest form of control uses digital pins to set direction and PWM pins to set speed. For each motor:\nint dirPinA = 2;    // Direction pin A\nint dirPinB = 3;    // Direction pin B\nint speedPin = 9;   // PWM pin\n\nvoid setup() {\n  pinMode(dirPinA, OUTPUT);\n  pinMode(dirPinB, OUTPUT);\n  pinMode(speedPin, OUTPUT);\n}\n\nvoid setMotor(int speed) {\n  if (speed >= 0) {\n    digitalWrite(dirPinA, HIGH);\n    digitalWrite(dirPinB, LOW);\n  } else {\n    digitalWrite(dirPinA, LOW);\n    digitalWrite(dirPinB, HIGH);\n    speed = -speed;\n  }\n  analogWrite(speedPin, constrain(speed, 0, 255));\n}\nThis function sets the direction pins based on the sign of the desired speed and uses PWM to control power.\n8.3 Implementing Mecanum Control\nAssume you have variables speed (forward/backward), strafe (left/right), and turn (rotation). The wheel speeds are computed as above[6]. Example:\nvoid driveMecanum(float speed, float strafe, float turn) {\n  float frontLeft  = speed + strafe - turn;\n  float frontRight = speed - strafe - turn;\n  float backLeft   = speed - strafe + turn;\n  float backRight  = speed + strafe + turn;\n  // Normalize values to within [-1,1]\n  float maxVal = max(max(abs(frontLeft), abs(frontRight)),\n                     max(abs(backLeft), abs(backRight)));\n  if (maxVal > 1.0) {\n    frontLeft  /= maxVal;\n    frontRight /= maxVal;\n    backLeft   /= maxVal;\n    backRight  /= maxVal;\n  }\n  setMotor1(frontLeft  * 255);\n  setMotor2(frontRight * 255);\n  setMotor3(backLeft   * 255);\n  setMotor4(backRight  * 255);\n}\nHere setMotorX() functions call the basic motor control; you might have them in an array for convenience. The normalisation ensures that if one wheel needs full power, the others scale accordingly.\n8.4 Reading the Ultrasonic Sensor\nTo read distance:\nlong readUltrasonicCM(int trigPin, int echoPin) {\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n  long duration = pulseIn(echoPin, HIGH);\n  // Duration is in microseconds; convert to centimetres\n  float distanceCm = duration * 0.0343 / 2.0;\n  return distanceCm;\n}\nThis function triggers the sensor and measures the duration of the echo pulse. The constant 0.0343 is the speed of sound (in cm/μs) at 20 °C[10]. If scanning, rotate the servo in increments, call this function, and store the distances.\n8.5 Reading the MQ2 Gas Sensor\nFor analog reading:\nint gasValue = analogRead(A0); // Raw value (0–1023)\nBecause the MQ2’s response is nonlinear and depends on calibration, you can map the raw value to approximate ppm after calibrating with known gas concentrations. For simple detection, compare gasValue against a threshold. To use the digital output, simply read the DO pin (digitalRead); when high, gas concentration exceeds the set threshold.\n8.6 Simple Navigation Logic\nIn a mine, you might want the robot to:\n    1. Move forward until it detects an obstacle within, say, 30 cm.\n    2. Stop and scan left and right to find a clear path.\n    3. Avoid directions where the MQ2 indicates high gas concentration.\nPseudo‑code:\nvoid loop() {\n  float frontDistance = readUltrasonicCM(trigPin, echoPin);\n  int gas = analogRead(A0);\n  if (gas > gasThreshold) {\n    // Alarm: high gas level; stop and retreat\n    driveMecanum(-0.5, 0, 0); // reverse\n    delay(1000);\n    driveMecanum(0, 0, 0);\n    activateAlarmLED();\n  } else if (frontDistance < 30) {\n    // Obstacle ahead; scan\n    scanAngles();\n    chooseDirection(); // sets speed, strafe\n  } else {\n    // Move forward\n    driveMecanum(0.5, 0, 0);\n  }\n}\nThis logic is simplistic. More advanced navigation could use simultaneous localisation and mapping (SLAM), line following, or a map of the mine. The Feynman approach encourages understanding the underlying physics: by studying how sensor delays, noise, and mechanical inertia affect the control loop, you can improve the algorithm.\n9. Calibration and Testing\n9.1 Calibrating the MQ2 Sensor\nThe MQ2 sensor’s response depends on temperature, humidity, and the specific sensor unit. For accurate ppm readings, you must calibrate:\n    1. Burn‑in: Power the sensor for 24 hours in clean air to stabilise the sensor[22].\n    2. Set Baseline: After burn‑in, note the sensor’s analog reading in clean air; this is your baseline R0.\n    3. Generate a Curve: Expose the sensor to known concentrations of gas and note the analog readings. Use the formula from the datasheet to compute ppm from the resistance ratio Rs/R0.\n    4. Adjust Threshold: Decide on a threshold to trigger an alarm. In mines, methane or hydrogen sulphide may be dangerous at 50–100 ppm; calibrate accordingly.\nBecause the sensor can’t identify which gas is present[21], treat any significant increase as potential danger. Provide ventilation to avoid false positives from the robot’s own battery or solder fumes.\n9.2 Testing the Ultrasonic Sensor\nCheck the ultrasonic sensor in a quiet environment:\n    • Hold a flat object at various distances and verify the reading matches a tape measure.\n    • Test the beam angle by moving the object off to the side; note that the sensor has a 15° cone[24].\n    • When scanning, measure the time it takes to rotate the servo and take readings; ensure the scanning frequency is slower than the sensor’s measurement cycle to avoid overlapping pulses.\n9.3 Verifying Wheel Alignment and Motion\n    • Straight Motion: Command the robot to move forward. If it veers to one side, adjust the speeds or calibrate the motors.\n    • Strafing: Command the robot to move right. If the robot rotates instead, check that the wheels are in the correct ABAB pattern and that the control equations are implemented properly.\n    • Rotation: Command the robot to turn in place; ensure the rotation is smooth and the robot doesn’t drift.\nDuring testing, keep the robot off the ground on a stand to observe wheel rotations without friction. Use a tachometer to verify each motor’s speed and adjust the PWM scaling accordingly.\n9.4 Environmental Considerations\nMines may be humid, dusty, and dark. Protect the electronics with enclosures and use desiccants to absorb moisture. Use a sealed but ventilated case for the MQ2 sensor so it can sense gas without being exposed to debris. Consider adding a headlight (LED strip) and a camera for remote observation.\n10. Enhancing the System\n10.1 Remote Control and Telemetry\nConnecting a Bluetooth module (HC‑05) or an RF transceiver allows you to control the robot from a safe distance. You can send joystick commands or autonomous navigation commands. Telemetry can include gas concentration, distance readings, battery voltage, and position. For longer range, consider LoRa modules or Wi‑Fi, but ensure your communications are reliable underground.\n10.2 Mapping and Autonomy\nFor advanced projects, integrate sensors such as lidar, inertial measurement units (IMUs), or wheel encoders to build a map of the environment. Use algorithms such as A* for path planning and Kalman filters for sensor fusion. Combining odometry from the Mecanum wheels with ultrasonic scanning can provide approximate localisation. Libraries like ROS (Robot Operating System) can help you implement SLAM.\n10.3 Safety Features\nAdd a flame sensor or temperature sensor to detect fires. Use a buzzer to alert when gas levels exceed thresholds. Implement automatic shutoff if the motors overheat; the L293D includes thermal protection[16], but you can also monitor motor temperature with thermistors. For extra caution, include a smoke alarm that triggers when the MQ2 detects high concentrations for a sustained period.\n10.4 Data Logging\nStore sensor data on an SD card for later analysis. Data logs can reveal patterns in gas concentration and help identify hazardous areas. Use Feynman’s method of analysing data to deduce relationships and test hypotheses about the environment. For example, you might notice that gas levels spike near certain features, indicating leaks.\n11. Reflecting on the Learning Process\nBuilding a Mecanum‑wheel robot is not just about assembling parts; it’s an exercise in understanding mechanical vectors, electronic circuits, and computer control. Richard Feynman once said, “What I cannot create, I do not understand.” By constructing this robot, you create an artefact that embodies physics and engineering principles. As you watch the robot strafe sideways, think about the diagonal forces produced by the rollers. When calibrating the gas sensor, think about molecules colliding with a hot oxide surface. When writing code, think about how the digital world interacts with the analogue world via PWM pulses and sensor readings.\n12. Conclusion\nIn this report you learned how to build an omnidirectional car with Mecanum wheels, an Arduino microcontroller, and sensors for mine exploration. You learned the physics behind Mecanum wheels, the necessity of motor drivers, the operation of ultrasonic and gas sensors, and how to integrate these components into a functioning robot. The approach emphasised understanding each part, encouraging you to think beyond definitions and to tinker. As you continue to refine your robot—adding autonomy, improving sensors, or adapting it to new environments—remember Feynman’s joy of discovery. The universe of robotics is wide open; step into it and explore.\n\nReferences\n    1. L293D Motor Driver: Motors require more current than Arduino pins can supply; the L293D shield uses two H‑bridge circuits and a shift register to drive DC motors[17]. Each H‑bridge allows reversing motor direction[13], handles voltages from 4.5–36 V and currents up to 600 mA[14], includes flyback diodes to dissipate inductive spikes[15], and has thermal protection[16].\n    2. Breadboard Structure: Breadboards have connected strips of five holes; the central ravine separates the two halves so DIP ICs can straddle it[12]. Power rails on the sides provide convenient voltage distribution but must be linked across the board[11]. Breadboards are ideal for prototyping because they require no soldering[8].\n    3. Mecanum Wheel Theory: Mecanum wheels have rollers at 45°; by controlling each wheel’s speed and direction the vehicle can move forward, sideways, diagonally, or rotate[1][2]. The ABAB arrangement of left‑ and right‑handed wheels is necessary for omnidirectional motion[3][4]. Control equations combine forward speed, strafe, and rotation to compute wheel speeds[6].\n    4. Sensor Operation: The HC‑SR04 ultrasonic sensor measures distance by timing the echo of a 40 kHz pulse; distance is calculated as (speed of sound × time)/2[10]. It measures 2–400 cm with 0.3 cm resolution[18] and has a four‑pin interface[19]. The MQ2 sensor detects combustible gases over 200–10000 ppm[9]; it cannot distinguish gas types[21] and uses a heated tin dioxide element covered by a stainless steel mesh for safety[23]; it outputs analog and digital signals depending on gas concentration[22].\n    5. Project Examples: Many DIY robots use Mecanum wheels and sensors; for example, an Instructables project uses an L293D shield and HC‑SR04 sensor, explaining the shield’s design[17], the ultrasonic distance calculation[25], and the structure of the 3D‑printed chassis[26]. Another project integrates the MQ2 gas sensor, DHT11 humidity sensor, and HC‑SR04 on a servo to scan obstacles[20]. Understanding these examples helps you adapt ideas to your own build.\n\n[1] Mecanum wheel - Wikipedia\nhttps://en.wikipedia.org/wiki/Mecanum_wheel\n[2] [3] 3. Mecanum Wheel Robot Basic Lesson — TurboPi Advanced v1.0 documentation\nhttps://docs.hiwonder.com/projects/TurboPi/en/advanced/docs/3.mecanum_wheel_control.html\n[4] [5] Arduino Mecanum Wheels Robot - How To Mechatronics\nhttps://howtomechatronics.com/projects/arduino-mecanum-wheels-robot/\n[6] How to Make Mecanum Wheel Robot and Program It Correctly : 8 Steps (with Pictures) - Instructables\nhttps://www.instructables.com/How-to-Make-Mecanum-Wheel-Robot-and-Program-It-Cor/\n[7] [13] [14] [15] [16] In-Depth: Control DC Motors with L293D Motor Driver IC & Arduino\nhttps://lastminuteengineers.com/l293d-dc-motor-arduino-tutorial/\n[8] [11] [12] How to Use a Breadboard - SparkFun Learn\nhttps://learn.sparkfun.com/tutorials/how-to-use-a-breadboard/all\n[9] [21] [22] [23] In-Depth: How MQ2 Gas/Smoke Sensor Works? & Interface it with Arduino\nhttps://lastminuteengineers.com/mq2-gas-senser-arduino-tutorial/\n[10] [18] [19] [24] Complete Guide for Ultrasonic Sensor HC-SR04 with Arduino | Random Nerd Tutorials\nhttps://randomnerdtutorials.com/complete-guide-for-ultrasonic-sensor-hc-sr04/\n[17] [25] [26] Omnidirectional Car With Obstacle Detection : 5 Steps - Instructables\nhttps://www.instructables.com/Omnidirectional-Car-With-Obstacle-Detection/\n[20] Automated Navigation Robot With Gas (MQ-2), Temperature & Humidity (DHT11) Sensors : 12 Steps (with Pictures) - Instructables\nhttps://www.instructables.com/Automated-Navigation-Robot-With-Gas-Temperature-Hu/",
-    "uploadDate": "2023-06-28 11:29",
-    "readTime": "23 min read",
-    "fileName": "Assembling a car with omnidireccional wheels and an arduino and why it's a bad idea do it in Peru.md",
-    "featured": true
-  },
-  {
-    "id": "928",
-    "title": "Creating Slow Motion (How Is That Possible) Videos With Twixtor And Sony Vegas",
-    "excerpt": "Did you see those videos on slow motion? How they are possible?",
-    "content": "---\n​tags:\n  - action\nauthor: Jorge\ndate: 2020-10-29 10:28\nmodified: 2025-10-29 10:49\n---\nDid you see those videos on slow motion? How they are possible?\n\nSo is clear that there are two main options or well you have a camera with 20000 FPS and that's it or well you record with your sad phone and use another techniques (Pirate Twixtor).\n\nBut how that works?\n\n\n# Now The Problem\n\nHave you ever shot something at **24 fps** or **30 fps** and later wished you had that buttery, dreamy slow‑motion look? If you just duplicate frames or let your editing software blend them, you’ll see jittery jumps or smeared motion. That happens because there simply aren’t enough pictures per second. To slow time gracefully you need to **invent** new pictures between the real ones.\n\nReal‑world footage isn’t ideal though. **Motion blur** from long shutter speeds hides detail, **occlusions** (where one object moves in front of another) confuse the software, and **rolling‑shutter cameras** or heavy **compression** can distort motion. And if your clip was shot at 24 fps and you want to play it back at 96 fps, you’re asking the software to create three brand‑new frames between every pair of originals! The key is to generate plausible “in‑betweens,” not just hold or fade frames.\n\n**What to remember:** _Slow motion looks smooth only when you synthesize new frames instead of repeating existing ones._\n\n# The Core Idea (In Plain English)\n\nTools like **Twixtor** look at how every pixel in one frame moves to the next. They build a little “map” of motion for each pixel, then **shift** the first frame forward in time and **shift** the second frame backward. After that, they **blend** the two warped frames and fill in any gaps where something gets revealed or disappears. RE:Vision Effects describes Twixtor as using proprietary tracking to calculate motion for each pixel so it can **warp and interpolate frames** of the original sequence[[1]](https://revisionfx.com/products/twixtor/#:~:text=In%20order%20to%20achieve%20unparalleled,frames%20of%20the%20original%20sequence).\n\nHere’s the general recipe no matter what algorithm is used:\n\n1. **Track the motion** – figure out where each pixel is going.\n    \n2. **Warp the frames** – move the earlier frame forward a bit and the later frame backward a bit.\n    \n3. **Blend them** – mix the two warped images depending on how far you are between them.\n    \n4. **Fix holes** – fill in parts that were hidden in one frame but visible in the other.\n    \n\nSome methods estimate motion directly (like optical‑flow, used in Twixtor). Others (called **phase‑based methods**) look at how the “phase” of the image changes and modify that, skipping motion estimation[[2]](https://openaccess.thecvf.com/content_cvpr_2015/papers/Meyer_Phase-Based_Frame_Interpolation_2015_CVPR_paper.pdf#:~:text=Standard%20approaches%20to%20computing%20interpolated,any%20form%20of%20explicit%20cor). Newer AI‑driven tools learn to guess what happens between frames. Regardless of the underlying tech, the process is **track → warp → blend → patch**.\n\n**What to remember:** _You’re not just slowing the video; you’re asking the software to imagine what happens between two moments._\n\n# Minimal Intuition (Just Enough Math)\n\nIf you like a tiny bit of math, here’s an easy way to picture it. A pixel at position **x** in frame 1 moves at some velocity **v** to its location in frame 2. We assume **it looks roughly the same along its path**, which you might see written as:\n\nI(x, t) ≈ I(x + v⋅Δt, t + Δt)\n\nwhere **I(x,t)** is the color of a pixel. Once you know **v**, making a halfway frame means shifting frame 0 half a step forward and frame 1 half a step backward, then mixing them. The maths hide all the complexity; in practice the software just tries to keep things looking consistent.\n\nPhase‑based methods skip estimating **v** and instead adjust the **phase** of frequency components to make them look “between”[[2]](https://openaccess.thecvf.com/content_cvpr_2015/papers/Meyer_Phase-Based_Frame_Interpolation_2015_CVPR_paper.pdf#:~:text=Standard%20approaches%20to%20computing%20interpolated,any%20form%20of%20explicit%20cor). That’s why they can work faster and sometimes fail more gracefully when the motion is messy[[3]](https://openaccess.thecvf.com/content_cvpr_2015/papers/Meyer_Phase-Based_Frame_Interpolation_2015_CVPR_paper.pdf#:~:text=yield%20smoother%20transitions%20between%20the,suited%20for%20frame%20interpolation%20and).\n\n**What to remember:** _Motion estimation is an educated guess; errors show up as ghosts or wobbles._\n\n# Sony Vegas + Twixtor: Quick Start (Do This First)\n\nWant to jump straight in? Follow these steps in **Vegas Pro** to get surprisingly smooth slow motion.\n\n1. **Install Twixtor** – Grab the OFX version of Twixtor, run the installer, and restart Vegas so the plug‑in appears in your Video FX list.\n    \n2. **Match your project to your goal** – In Vegas, set the **Project Properties** to the frame rate you want out (e.g., 96 fps for 4× slow motion). Twixtor reads this project frame rate for its output[[4]](https://help.revisionfx.com/resource/71/#:~:text=Apply%20Twixtor,into%20a%2050fps%20PAL%20sized).\n    \n3. **Prepare your clip** – Use the cleanest footage you can. The _Plug‑in to After Effects_ guide recommends shooting with very fast shutters (1/240 s if possible) to minimise blur[[5]](https://epdf.pub/plug-in-to-after-effects-third-party-plug-in-mastery.html#:~:text=%C2%ADproduction%20and%20postproduction%3A%201,It%20can%20blur). Right‑click your clip in the timeline and choose **Switches → Disable Resample** so Vegas doesn’t blend frames behind Twixtor’s back.\n    \n4. **Apply Twixtor** – Select the clip (event), click **Event FX**, and add **Twixtor**. You’ll see Twixtor’s controls.\n    \n5. **Tell Twixtor about your footage** – Under **Source Control**, set **Input: Frame Rate** to your original frame rate (24.000, 29.97, etc.)[[4]](https://help.revisionfx.com/resource/71/#:~:text=Apply%20Twixtor,into%20a%2050fps%20PAL%20sized). Leave **Input: Fields** at **None** for progressive footage.\n    \n6. **Choose how to slow**:\n    \n7. **Speed (%)** – Enter a number like **25 %** to stretch time fourfold. Twixtor lengthens the clip for you.\n    \n8. **Frame Rate** – Instead of a percentage, you can tell Twixtor to output, say, **96 fps**. This keeps the clip’s length but adds frames so you can slow it later with Vegas’s velocity envelope. **Don’t set both values at once.**\n    \n9. **Tune motion settings**:\n    \n10. **Motion Sensitivity** – Think of this as how keen Twixtor is to follow motion. The default (~70) works in many cases; some editors lower it to 20 for smoother results[[6]](https://epdf.pub/plug-in-to-after-effects-third-party-plug-in-mastery.html#:~:text=connect,and%203%20was%20a%20good). Raise the value for subtle movement, lower it if noise is causing jitters.\n    \n11. **Track Quality** – Use **Medium** while previewing; switch to **Best** when you render.\n    \n12. **Motion Blur Compensation** – Leave it off for analysis; set it around 2–3 for a bit of natural blur in your final slow motion[[6]](https://epdf.pub/plug-in-to-after-effects-third-party-plug-in-mastery.html#:~:text=connect,and%203%20was%20a%20good).\n    \n13. **Image Prep** – If your footage is noisy, enable a bit of denoise so Twixtor doesn’t chase grain[[7]](https://borisfx.com/blog/optical-flow-vs-frame-blending-main-difference/#:~:text=The%20more%20data%20your%20video,motion%20effect).\n    \n14. **Preview & adjust** – Play the clip at a lower quality to check for ghosts or wobbles. Tweak Motion Sensitivity or reduce the slow‑down factor if needed.\n    \n15. **Render high quality** – For your final export, set Vegas to **Best/Full** quality and use a high‑quality codec (ProRes, DNxHR). Avoid heavy compression until the last step.\n    \n\n**What to remember:** _Set the correct input rate, pick_ _Speed_ _or_ _Frame Rate, and don’t forget to disable Vegas’s resampling._\n\n# Vegas Workflow Variations (When You Need Control)\n\n- **Velocity envelope + Twixtor** – Vegas has a Velocity Envelope for speed changes. If you use it with Twixtor, set Twixtor to **Frame Rate mode** and leave the velocity envelope at 100 %. Alternatively, let Twixtor handle all the speed changes by animating its **Speed (%)** parameter.\n    \n- **Smooth ramps** – You can keyframe Twixtor’s speed: 100 % → 25 % → 100 % to ease into slow motion and out again. This creates nice ramps without the complexity of Vegas’s envelope.\n    \n- **Per‑shot settings** – Apply Twixtor individually to each event. Copy/paste event attributes to maintain consistency but adjust settings per shot if they need different speeds.\n    \n\n**What to remember:** _Don’t double‑retime – pick either Vegas’s tools or Twixtor to control speed._\n\n# Settings Cheatsheet (Start Here, Then Tweak)\n\n  \n|Setting|Friendly starting point|Why & when to change|\n|---|---|---|\n|**Motion Sensitivity**|70–80|Default is OK for most clips. Lower it if Twixtor locks onto noise; some editors like ~20 for extra smoothness[[6]](https://epdf.pub/plug-in-to-after-effects-third-party-plug-in-mastery.html#:~:text=connect,and%203%20was%20a%20good).|\n|**Track Quality**|Medium while working; Best when exporting|Higher quality improves the motion estimate but slows down rendering[[8]](https://beverlyboy.com/filmmaking/how-does-twixtor-work/#:~:text=Getting%20the%20most%20out%20of,settings%20that%20increase%20motion%20sensitivity).|\n|**Image Prep/Filtering**|Mild denoise|Clean footage gives optical flow more data[[7]](https://borisfx.com/blog/optical-flow-vs-frame-blending-main-difference/#:~:text=The%20more%20data%20your%20video,motion%20effect).|\n|**Motion Blur Compensation**|Off for previews; 2–3 for final render|Adds a natural blur over interpolated frames[[6]](https://epdf.pub/plug-in-to-after-effects-third-party-plug-in-mastery.html#:~:text=connect,and%203%20was%20a%20good).|\n|**Input: Frame Rate**|Exact frame rate of your footage|Twixtor needs this to know how far apart the originals are[[4]](https://help.revisionfx.com/resource/71/#:~:text=Apply%20Twixtor,into%20a%2050fps%20PAL%20sized).|\n\n**What to remember:** _Start with defaults, adjust gradually, and trust your eyes._\n\n# Troubleshooting Artifacts (Spot & Fix)\n\n  \n|What you see|Likely cause|How to tackle it|\n|---|---|---|\n|**Ghosting/double edges**|Twixtor’s motion guesses disagree|Increase **Track Quality**, reduce the slow‑down (e.g., use 33 % instead of 25 %), stabilize the shot, or mask problem areas.|\n|**Tearing at occlusion edges**|Something passes in front of something else|Turn on occlusion detection and, if necessary, mask foreground and background separately.|\n|**Rubbery wobble**|Twixtor is confused by textures or noise|Lower **Motion Sensitivity**, denoise or deflicker the footage, or blur the clip slightly before applying Twixtor.|\n|**Shimmer in hair/grass**|Fine detail is hard to track|Apply a subtle blur (1–2 pixels) before Twixtor and sharpen afterwards; reduce the slow‑down factor.|\n\n**What to remember:** _Most problems come from tricky input—clean and stabilize your source._\n\n# Shoot So Interpolation Wins (Small but Mighty)\n\nA little planning during shooting makes frame interpolation shine:\n\n- **Fast shutters = crisp frames.** A shutter of **1/240 s** or faster almost eliminates blur and gives Twixtor clean edges to track[[5]](https://epdf.pub/plug-in-to-after-effects-third-party-plug-in-mastery.html#:~:text=%C2%ADproduction%20and%20postproduction%3A%201,It%20can%20blur).\n    \n- **Plenty of light and low ISO.** More light allows fast shutters and keeps noise down. Clean footage is essential[[7]](https://borisfx.com/blog/optical-flow-vs-frame-blending-main-difference/#:~:text=The%20more%20data%20your%20video,motion%20effect).\n    \n- **Stable camera.** Lock down your camera or use good stabilization. Rolling‑shutter pans and handheld jitters create warped motion fields.\n    \n- **Simple scenes.** Avoid busy backgrounds and crossing objects. When characters move in front of each other, occlusion makes interpolation harder.\n    \n- **Use the highest frame rate you can.** Even if it’s just 60 fps, Twixtor can slow it further with fewer artifacts.\n    \n\n**What to remember:** _Great slow motion is born at the shoot – crisp, bright, stable footage makes life easier._\n\n# Quick “Why This Counts as Slow Motion”\n\nWhen you stretch a 24 fps clip to 96 fps using Twixtor, you’re not just pausing frames; you’re **filling in the gaps**. Optical‑flow tools like Twixtor examine how pixels move and create plausible intermediate frames so motion appears continuous[[1]](https://revisionfx.com/products/twixtor/#:~:text=In%20order%20to%20achieve%20unparalleled,frames%20of%20the%20original%20sequence). That’s why the result feels smooth and not like a flipbook. Just remember that when motion is extreme or details are hidden, the software has to guess, so it might hallucinate.\n\n**What to remember:** _You’re densifying time—not freezing it._\n\n# Science & Practical Uses (Beyond Edits)\n\nFrame interpolation isn’t just for flashy edits. It has real‑world uses:\n\n- **Sports and biomechanics:** Coaches use slow motion to study athletes’ movements. Smooth slow‑mo makes it easier to see precise joint angles.\n    \n- **Event analysis:** Engineers reviewing accidents or machinery failures can slow down footage that wasn’t shot in high frame rates to better see what happened.\n    \n- **Multi‑camera sync:** When cameras with different frame rates need to be matched, generating extra frames helps align them.\n    \n- **Machine‑learning datasets:** Researchers use interpolated frames as extra training examples for AI models.\n    \n- **Virtual views:** Phase‑based methods can generate novel in‑between views for special effects[[2]](https://openaccess.thecvf.com/content_cvpr_2015/papers/Meyer_Phase-Based_Frame_Interpolation_2015_CVPR_paper.pdf#:~:text=Standard%20approaches%20to%20computing%20interpolated,any%20form%20of%20explicit%20cor).\n    \n\nAlways be honest about using interpolated frames if precision is required; don’t measure distances or speeds on made‑up data.\n\n**What to remember:** _Interpolation is a useful tool beyond editing—just be transparent when accuracy matters._\n\n# Tiny Hands‑On Check (2 minutes)\n\nCurious what difference interpolation makes? Try this quick test:\n\n1. **Duplicate a short clip** (3–5 seconds) in Vegas so you have two identical tracks.\n    \n2. **Track A:** Add Twixtor, set **Speed** to 25 %, and disable Vegas’s resample.\n    \n3. **Track B:** Just slow the clip with the normal time‑stretch tool (hold Ctrl and drag), leaving Vegas to duplicate frames.\n    \n4. **Play back** at half speed and step through a few frames. On Track A you’ll see smooth movement; on Track B you’ll see jumps. Notice hair, hands, and background edges.\n    \n5. **Adjust and compare** – try raising Motion Sensitivity or reducing the slow‑down to fix any issues.\n    \n\n# 5‑Bullet Checklist: Will My Clip Interpolate Well?\n\n1. **Is it crisp and bright?** Fast shutters (around 1/240 s) and good lighting minimise blur and noise[[5]](https://epdf.pub/plug-in-to-after-effects-third-party-plug-in-mastery.html#:~:text=%C2%ADproduction%20and%20postproduction%3A%201,It%20can%20blur)[[7]](https://borisfx.com/blog/optical-flow-vs-frame-blending-main-difference/#:~:text=The%20more%20data%20your%20video,motion%20effect).\n    \n2. **Is the camera steady?** Locked‑off or well‑stabilised shots produce cleaner slow motion. Rolling‑shutter pan = bad.\n    \n3. **Are there few occlusions?** Scenes where people or objects pass in front of each other are harder to interpolate.\n    \n4. **Is the footage clean?** Less noise and lower compression give the motion‑estimator more information[[7]](https://borisfx.com/blog/optical-flow-vs-frame-blending-main-difference/#:~:text=The%20more%20data%20your%20video,motion%20effect).\n    \n5. **Is the motion moderate?** If someone is waving their hair or water is splashing everywhere, be prepared for artifacts. Higher native frame rates help.\n    \n\n## References & Further Learning\n\n- **Twixtor product page** – Explanation of how Twixtor warps and interpolates frames[[1]](https://revisionfx.com/products/twixtor/#:~:text=In%20order%20to%20achieve%20unparalleled,frames%20of%20the%20original%20sequence).\n    \n- **How does Twixtor work?** – A plain‑language article describing Twixtor’s motion estimation and settings[[9]](https://beverlyboy.com/filmmaking/how-does-twixtor-work/#:~:text=WHAT%20IS%20TWIXTOR%20AND%20HOW,IT%20ENABLE%20FRAME%20RATE%20CONVERSION)[[10]](https://beverlyboy.com/filmmaking/how-does-twixtor-work/#:~:text=Key%20parameters%20to%20monitor%20include,unique%20demands%20of%20each%20project).\n    \n- **Optical flow vs. frame blending (Boris FX blog)** – Why optical flow looks better and how extra data helps[[11]](https://borisfx.com/blog/optical-flow-vs-frame-blending-main-difference/#:~:text=will%20look%20at%20the%20whole,create%20new%20frames%20in%20between)[[12]](https://borisfx.com/blog/optical-flow-vs-frame-blending-main-difference/#:~:text=Optical%20flow%2C%20on%20the%20other,it%20can%20distort%20the%20image).\n    \n- **Plug‑in to After Effects** – Tips on shooting with fast shutters and tuning Motion Sensitivity[[5]](https://epdf.pub/plug-in-to-after-effects-third-party-plug-in-mastery.html#:~:text=%C2%ADproduction%20and%20postproduction%3A%201,It%20can%20blur)[[6]](https://epdf.pub/plug-in-to-after-effects-third-party-plug-in-mastery.html#:~:text=connect,and%203%20was%20a%20good).\n    \n- **Phase‑Based Frame Interpolation for Video** – A research paper explaining phase‑based alternatives[[2]](https://openaccess.thecvf.com/content_cvpr_2015/papers/Meyer_Phase-Based_Frame_Interpolation_2015_CVPR_paper.pdf#:~:text=Standard%20approaches%20to%20computing%20interpolated,any%20form%20of%20explicit%20cor).\n    \n- **RE:Vision help article** – Shows that Twixtor uses the composition’s frame rate as output and needs the correct input rate[[4]](https://help.revisionfx.com/resource/71/#:~:text=Apply%20Twixtor,into%20a%2050fps%20PAL%20sized).\n\n_What to remember:_ Learning how to use frame interpolation is like learning a craft: start simple, observe, and tweak. With clean footage and a bit of practice, you can turn ordinary clips into silky slow‑motion stories.",
-    "uploadDate": "2020-10-29 10:28",
-    "readTime": "14 min read",
-    "fileName": "Creating Slow Motion (How is that possible) Videos with Twixtor and Sony Vegas.md",
-    "featured": true
-  },
-  {
-    "id": "929",
-    "title": "Building A PC From Scratch Ryzen Nvidia With Low Resources",
-    "excerpt": "So like my laptop die with the Sony Vegas we need a fancy hardware this is how I do it. (A shame)",
-    "content": "---\ntags:\n  - baby\nauthor: Jorge\ndate: 2020-07-25 11:29\nmodified: 2025-10-25 11:24\n---\nSo like my laptop die with the Sony Vegas we need a fancy hardware this is how I do it. (A shame)\n\n\nBuilding a personal computer is more than assembling a kit of parts; it’s an exercise in understanding how disparate hardware elements work together to create a working system. Richard Feynman loved to start from first principles and ask, why does this work the way it does? As you assemble your PC, take his curiosity to heart: every component you touch has a specific role, and the joy of building a PC comes from watching those roles combine into a functional whole. This report provides a step‑by‑step guide for building a desktop computer using an AMD Ryzen 3×1000 processor, an Nvidia GT 730 graphics card, an M.2 NVMe solid‑state drive, and 8 GB of DDR4 RAM. It also explains the function of each major component and offers practical advice to ensure a successful build.\nEssential Components\nEvery PC consists of a core set of components. While parts can vary in performance, form factor and vendor, their fundamental functions remain the same. The table below summarizes the key components we will use and their purposes.\nComponent\tFunction (keyword/phrase)\tNotes\nCPU (Ryzen 3×1000)\t“brain” of the system[1]\tExecutes instructions; performance measured in GHz[2]\nMotherboard\tMain circuit board[3]\tHosts CPU, RAM, GPU and connectors; determines compatibility\nRAM (8 GB DDR4)\tShort‑term memory[4]\tVolatile; more RAM enables more simultaneous tasks[5]\nStorage (NVMe SSD)\tLong‑term data storage[6]\tNVMe uses PCIe for high throughput[7] and low latency\nGPU (GT 730)\tHandles graphics output[8]\tOffloads rendering from CPU, improving visual performance\nPower Supply Unit (PSU)\tConverts AC to DC power[9]\tFeeds motherboard, CPU, GPU and drives\nCase\tPhysical enclosure\tProvides airflow and mounting points\nCooling System\tTransfers heat away from components\tIncludes CPU cooler and case fans\nPeripherals\tKeyboard, mouse, monitor\tRequired for input/output\nCPU: the central processing unit\nThe processor is often called the brain of the computer[1]. Whenever you press a key or open a program, you are issuing instructions that the CPU executes. Modern CPUs, like the AMD Ryzen 3×1000, contain billions of transistors packed into a tiny silicon wafer. They operate at clock speeds measured in gigahertz (billions of cycles per second)[2]. The CPU fits into a socket on the motherboard and is covered by a heat sink, which dissipates heat generated by rapid switching of transistors[10].\nRyzen processors use AMD’s AM4 or newer AM5 socket depending on the model. Always verify that your motherboard supports your specific CPU. In our build, the Ryzen 3×1000 is an entry‑level quad‑core processor suitable for general productivity and light gaming. Its efficiency pairs well with the GT 730 GPU and helps keep power consumption low.\nMotherboard: the platform that connects everything\nA motherboard is a thin plate that holds the CPU, memory, connectors for drives and expansion cards, and ports for external devices[3]. It acts as a central nervous system, providing electrical connections and communication pathways between components. When selecting a motherboard, match the CPU socket (AM4 for many Ryzen processors), memory type (DDR4 in our case), and form factor (ATX, micro‑ATX, or mini‑ITX). The board also provides slots for expansion cards like the GT 730 and connectors for M.2 NVMe drives.\nRAM: short‑term memory (DDR4)\nRandom access memory (RAM) is short‑term memory[4]. When you open an application, data and instructions are temporarily stored in RAM so the CPU can access them quickly. Unlike storage devices, RAM loses its data when the power is off. The more RAM you have, the more tasks your computer can handle simultaneously[5]. DDR4 is the fourth generation of double‑data‑rate synchronous dynamic RAM. Compared with DDR3, DDR4 offers higher transfer rates and lower operating voltage (1.2 V vs. 1.5 V)[11], enabling faster and more power‑efficient operation. DDR4 DIMMs use 288 pins instead of DDR3’s 240 pins[12], making them incompatible with older boards. Our build uses 8 GB of DDR4, which is adequate for basic tasks but may feel limiting for memory‑intensive workloads; an upgrade to 16 GB would improve multitasking.\nStorage: NVMe solid‑state drive\nPermanent storage holds your operating system, applications and files. Traditional hard drives rely on spinning magnetic platters, but modern PCs benefit from solid‑state drives (SSDs) that store data on flash memory. Non‑Volatile Memory Express (NVMe) is a host controller interface designed specifically for SSDs; it runs over the PCIe bus[7]. An NVMe drive plugs directly into an M.2 slot on the motherboard and offers significantly higher throughput and lower latency compared with SATA‑based SSDs. NVMe supports multiple queues and can handle up to 64 000 command queues with 64 000 commands each[13], enabling parallel processing and reducing latency.\nIn our build, the NVMe drive will house the operating system and software. NVMe drives can provide several gigabytes per second of sequential read/write performance[14]. When preparing your PC, ensure your motherboard has an M.2 slot that supports NVMe; some boards support only SATA in certain slots.\nGPU: graphics processing unit (GT 730)\nWhile the CPU can render graphics, a dedicated graphics processing unit (GPU) accelerates rendering and frees the CPU for other tasks. A video card is responsible for what you see on the monitor[8]. The GT 730 is an entry‑level Nvidia GPU. Though not powerful by modern gaming standards, it handles basic 2D/3D tasks and light gaming. Installing the GT 730 in a PCIe x16 slot allows the PC to output video via HDMI or DVI. For more demanding games or computational workloads, upgrading to a modern GPU would drastically improve performance.\nPower supply unit (PSU)\nThe power supply unit converts AC power from the wall into regulated DC voltages[9]. It then distributes power to the motherboard, CPU, GPU, storage and peripherals. Choose a PSU with enough wattage to handle your components (a 450–550 W unit suffices for this build) and look for an 80 Plus certification for efficiency. Modular PSUs allow you to connect only the cables you need, reducing clutter.\nCase and cooling\nThe case holds all components, provides structural support and channels airflow to remove heat. Cases come in various sizes: ATX mid‑tower cases accommodate full‑size boards and offer good airflow, while micro‑ATX or mini‑ITX cases are more compact. A CPU cooler sits atop the CPU to transfer heat away. Stock coolers included with some CPUs are adequate for non‑overclocked systems. Aftermarket air or liquid coolers reduce temperatures and noise, but may require additional space.\nAdditional components\n    • Peripherals: Monitor, keyboard, mouse, speakers or headphones. Without these, you cannot interact with your machine.\n    • Operating system (OS): Windows, Linux or another OS must be installed after assembly. The OS manages hardware and provides a platform for software.\n    • Drivers: After installation, you will need to install drivers for the motherboard, graphics card and other devices to ensure optimal performance.\nPreparation: Tools and Workspace\nBefore beginning, gather tools and create a safe workspace:\n    1. Clear desk or table: Provide enough space to lay out components and the case.\n    2. Phillips‑head screwdriver: Most screws in a PC build require a #2 Phillips screwdriver[15].\n    3. Anti‑static precautions: Ground yourself by touching a metal part of the case or wear an anti‑static wrist strap[16]. Static discharge can damage sensitive electronics.\n    4. Thermal paste: Some CPU coolers come with pre‑applied paste; otherwise, a pea‑sized dot of thermal compound is necessary for heat transfer between the CPU and cooler.\n    5. Lighting: Good lighting helps avoid mistakes; a headlamp or desk lamp is useful for illuminating the inside of the case.\nPlan your build like a Feynman diagram: identify each piece and its interactions, then assemble them step by step. Pre‑read the motherboard manual; it contains crucial information about CPU socket type, RAM slots and front‑panel connectors.\nStep‑by‑Step Assembly\nThe assembly steps below follow the general process recommended by Ibertronica’s step‑by‑step guide[17] and incorporate best practices for handling AMD CPUs and NVMe drives.\n1. Install the power supply\n    1. Open your case and locate the PSU mount. Modern cases often mount the power supply at the bottom. Orient the PSU so its fan faces downward if there is a bottom vent[18].\n    2. Slide the PSU into the case and align its screw holes with the case bracket. Secure it with the provided screws.\n    3. If the PSU is modular, connect only the cables you will need (24‑pin ATX, 8‑pin CPU power, PCIe power cables for GPU, SATA/Molex for drives).\n2. Prepare the motherboard\n    1. Place the motherboard on its anti‑static bag or a clean surface.\n    2. Install the CPU:\n    3. Release the CPU socket lever. With AMD’s AM4 socket, lift the lever to open the retention mechanism.\n    4. Align the triangle marker on the corner of the CPU with the triangle on the socket[19]. Gently lower the CPU into place; it should drop in without force. Close the retention arm.\n    5. Apply thermal paste and mount the cooler: If your cooler lacks pre‑applied paste, place a small amount (about a grain of rice) in the center of the CPU. Install the cooler following its instructions; for air coolers, tighten the screws evenly to maintain contact[20].\n    6. Install RAM: Open the RAM slot latches. Hold the DDR4 module by its edges, align its notch with the slot key, and press down firmly until both latches click[21]. Use the slots recommended by your motherboard manual for single or dual‑channel operation.\n    7. Install NVMe drive: Locate the M.2 slot. Remove the mounting screw, slide the NVMe SSD into the slot at a slight angle, then push it down and secure it with the screw. Ensure the drive is recognized as NVMe rather than SATA.\n3. Mount the motherboard in the case\n    1. Install the I/O shield: Snap the I/O shield (the rectangular metal plate that covers the motherboard’s rear ports) into the case opening[22].\n    2. Align the motherboard with the standoffs inside the case. Ensure that none of the standoffs touch the board where there is no hole. Secure the board with screws. Avoid over‑tightening, which could crack the board.\n4. Install the graphics card\n    1. Remove the necessary PCIe slot covers on the case. The GT 730 uses a full‑height bracket, so remove one or two slots depending on the card’s thickness.\n    2. Insert the card into the PCIe x16 slot; push until it clicks and the retention tab locks[23].\n    3. Secure the card to the case with screws. Connect any required PCIe power cables (GT 730 often does not need extra power, but high‑end cards do).\n5. Install remaining storage (if applicable)\nIf you have additional SATA SSDs or hard drives:\n    1. Mount the drive in the appropriate bay or sled.\n    2. Connect a SATA data cable to the motherboard and a SATA power cable from the PSU[24].\n6. Connect cables and manage them\n    1. Motherboard power: Connect the 24‑pin ATX cable to the motherboard, ensuring it clicks into place. Connect the 8‑pin (or 4‑pin) CPU power cable.\n    2. Front‑panel connectors: Attach the front‑panel (power button, reset, HDD LED) connectors to the header pins. Refer to the motherboard manual for pin layout.\n    3. Fan and USB connectors: Connect case fans to fan headers, and front USB/audio connectors to the appropriate headers.\n    4. Cable management: Route cables behind the motherboard tray and secure them with zip ties[25]. Good cable management improves airflow and reduces clutter.\n7. First boot and BIOS configuration\n    1. Double‑check that all components and cables are properly connected[26].\n    2. Connect your monitor, keyboard and mouse. Plug the power cord into the PSU.\n    3. Turn on the power supply and press the case’s power button. If everything is wired correctly, the system should power on and display the BIOS/UEFI screen[27].\n    4. In the BIOS, configure your memory speed (enable XMP/DOCP for DDR4), confirm that the NVMe drive is detected, and set the boot order.\n8. Install the operating system\n    1. Insert a bootable USB drive containing your OS (e.g., Windows 10/11, Ubuntu Linux). In BIOS, set the USB drive as the first boot device.\n    2. Save changes and reboot. Follow the OS installer’s prompts to format the NVMe drive and install the operating system[28].\n9. Install drivers and updates\nOnce the OS is installed:\n    1. Install the motherboard chipset drivers, network and audio drivers. These are often found on the manufacturer’s website.\n    2. Install the graphics driver from Nvidia for the GT 730. Without the correct driver, the GPU may run in a low‑performance mode.\n    3. Apply operating system updates and reboot when necessary.\nBeyond Assembly: Understanding the Design\nA Feynman‑style exploration does not end with assembly. Here are some deeper questions to consider:\n    • How does data travel inside the PC? On the motherboard, the CPU communicates with RAM via memory buses and caches. NVMe drives use the high‑speed PCIe bus to bypass traditional SATA controllers[7]. GPUs use PCIe x16 lanes to transfer frame data from the CPU and memory. Asking where each electron flows can reveal bottlenecks and opportunities for improvement.\n    • Why is RAM volatile? RAM uses capacitors that hold electrical charges. These charges leak over time and must be refreshed thousands of times per second. Turning off the power removes the refreshing mechanism, causing data loss[29].\n    • What limits DDR4 speed? DDR4 memory improves transfer rates and reduces voltage compared with DDR3[11], but signal integrity, motherboard traces and memory controller design limit the achievable frequencies. Overclocking can push DDR4 to higher speeds but increases power consumption and heat.\n    • Why is NVMe faster than SATA? SATA is limited by the Advanced Host Controller Interface (AHCI) protocol, which was designed for spinning hard drives and supports a single command queue. NVMe uses multiple queues with thousands of commands[13], reducing latency and increasing throughput. The physical connection (PCIe) also offers more bandwidth than SATA cables.\n    • How does a GPU accelerate graphics? GPUs consist of many small cores designed for parallel processing. They handle massive numbers of simple calculations simultaneously—ideal for drawing pixels and shading polygons. Even an entry‑level GT 730 can offload tasks like video decoding and simple games from the CPU.\nExploring these questions deepens your understanding and prepares you to troubleshoot and upgrade systems in the future.\nTips and Troubleshooting\n    • No video output: Ensure the monitor cable is connected to the graphics card (not the motherboard) and that the GPU is fully seated in its slot. Verify that the GPU receives power.\n    • System won’t power on: Check the PSU switch, confirm that the 24‑pin and CPU power cables are connected, and ensure the front‑panel connectors are correctly wired.\n    • Random freezes or crashes: Reseat the RAM and ensure XMP/DOCP profiles are appropriate for your memory. Insufficient power from the PSU can also cause instability.\n    • High temperatures: Recheck the thermal paste application and ensure the CPU cooler is secure. Improve airflow by repositioning fans or tidying cables.\nConclusion\nBuilding a PC is a gratifying way to blend hands‑on skills with theoretical knowledge. Each component—from the CPU that executes instructions[1] to the NVMe drive that streams data through PCIe lanes[7]—plays a specific role. By understanding these roles and methodically assembling your hardware, you can create a system tailored to your needs. The Ryzen 3×1000, GT 730, 8 GB of DDR4 RAM and an NVMe SSD form a modest yet functional computer suited for everyday tasks, light gaming and learning projects. As Feynman might remind us, curiosity doesn’t end with success; instead, let this build serve as a launching point for deeper questions about how computing hardware works and how you might improve your system in the future.",
-    "uploadDate": "2020-07-25 11:29",
-    "readTime": "13 min read",
-    "fileName": "Building a PC from Scratch Ryzen Nvidia with low resources.md",
-    "featured": true
   }
 ];
 
