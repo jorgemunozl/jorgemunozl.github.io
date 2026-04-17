@@ -2,7 +2,6 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
-import rehypeHighlight from 'rehype-highlight';
 import rehypeKatex from 'rehype-katex';
 import { processWikiLinksToMarkdown } from '@/utils/wikiLinks';
 import { convertObsidianMathSyntax } from '@/utils/mathSyntax';
@@ -44,8 +43,34 @@ const WikiMarkdown: React.FC<WikiMarkdownProps> = ({
     <div className={`${className} wiki-markdown`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[[rehypeHighlight, { detect: true, ignoreMissing: true }], rehypeKatex]}
+        rehypePlugins={[rehypeKatex]}
         components={{
+          pre: ({ children, ...props }) => (
+            <pre
+              className="my-4 overflow-x-auto rounded-lg border border-border bg-muted/50 p-4 text-sm leading-relaxed"
+              {...props}
+            >
+              {children}
+            </pre>
+          ),
+          code: ({ className, children, ...props }) => {
+            const isBlock = /language-[\w-]+/.test(className ?? '');
+            if (isBlock) {
+              return (
+                <code className={`font-mono text-sm ${className ?? ''}`} {...props}>
+                  {children}
+                </code>
+              );
+            }
+            return (
+              <code
+                className="rounded bg-muted px-1.5 py-0.5 font-mono text-[0.9em] text-foreground"
+                {...props}
+              >
+                {children}
+              </code>
+            );
+          },
           img: ({ src = '', alt = '', ...props }) => {
             // Prefix non-external image srcs with Vite base URL
             const isExternal = /^(?:[a-z]+:)?\/\//i.test(src) || src.startsWith('data:');
