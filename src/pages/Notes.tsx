@@ -10,9 +10,6 @@ import LocalGraphView from '@/components/LocalGraphView';
 import RelativityFieldLines from '@/components/RelativityFieldLines';
 import Footer from '@/components/Footer';
 import TopControls from '@/components/TopControls';
-import { useTheme } from 'next-themes';
-import hljsLight from 'highlight.js/styles/github.css?raw';
-import hljsDark from 'highlight.js/styles/github-dark.css?raw';
 import 'katex/dist/katex.min.css';
 import { blogPosts as importedBlogPosts, BlogPost } from '@/components/data/notes';
 import { findRelatedNotes, normalizeTitle } from '@/utils/wikiLinks';
@@ -69,7 +66,6 @@ type ExtendedBlogPost = BlogPost & {
 };
 
 const Notes = () => {
-  const { theme } = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
   const [posts, setPosts] = useState<ExtendedBlogPost[]>([]);
   const [showGraphView, setShowGraphView] = useState(true); // Default to visible
@@ -81,24 +77,6 @@ const Notes = () => {
   const params = useParams();
   const navigate = useNavigate();
   const noteId = params.id;
-
-  // Inject appropriate highlight.js theme based on current theme
-  React.useEffect(() => {
-    const id = 'hljs-theme';
-    let styleTag = document.getElementById(id) as HTMLStyleElement | null;
-    if (!styleTag) {
-      styleTag = document.createElement('style');
-      styleTag.id = id;
-      document.head.appendChild(styleTag);
-    }
-    const isDark = theme === 'dark';
-    styleTag.textContent = isDark ? hljsDark : hljsLight;
-    return () => {
-      // Clean up on unmount to avoid duplicates
-      const existing = document.getElementById(id);
-      if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
-    };
-  }, [theme]);
 
   // Initialize posts with imported data from generated file
   React.useEffect(() => {
