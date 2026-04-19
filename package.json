@@ -13,8 +13,7 @@
     "preview": "vite preview",
     "generate-notes": "node scripts/generate-notes.js",
     "analyze-notes": "node scripts/analyze-notes.js",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
+    "deploy": "bash scripts/deploy-master.sh",
     "dev:notes": "npm run generate-notes && npm run dev"
   },
   "dependencies": {
@@ -90,7 +89,6 @@
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
-    "gh-pages": "^6.3.0",
     "globals": "^15.9.0",
     "lovable-tagger": "^1.1.7",
     "postcss": "^8.4.47",

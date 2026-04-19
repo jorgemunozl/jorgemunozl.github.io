@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => ({
         '**/node_modules/**',
         '**/.git/**',
         '**/dist/**',
+        '**/docs/**',
         '**/build/**',
         '**/.next/**',
         '**/coverage/**',
@@ -42,5 +43,9 @@ export default defineConfig(({ mode }) => ({
   },
   optimizeDeps: {
     include: ['react', 'react-dom']
+  },
+  build: {
+    outDir: 'docs',
+    emptyOutDir: true,
   },
 }));
