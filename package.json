@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://jorgemunozl.github.io/jorgemunozl/",
+  "homepage": "https://jorgemunozl.github.io/",
   "scripts": {
     "dev": "npm run generate-notes && vite",
     "build": "npm run generate-notes && vite build",
