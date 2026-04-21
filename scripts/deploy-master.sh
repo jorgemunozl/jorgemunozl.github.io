@@ -8,9 +8,10 @@ cd "$ROOT"
 pnpm run build
 git add docs
 if git diff --staged --quiet; then
-  echo "No changes under docs/ to commit (site already up to date)."
-  exit 0
+  echo "docs/ is identical to the last commit — rebuild matched, so there is nothing new to commit."
+  echo "That is normal if you have not changed the app or notes since the last deploy."
+else
+  git commit -m "chore: deploy site to GitHub Pages (docs/)"
 fi
 
-git commit -m "chore: deploy site to GitHub Pages (docs/)"
 git push origin HEAD
