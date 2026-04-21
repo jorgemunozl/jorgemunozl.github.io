@@ -34,7 +34,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, showHomeButton = true })
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/70 dark:bg-gray-950/70 backdrop-blur-md border-b border-black/10 dark:border-purple-500/10">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/70 dark:bg-gray-950/70 backdrop-blur-md border-b border-slate-600 dark:border-purple-500/10">
       <div className="flex items-center justify-between px-6 py-3">
         {/* Left side - Home icon only */}
         <div className="flex items-center gap-3">

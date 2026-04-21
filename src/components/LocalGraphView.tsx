@@ -28,7 +28,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
   const graphContainerRef = useRef<HTMLDivElement | null>(null);
   const settleAnimationRef = useRef<number | null>(null);
   const alphaResetTimeoutRef = useRef<number | null>(null);
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
+  const isLightGraph = resolvedTheme !== 'dark';
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -283,13 +284,13 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
 
   return (
     <div className={containerClasses}>
-      <Card className={`group graph-card-light card-hover-glow border border-gray-400/60 dark:border-gray-700/30 shadow-sm rounded-lg ${isFullscreen ? 'w-full h-full max-w-none' : ''} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : '')}`}
+      <Card className={`group graph-card-light card-hover-glow border border-slate-600 dark:border-gray-700/30 shadow-sm rounded-lg ${isFullscreen ? 'w-full h-full max-w-none' : ''} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : '')}`}
         style={!isFullscreen ? { width: dimensions.width } : undefined}
       >
         
         {/* Detachable Controls Arrow - appears on hover */}
         <div className="absolute -top-2 -right-2 opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300 z-50">
-          <div className="flex items-center space-x-1 bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-1 border border-gray-400/60 dark:border-gray-700/50 shadow-sm">
+          <div className="flex items-center space-x-1 bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-1 border border-slate-600 dark:border-gray-700/50 shadow-sm">
             <Button
               variant="ghost"
               size="sm"
@@ -313,7 +314,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
 
         {/* Graph Controls - floating overlay when visible */}
         {showControls && (
-          <div className="absolute top-4 left-4 right-4 p-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg border border-gray-400/60 dark:border-gray-700/50 shadow-lg space-y-2 z-40">
+          <div className="absolute top-4 left-4 right-4 p-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg border border-slate-600 dark:border-gray-700/50 shadow-lg space-y-2 z-40">
             <div className="space-y-1">
               <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-600 dark:text-gray-400">Node Size</span>
@@ -450,11 +451,11 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                 backgroundColor="transparent"
                 nodeColor={(node: GraphNode) => {
                   if (node.id === currentNote) return '#ef4444';
-                  return theme === 'dark' ? '#6366f1' : '#8b5cf6';
+                  return isLightGraph ? '#059669' : '#6366f1';
                 }}
                 nodeVal={(node: GraphNode) => node.id === currentNote ? nodeSize * 1.5 : nodeSize}
                 nodeLabel={(node: GraphNode) => node.title}
-                linkColor={() => theme === 'dark' ? '#4b5563' : '#6b7280'}
+                linkColor={() => (isLightGraph ? '#94a3b8' : '#4b5563')}
                 linkWidth={() => linkThickness}
                 onNodeClick={handleNodeClick}
                 enableNodeDrag={true}
@@ -471,7 +472,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                   if (node.id === currentNote) {
                     ctx.fillStyle = '#ef4444';
                   } else {
-                    ctx.fillStyle = theme === 'dark' ? '#6366f1' : '#8b5cf6';
+                    ctx.fillStyle = isLightGraph ? '#059669' : '#6366f1';
                   }
                   ctx.fill();
                   
@@ -481,7 +482,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                     ctx.font = `${fontSize}px Inter, system-ui, sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillStyle = theme === 'dark' ? '#e5e7eb' : '#374151';
+                    ctx.fillStyle = isLightGraph ? '#1e293b' : '#e5e7eb';
                     ctx.fillText(label, node.x!, node.y! + radius + fontSize / 2 + 4);
                   }
                 }}

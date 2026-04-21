@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Mail, Linkedin, Github, Briefcase, BookOpen, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import SiteUpdatesPanel from '@/components/SiteUpdatesPanel';
 
 const Hero = () => {
   const contactLinks = [
@@ -20,7 +21,7 @@ const Hero = () => {
         <div className="absolute inset-0 opacity-40 dark:opacity-20 bg-[radial-gradient(circle_at_top,var(--tw-gradient-stops))] from-transparent via-black/5 to-transparent dark:from-transparent dark:via-white/5 dark:to-transparent" />
       </div>
       <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <Badge className="mb-6 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/90 px-4 py-1 text-xs font-medium uppercase tracking-[0.2em] text-slate-700 shadow-sm dark:border-white/10 dark:bg-white/10 dark:text-white/80">
+        <Badge className="mb-6 inline-flex items-center gap-2 rounded-full border border-slate-600 bg-white/90 px-4 py-1 text-xs font-medium uppercase tracking-[0.2em] text-slate-700 shadow-sm dark:border-white/10 dark:bg-white/10 dark:text-white/80">
           Learning in public since 2020
         </Badge>
         <h1 className="text-4xl md:text-6xl font-semibold leading-tight text-slate-900 dark:text-white">
@@ -55,7 +56,7 @@ const Hero = () => {
           <Button
             variant="outline"
             asChild
-            className="h-12 rounded-full border border-slate-800/15 px-6 text-base font-medium text-slate-900 transition hover:border-slate-800/30 hover:bg-slate-900/5 dark:border-purple-400/30 dark:text-purple-100 dark:hover:border-purple-300/50 dark:hover:bg-purple-500/10"
+            className="h-12 rounded-full border border-slate-600 px-6 text-base font-medium text-slate-900 transition hover:border-slate-800 hover:bg-slate-900/5 dark:border-purple-400/30 dark:text-purple-100 dark:hover:border-purple-300/50 dark:hover:bg-purple-500/10"
           >
             <Link to="/notes">
               <BookOpen className="mr-2 h-5 w-5" />
@@ -78,7 +79,7 @@ const Hero = () => {
         </div>
 
         <div className="mt-12 flex items-center justify-center">
-          <div className="inline-flex items-center gap-4 rounded-full border border-slate-900/10 bg-white/80 px-6 py-3 text-slate-600 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-white/5 dark:text-white/70">
+          <div className="inline-flex items-center gap-4 rounded-full border border-slate-600 bg-white/80 px-6 py-3 text-slate-600 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-white/5 dark:text-white/70">
             {contactLinks.map(({ href, title, icon: Icon, svg }) => (
               <a
                 key={title}
@@ -125,6 +126,10 @@ const Hero = () => {
               </a>
             ))}
           </div>
+        </div>
+
+        <div className="mt-10 flex justify-center px-2">
+          <SiteUpdatesPanel />
         </div>
       </div>
     </section>

@@ -21,7 +21,7 @@ const BlogPreview = () => {
           {recentPosts.map((post) => (
             <Card
               key={post.id}
-              className="group relative overflow-hidden border border-slate-900/10 bg-white/40 backdrop-blur-lg shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_60px_-30px_rgba(15,23,42,0.45)] dark:border-white/10 dark:bg-slate-9010/10 dark:hover:shadow-[0_28px_60px_-28px_rgba(139,92,246,0.45)]"
+              className="group relative overflow-hidden border border-slate-600 bg-white/40 backdrop-blur-lg shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_60px_-30px_rgba(15,23,42,0.45)] dark:border-white/10 dark:bg-slate-9010/10 dark:hover:shadow-[0_28px_60px_-28px_rgba(139,92,246,0.45)]"
             >
               <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100">
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/10 via-transparent to-blue-500/10 dark:from-purple-500/15 dark:via-transparent dark:to-indigo-500/20" />
@@ -77,7 +77,7 @@ const BlogPreview = () => {
           <Button
             variant="outline"
             onClick={() => navigate('/notes/featured')}
-            className="h-11 rounded-full border border-slate-900/15 px-5 text-sm font-medium text-slate-900 transition hover:border-slate-900/35 hover:bg-slate-900/5 dark:border-purple-300/30 dark:text-purple-100 dark:hover:border-purple-200/50 dark:hover:bg-purple-500/10"
+            className="h-11 rounded-full border border-slate-600 px-5 text-sm font-medium text-slate-900 transition hover:border-slate-800 hover:bg-slate-900/5 dark:border-purple-300/30 dark:text-purple-100 dark:hover:border-purple-200/50 dark:hover:bg-purple-500/10"
           >
             Featured Notes
           </Button>
