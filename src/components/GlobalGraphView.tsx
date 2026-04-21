@@ -26,7 +26,16 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
 }) => {
   const graphRef = useRef<ForceGraphInstance<GraphNode, GraphLink> | null>(null);
   const graphContainerRef = useRef<HTMLDivElement | null>(null);
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
+  const isLightGraph = resolvedTheme !== 'dark';
+
+  const resolveNodeFill = (node: GraphNode) => {
+    if (isLightGraph) {
+      if (node.group === 2) return '#34d399';
+      return '#059669';
+    }
+    return node.color ?? '#6366f1';
+  };
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -262,11 +271,11 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
 
   return (
     <div className={containerClasses}>
-      <Card className={`group graph-card-light card-hover-glow ${inline ? 'border-transparent bg-transparent shadow-none' : 'border border-gray-400/60 dark:border-gray-700/30 shadow-sm'} rounded-lg ${inline ? 'w-full' : ''} ${isFullscreen ? 'w-full h-full max-w-none' : ''} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : '')}`} style={!isFullscreen && !inline ? { width: dimensions.width } : undefined}>
+      <Card className={`group graph-card-light card-hover-glow ${inline ? 'border-transparent bg-transparent shadow-none' : 'border border-slate-600 dark:border-gray-700/30 shadow-sm'} rounded-lg ${inline ? 'w-full' : ''} ${isFullscreen ? 'w-full h-full max-w-none' : ''} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : '')}`} style={!isFullscreen && !inline ? { width: dimensions.width } : undefined}>
         
         {/* Detachable Controls Arrow - appears on hover (hide close button if inline) */}
         <div className="absolute -top-2 -right-2 opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300 z-50">
-          <div className="flex items-center space-x-1 bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-1 border border-gray-400/60 dark:border-gray-700/50 shadow-sm">
+          <div className="flex items-center space-x-1 bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-1 border border-slate-600 dark:border-gray-700/50 shadow-sm">
             <Button
               variant="ghost"
               size="sm"
@@ -292,7 +301,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
 
         {/* Graph Controls - floating overlay when visible */}
         {showControls && (
-          <div className="absolute top-4 left-4 right-4 p-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg border border-gray-400/60 dark:border-gray-700/50 shadow-lg space-y-2 z-40">
+          <div className="absolute top-4 left-4 right-4 p-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg border border-slate-600 dark:border-gray-700/50 shadow-lg space-y-2 z-40">
             <div className="space-y-1">
               <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-600 dark:text-gray-400">Node Size</span>
@@ -427,14 +436,14 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 width={dimensions.width}
                 height={dimensions.height}
                 backgroundColor="transparent"
-                nodeColor={(node: GraphNode) => node.color || '#6366f1'}
+                nodeColor={(node: GraphNode) => resolveNodeFill(node)}
                 // Scale intrinsic node size by the slider to ensure slider always has effect
                 nodeVal={(node: GraphNode) => {
                   const base = node.size || 10;
                   return base * (nodeSize / 6);
                 }}
                 nodeLabel={(node: GraphNode) => node.title}
-                linkColor={() => '#4b5563'}
+                linkColor={() => (isLightGraph ? '#94a3b8' : '#4b5563')}
                 linkWidth={() => linkThickness}
                 onNodeClick={handleNodeClick}
                 enableNodeDrag={true}
@@ -447,19 +456,16 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                   // Draw node circle
                   ctx.beginPath();
                   ctx.arc(node.x!, node.y!, radius, 0, 2 * Math.PI);
-                  ctx.fillStyle = node.color || '#6366f1';
+                  ctx.fillStyle = resolveNodeFill(node);
                   ctx.fill();
                   
                   // Draw label when zoomed in enough
                   if (globalScale > textThreshold) {
-                    const textWidth = ctx.measureText(label).width;
-                    const padding = 4;
-                    
                     // Text (no background - fully transparent)
                     ctx.font = `${fontSize}px Inter, system-ui, sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillStyle = '#e5e7eb';
+                    ctx.fillStyle = isLightGraph ? '#1e293b' : '#e5e7eb';
                     ctx.fillText(label, node.x!, node.y! + radius + fontSize / 2 + 4);
                   }
                 }}

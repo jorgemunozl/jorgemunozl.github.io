@@ -95,7 +95,7 @@ const Index = () => {
             <h2 className="text-2xl md:text-3xl font-bold text-center text-foreground mb-8">
               Knowledge Graph
             </h2>
-            
+
             {/* Three column layout: Notes | Graph | Notes */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               {/* Left Notes Column */}
@@ -103,7 +103,7 @@ const Index = () => {
                 {leftPosts.map((post) => (
                   <Card
                     key={post.id}
-                    className="group cursor-pointer border border-slate-900/10 bg-white/40 backdrop-blur-lg shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/10 dark:bg-slate-900/10"
+                    className="group cursor-pointer border border-slate-600 bg-white/40 backdrop-blur-lg shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/10 dark:bg-slate-900/10"
                     onClick={() => navigate(`/notes/${post.id}`)}
                   >
                     <CardHeader className="pb-2">
@@ -148,7 +148,7 @@ const Index = () => {
                 {rightPosts.map((post) => (
                   <Card
                     key={post.id}
-                    className="group cursor-pointer border border-slate-900/10 bg-white/40 backdrop-blur-lg shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/10 dark:bg-slate-900/10"
+                    className="group cursor-pointer border border-slate-600 bg-white/40 backdrop-blur-lg shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/10 dark:bg-slate-900/10"
                     onClick={() => navigate(`/notes/${post.id}`)}
                   >
                     <CardHeader className="pb-2">

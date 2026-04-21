@@ -13,6 +13,7 @@ import NotFound from "./pages/NotFound";
 import ProjectDetail from "./pages/ProjectDetail";
 import AboutPage from "./pages/About";
 import TimelinePage from "./pages/Timeline";
+import UpdatesPage from "./pages/Updates";
 import { useSmoothScroll } from "@/hooks/useSmoothScroll";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => {
             <Route path="/portfolio/:projectId" element={<ProjectDetail />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/timeline" element={<TimelinePage />} />
+            <Route path="/updates" element={<UpdatesPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

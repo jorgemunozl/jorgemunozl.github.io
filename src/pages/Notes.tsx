@@ -248,7 +248,7 @@ const Notes = () => {
             </div>
 
             {tocHeadings.length > 0 && (
-              <Card className="mt-8 mb-8 border border-slate-900/10 bg-white/80 text-slate-700 shadow-lg shadow-purple-500/15 backdrop-blur-md dark:border-white/10 dark:bg-slate-900/70 dark:text-slate-100 dark:shadow-purple-500/25">
+              <Card className="mt-8 mb-8 border border-slate-600 bg-white/80 text-slate-700 shadow-lg shadow-purple-500/15 backdrop-blur-md dark:border-white/10 dark:bg-slate-900/70 dark:text-slate-100 dark:shadow-purple-500/25">
                 <CardContent className="p-6 md:p-7">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-500 dark:text-slate-300">
@@ -260,7 +260,7 @@ const Notes = () => {
                     <button
                       type="button"
                       onClick={() => setTocExpanded((prev) => !prev)}
-                      className="rounded-full border border-slate-900/10 bg-white/70 px-3 py-1 text-xs font-medium tracking-wide text-slate-600 transition-colors hover:bg-white hover:text-slate-900 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+                      className="rounded-full border border-slate-600 bg-white/70 px-3 py-1 text-xs font-medium tracking-wide text-slate-600 transition-colors hover:bg-white hover:text-slate-900 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
                     >
                       {tocExpanded ? 'Collapse' : 'Expand'}
                     </button>
@@ -388,7 +388,7 @@ const Notes = () => {
                   variant="ghost"
                   size="sm"
                   aria-label="Toggle search"
-                  className="rounded-full border border-slate-900/10 bg-white/80 p-2 text-slate-600 shadow-sm hover:bg-white hover:text-slate-900 dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+                  className="rounded-full border border-slate-600 bg-white/80 p-2 text-slate-600 shadow-sm hover:bg-white hover:text-slate-900 dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
                 >
                   <Search className="w-4 h-4" />
                 </Button>
