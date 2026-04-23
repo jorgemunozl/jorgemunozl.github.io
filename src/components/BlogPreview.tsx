@@ -3,14 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, BookOpen, Clock, ArrowRight } from 'lucide-react';
-import { blogPosts, BlogPost } from '@/components/data/notes';
+import { blogPostsMeta } from '@/components/data/notesMeta';
+import type { BlogPostMeta } from '@/types/notes';
 
 const BlogPreview = () => {
   const navigate = useNavigate();
 
   // Only featured posts, sorted by date (newest first) and show up to 6 recent posts
-  const recentPosts = blogPosts
-    .filter((p: BlogPost) => (p as any).featured === true)
+  const recentPosts = blogPostsMeta
+    .filter((p: BlogPostMeta) => p.featured === true)
     .sort((a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime())
     .slice(0, 6);
 

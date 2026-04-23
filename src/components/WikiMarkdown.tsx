@@ -5,11 +5,11 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { processWikiLinksToMarkdown } from '@/utils/wikiLinks';
 import { convertObsidianMathSyntax } from '@/utils/mathSyntax';
-import type { BlogPost } from '@/components/data/notes';
+import type { BlogPostMeta } from '@/types/notes';
 
 interface WikiMarkdownProps {
   content: string;
-  posts: BlogPost[];
+  posts: BlogPostMeta[];
   onWikiLinkClick?: (target: string) => void;
   className?: string;
 }
