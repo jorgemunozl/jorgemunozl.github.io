@@ -256,3 +256,57 @@ export function findRelatedNotes(
 
   return Array.from(related);
 }
+
+/** Neighbour titles of `title` from a prebuilt graph, without needing note bodies. */
+export function relatedTitlesFromGraph(data: GraphData, title: string): string[] {
+  const related = new Set<string>();
+  for (const link of data.links) {
+    const source = typeof link.source === 'object' && link.source !== null && 'id' in link.source
+      ? (link.source as GraphNode).id
+      : String(link.source);
+    const target = typeof link.target === 'object' && link.target !== null && 'id' in link.target
+      ? (link.target as GraphNode).id
+      : String(link.target);
+    if (source === title && target !== title) related.add(target);
+    if (target === title && source !== title) related.add(source);
+  }
+  return Array.from(related);
+}
+
+/** Deep copy graph data so force-layout mutations do not affect the prebuilt source. */
+export function cloneGraphData(data: GraphData): GraphData {
+  return {
+    nodes: data.nodes.map((n) => ({ ...n })),
+    links: data.links.map((l) => ({ ...l })),
+  };
+}
+
+function linkEndpointId(end: string | GraphNode): string {
+  return typeof end === 'object' && end !== null && 'id' in end
+    ? (end as GraphNode).id
+    : String(end);
+}
+
+/** Nodes and links within one hop of `centerTitle` (undirected), matching local graph scope. */
+export function filterGraphToNeighborhood(data: GraphData, centerTitle: string): GraphData {
+  const { nodes, links } = data;
+  const idSet = new Set<string>();
+  idSet.add(centerTitle);
+  for (const l of links) {
+    const s = linkEndpointId(l.source as string | GraphNode);
+    const t = linkEndpointId(l.target as string | GraphNode);
+    if (s === centerTitle || t === centerTitle) {
+      idSet.add(s);
+      idSet.add(t);
+    }
+  }
+  const filteredNodes = nodes.filter((n) => idSet.has(n.id)).map((n) => ({ ...n }));
+  const filteredLinks = links
+    .filter((l) => {
+      const s = linkEndpointId(l.source as string | GraphNode);
+      const t = linkEndpointId(l.target as string | GraphNode);
+      return idSet.has(s) && idSet.has(t);
+    })
+    .map((l) => ({ ...l }));
+  return { nodes: filteredNodes, links: filteredLinks };
+}

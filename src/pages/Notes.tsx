@@ -11,8 +11,16 @@ import RelativityFieldLines from '@/components/RelativityFieldLines';
 import Footer from '@/components/Footer';
 import TopControls from '@/components/TopControls';
 import 'katex/dist/katex.min.css';
-import { blogPosts as importedBlogPosts, BlogPost } from '@/components/data/notes';
-import { findRelatedNotes, normalizeTitle } from '@/utils/wikiLinks';
+import { blogPostsMeta } from '@/components/data/notesMeta';
+import { prebuiltGraphData } from '@/components/data/prebuiltGraph';
+import type { BlogPost } from '@/types/notes';
+import { fetchNoteBody, getCachedNoteBody } from '@/utils/noteBodies';
+
+const importedBlogPosts: BlogPost[] = blogPostsMeta.map((m) => ({
+  ...m,
+  content: '',
+}));
+import { normalizeTitle, relatedTitlesFromGraph } from '@/utils/wikiLinks';
 
 // Optional per-note PDFs are auto-discovered from the Featured Notes directory.
 // Drop a PDF next to its matching markdown file and it will show up in the Download button.
@@ -115,9 +123,11 @@ const Notes = () => {
   };
 
   const filteredPosts = posts.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         post.content.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
+    const q = searchTerm.toLowerCase();
+    return (
+      post.title.toLowerCase().includes(q) ||
+      (post.excerpt?.toLowerCase().includes(q) ?? false)
+    );
   });
 
   // Sort posts by date (newest first)
@@ -134,13 +144,60 @@ const Notes = () => {
     setCurrentPage(1);
   }, [searchTerm]);
 
-  const selectedPost = noteId ? posts.find(post => post.id === noteId) : undefined;
+  const baseSelectedPost = noteId ? posts.find(post => post.id === noteId) : undefined;
+  const [selectedBody, setSelectedBody] = useState<{ id: string; content: string } | null>(() => {
+    if (!noteId) return null;
+    const cached = getCachedNoteBody(noteId);
+    return cached !== undefined ? { id: noteId, content: cached } : null;
+  });
+  const [selectedBodyStatus, setSelectedBodyStatus] = useState<'idle' | 'loading' | 'error'>(
+    () => (noteId && getCachedNoteBody(noteId) === undefined ? 'loading' : 'idle')
+  );
+
+  React.useEffect(() => {
+    if (!noteId) {
+      setSelectedBody(null);
+      setSelectedBodyStatus('idle');
+      return;
+    }
+    const cached = getCachedNoteBody(noteId);
+    if (cached !== undefined) {
+      setSelectedBody({ id: noteId, content: cached });
+      setSelectedBodyStatus('idle');
+      return;
+    }
+    const controller = new AbortController();
+    setSelectedBody(null);
+    setSelectedBodyStatus('loading');
+    fetchNoteBody(noteId, controller.signal)
+      .then((content) => {
+        setSelectedBody({ id: noteId, content });
+        setSelectedBodyStatus('idle');
+      })
+      .catch((err) => {
+        if ((err as { name?: string })?.name === 'AbortError') return;
+        setSelectedBodyStatus('error');
+      });
+    return () => controller.abort();
+  }, [noteId]);
+
+  const selectedPost = baseSelectedPost
+    ? {
+        ...baseSelectedPost,
+        content:
+          selectedBody && selectedBody.id === baseSelectedPost.id
+            ? selectedBody.content
+            : '',
+      }
+    : undefined;
+  const selectedContentReady =
+    !!selectedPost && selectedBody?.id === selectedPost.id && selectedBodyStatus === 'idle';
   const normalizedSelectedTitle = selectedPost ? normalizeTitle(selectedPost.title) : undefined;
   const selectedPdfUrl = normalizedSelectedTitle ? pdfByNormalizedTitle[normalizedSelectedTitle] : undefined;
   const tocHeadings = React.useMemo(() => {
-    if (!selectedPost) return [];
+    if (!selectedPost || !selectedContentReady) return [];
     return extractHeadings(removeFrontmatter(selectedPost.content));
-  }, [selectedPost?.content]);
+  }, [selectedPost, selectedContentReady]);
 
   React.useEffect(() => {
     if (noteId) {
@@ -303,19 +360,30 @@ const Notes = () => {
             <Card className="bg-card/40 border-border/40 backdrop-blur-sm shadow-lg shadow-black/5 dark:shadow-purple-500/10">
               <CardContent className="p-6 md:p-8">
                 <div className="prose dark:prose-invert max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-pre:bg-card prose-pre:border prose-pre:border-border">
-                  <WikiMarkdown
-                    content={removeFrontmatter(selectedPost.content)}
-                    posts={posts}
-                    onWikiLinkClick={handleWikiLinkClick}
-                    className="wiki-content"
-                  />
+                  {selectedContentReady ? (
+                    <WikiMarkdown
+                      content={removeFrontmatter(selectedPost.content)}
+                      posts={posts}
+                      onWikiLinkClick={handleWikiLinkClick}
+                      className="wiki-content"
+                    />
+                  ) : selectedBodyStatus === 'error' ? (
+                    <p className="text-muted-foreground">Could not load this note. Please try again.</p>
+                  ) : (
+                    <div className="space-y-3" aria-busy="true" aria-label="Loading note">
+                      <div className="h-4 w-2/3 rounded bg-muted/60 animate-pulse" />
+                      <div className="h-4 w-11/12 rounded bg-muted/60 animate-pulse" />
+                      <div className="h-4 w-10/12 rounded bg-muted/60 animate-pulse" />
+                      <div className="h-4 w-9/12 rounded bg-muted/60 animate-pulse" />
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
             
             {/* Related Notes Section */}
             {(() => {
-              const relatedNotes = findRelatedNotes(selectedPost.title, posts);
+              const relatedNotes = relatedTitlesFromGraph(prebuiltGraphData, selectedPost.title);
               return relatedNotes.length > 0 ? (
                 <Card className="bg-card/30 border-border/50 backdrop-blur-sm mt-6">
                   <CardHeader>
