@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync } from 'node:fs';
+import { copyFileSync, existsSync, writeFileSync } from 'node:fs';
 
 const source = 'docs/index.html';
 const target = 'docs/404.html';
@@ -10,3 +10,7 @@ if (!existsSync(source)) {
 
 copyFileSync(source, target);
 console.log('Created docs/404.html for GitHub Pages single-page app routing.');
+
+// Skip Jekyll so it does not process or ignore Vite's static output (e.g. underscored paths).
+writeFileSync('docs/.nojekyll', '');
+console.log('Created docs/.nojekyll for GitHub Pages.');
