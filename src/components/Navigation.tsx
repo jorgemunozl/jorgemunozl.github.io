@@ -32,7 +32,7 @@ const Navigation = () => {
             className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity"
             onClick={handleLogoClick}
           >
-            <BookOpen className="w-20 h-20 text-black dark:text-purple-500" />
+            <BookOpen className="h-8 w-8 shrink-0 text-black dark:text-purple-500" />
           </div>
           
           <div className="hidden md:flex items-center space-x-8">
@@ -62,7 +62,7 @@ const Navigation = () => {
               variant="ghost"
               size="icon"
               onClick={toggleTheme}
-              className="h-16 w-16 text-emerald-700 hover:text-cyan-600 dark:text-emerald-300 dark:hover:text-cyan-300 transition-colors [&_svg]:size-1"
+              className="h-10 w-10 text-emerald-700 hover:text-cyan-600 dark:text-emerald-300 dark:hover:text-cyan-300 transition-colors [&_svg]:h-5 [&_svg]:w-5"
             >
               {theme === 'dark' ? <Sun /> : <Moon />}
             </Button>

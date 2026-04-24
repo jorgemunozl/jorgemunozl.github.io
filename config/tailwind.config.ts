@@ -4,7 +4,9 @@ import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
 	darkMode: ["class"],
-	content: ["../src/**/*.{ts,tsx}"],
+	// Paths are resolved from the project root (Vite/PostCSS cwd), not this file. Do not use
+	// `../src` here — that points outside the repo and Tailwind will scan no components.
+	content: ["./index.html", "./src/**/*.{ts,tsx}"],
 	prefix: "",
 	theme: {
 		container: {
