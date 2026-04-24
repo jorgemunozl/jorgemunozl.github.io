@@ -20,6 +20,7 @@ export default {
 		extend: {
 			fontFamily: {
 				modern: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
+				toc: ['"Outfit"', 'Inter', 'system-ui', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',

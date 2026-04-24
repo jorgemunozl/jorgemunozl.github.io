@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -178,6 +178,29 @@
 }
 
 @layer components {
+  /* Match @tailwindcss/typography `prose` (base) heading sizes, scaled equally */
+  .prose.md-scale-markdown {
+    --md-heading-scale: 0.88;
+  }
+  .prose.md-scale-markdown h1 {
+    font-size: calc(2.25rem * var(--md-heading-scale));
+  }
+  .prose.md-scale-markdown h2 {
+    font-size: calc(1.5rem * var(--md-heading-scale));
+  }
+  .prose.md-scale-markdown h3 {
+    font-size: calc(1.25rem * var(--md-heading-scale));
+  }
+  .prose.md-scale-markdown h4 {
+    font-size: calc(1rem * var(--md-heading-scale));
+  }
+  .prose.md-scale-markdown h5 {
+    font-size: calc(0.875rem * var(--md-heading-scale));
+  }
+  .prose.md-scale-markdown h6 {
+    font-size: calc(0.75rem * var(--md-heading-scale));
+  }
+
   .page-shell {
     @apply relative flex min-h-screen flex-col overflow-hidden bg-background gradient-bg text-slate-900 dark:text-slate-100;
   }
