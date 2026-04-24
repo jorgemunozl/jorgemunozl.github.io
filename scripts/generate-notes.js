@@ -13,9 +13,121 @@ const DIRECTORIES = [
   { dir: path.join(__dirname, '..', 'src', 'components', 'Featured Notes'), featured: true },
   { dir: path.join(__dirname, '..', 'src', 'components', 'Notes'), featured: false },
 ];
-const OUTPUT_FILE = path.join(__dirname, '..', 'src', 'components', 'data', 'notes.ts');
-const PUBLIC_ASSETS_DIR = path.join(__dirname, '..', 'public', 'notes-assets');
+const DATA_DIR = path.join(__dirname, '..', 'src', 'components', 'data');
+const OUTPUT_META = path.join(DATA_DIR, 'notesMeta.ts');
+const OUTPUT_GRAPH = path.join(DATA_DIR, 'prebuiltGraph.ts');
+const PUBLIC_DIR = path.join(__dirname, '..', 'public');
+const PUBLIC_NOTES_DIR = path.join(PUBLIC_DIR, 'notes');
+const PUBLIC_ASSETS_DIR = path.join(PUBLIC_DIR, 'notes-assets');
 const IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.svg', '.webp', '.gif'];
+
+/** Mirrors src/utils/wikiLinks.ts for build-time graph generation */
+function normalizeTitle(input) {
+  return input
+    .trim()
+    .toLowerCase()
+    .replace(/[-_]+/g, ' ')
+    .replace(/[^\p{L}\p{N}\s]+/gu, ' ')
+    .replace(/\s+/g, ' ');
+}
+
+function stripMarkdownExtension(fileName) {
+  return fileName.replace(/\.(md|markdown)$/i, '');
+}
+
+function normalizeFileReference(fileName) {
+  return normalizeTitle(stripMarkdownExtension(fileName));
+}
+
+function findPostByNormalizedTarget(normalizedTarget, posts) {
+  return posts.find((post) => {
+    if (normalizeTitle(post.title) === normalizedTarget) return true;
+    if (post.fileName && normalizeFileReference(post.fileName) === normalizedTarget) return true;
+    return false;
+  });
+}
+
+function extractWikiLinks(content) {
+  const wikiLinkRegex = /\[\[([^\]]+)\]\]/g;
+  const links = [];
+  let match;
+  while ((match = wikiLinkRegex.exec(content)) !== null) {
+    const linkContent = match[1];
+    const parts = linkContent.split('|');
+    const target = parts[0].trim();
+    const text = parts.length > 1 ? parts[1].trim() : target;
+    links.push({ text, target, start: match.index, end: match.index + match[0].length });
+  }
+  return links;
+}
+
+/** Same algorithm as buildGraphFromPosts in wikiLinks.ts */
+function buildGraphFromPosts(posts) {
+  const nodes = new Map();
+  const linkCounts = new Map();
+  const links = [];
+
+  posts.forEach((post) => {
+    nodes.set(post.title, {
+      id: post.title,
+      title: post.title,
+      group: 1,
+      size: 10,
+      color: '#A855F7',
+    });
+  });
+
+  posts.forEach((post) => {
+    const wikiLinks = extractWikiLinks(post.content);
+
+    wikiLinks.forEach((link) => {
+      const normalizedTarget = normalizeTitle(link.target);
+      const matchedPost = findPostByNormalizedTarget(normalizedTarget, posts);
+      const targetTitle = matchedPost ? matchedPost.title : link.target;
+
+      if (!nodes.has(targetTitle)) {
+        nodes.set(targetTitle, {
+          id: targetTitle,
+          title: targetTitle,
+          group: 2,
+          size: 6,
+          color: '#9CA3AF',
+        });
+      }
+
+      const existingLink = links.find(
+        (l) =>
+          (l.source === post.title && l.target === targetTitle) ||
+          (l.source === targetTitle && l.target === post.title)
+      );
+
+      if (existingLink) {
+        existingLink.value += 1;
+      } else {
+        links.push({
+          source: post.title,
+          target: targetTitle,
+          value: 1,
+        });
+      }
+
+      const currentCount = linkCounts.get(post.title) || 0;
+      linkCounts.set(post.title, currentCount + 1);
+      const targetCount = linkCounts.get(targetTitle) || 0;
+      linkCounts.set(targetTitle, targetCount + 1);
+    });
+  });
+
+  nodes.forEach((node) => {
+    const connectionCount = linkCounts.get(node.id) || 0;
+    node.size = Math.max(6, 10 + connectionCount * 2);
+  });
+
+  return {
+    nodes: Array.from(nodes.values()),
+    links,
+  };
+}
 
 // Function to parse frontmatter from markdown content
 function parseFrontmatter(content) {
@@ -305,39 +417,77 @@ function generateNotesData() {
       ...post,
     }));
 
-    // Create the output directory if it doesn't exist
-    const outputDir = path.dirname(OUTPUT_FILE);
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
+    const blogPostsMeta = blogPosts.map(({ content: _c, ...meta }) => meta);
+    const graphData = buildGraphFromPosts(
+      blogPosts.map((p) => ({
+        id: p.id,
+        title: p.title,
+        content: p.content,
+        fileName: p.fileName,
+      }))
+    );
+
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
     }
 
-    // Generate TypeScript file content
-    const tsContent = [
+    const generatedAt = new Date().toISOString();
+
+    const metaTs = [
       '// Auto-generated file - do not edit manually',
-      `// Generated on: ${new Date().toISOString()}`,
+      `// Generated on: ${generatedAt}`,
       '',
-      'export interface BlogPost {',
-      '  id: string;',
-      '  title: string;',
-      '  content: string;',
-      '  excerpt: string;',
-      '  uploadDate: string;',
-      '  readTime: string;',
-      '  fileName: string;',
-      '  featured: boolean;',
-      '}',
+      "import type { BlogPostMeta } from '@/types/notes';",
       '',
-      `export const blogPosts: BlogPost[] = ${JSON.stringify(blogPosts, null, 2)};`,
+      `export const blogPostsMeta: BlogPostMeta[] = ${JSON.stringify(blogPostsMeta, null, 2)};`,
       '',
-      'export default blogPosts;',
-      ''
+      'export default blogPostsMeta;',
+      '',
     ].join('\n');
 
-    // Write the generated file
-    fs.writeFileSync(OUTPUT_FILE, tsContent);
-    
+    const graphTs = [
+      '// Auto-generated file - do not edit manually',
+      `// Generated on: ${generatedAt}`,
+      '',
+      "import type { GraphData } from '@/utils/wikiLinks';",
+      '',
+      `export const prebuiltGraphData: GraphData = ${JSON.stringify(graphData, null, 2)};`,
+      '',
+    ].join('\n');
+
+    fs.writeFileSync(OUTPUT_META, metaTs);
+    fs.writeFileSync(OUTPUT_GRAPH, graphTs);
+
+    // Legacy files that were previously bundled as JS.
+    for (const stale of [
+      path.join(DATA_DIR, 'notes.ts'),
+      path.join(DATA_DIR, 'notesBodies.ts'),
+    ]) {
+      if (fs.existsSync(stale)) fs.unlinkSync(stale);
+    }
+
+    // Emit one JSON file per note so bodies are fetched on demand at runtime.
+    if (fs.existsSync(PUBLIC_NOTES_DIR)) {
+      for (const entry of fs.readdirSync(PUBLIC_NOTES_DIR)) {
+        if (entry.endsWith('.json')) {
+          fs.unlinkSync(path.join(PUBLIC_NOTES_DIR, entry));
+        }
+      }
+    } else {
+      fs.mkdirSync(PUBLIC_NOTES_DIR, { recursive: true });
+    }
+
+    for (const post of blogPosts) {
+      fs.writeFileSync(
+        path.join(PUBLIC_NOTES_DIR, `${post.id}.json`),
+        JSON.stringify(post.content)
+      );
+    }
+
     console.log(`\n✅ Generated notes data successfully!`);
-    console.log(`📄 Output file: ${OUTPUT_FILE}`);
+    console.log(`📄 Meta: ${OUTPUT_META}`);
+    console.log(`📄 Graph: ${OUTPUT_GRAPH}`);
+    console.log(`📁 Bodies: ${PUBLIC_NOTES_DIR}/<id>.json (${blogPosts.length} files)`);
     console.log(`📊 Total notes: ${blogPosts.length}`);
     
     // Show detailed analysis for each post

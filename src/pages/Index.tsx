@@ -1,76 +1,70 @@
-
-import React, { useEffect, useRef } from 'react';
+import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Hero from '@/components/Hero';
 import RelativityFieldLines from '@/components/RelativityFieldLines';
 import TopControls from '@/components/TopControls';
-import GlobalGraphView from '@/components/GlobalGraphView';
+
+const GlobalGraphView = lazy(() => import('@/components/GlobalGraphView'));
+
+const GraphPlaceholder = () => (
+  <div
+    className="w-full rounded-lg border border-slate-400/50 dark:border-white/20 bg-muted/25 animate-pulse min-h-[400px]"
+    aria-hidden
+  />
+);
+
+// Defer loading the ~500 KB graph chunk until the container scrolls near the viewport.
+function useInViewOnce<T extends Element>(rootMargin = '300px'): [React.RefObject<T>, boolean] {
+  const ref = useRef<T>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    if (inView) return;
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === 'undefined') {
+      setInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [inView, rootMargin]);
+  return [ref, inView];
+}
 import { normalizeTitle } from '@/utils/wikiLinks';
-import { blogPosts, BlogPost } from '@/components/data/notes';
+import { blogPostsMeta } from '@/components/data/notesMeta';
+import type { BlogPostMeta } from '@/types/notes';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, Clock } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
-  const graphContainerRef = useRef<HTMLDivElement>(null);
-  const notesSectionRef = useRef<HTMLDivElement>(null);
-  
+  const [graphSlotRef, graphInView] = useInViewOnce<HTMLDivElement>('300px');
+
   // Handler for graph node clicks
   const handleGraphNodeClick = (nodeId: string) => {
     const targetNorm = normalizeTitle(nodeId);
-    const matchingPost = blogPosts.find(post => normalizeTitle(post.title) === targetNorm);
+    const matchingPost = blogPostsMeta.find(post => normalizeTitle(post.title) === targetNorm);
     if (matchingPost) {
       navigate(`/notes/${matchingPost.id}`);
     }
   };
 
   // Get featured posts and split them for left and right sides
-  const featuredPosts = blogPosts
-    .filter((p: BlogPost) => (p as any).featured === true)
+  const featuredPosts = blogPostsMeta
+    .filter((p: BlogPostMeta) => p.featured === true)
     .sort((a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime());
   
   const leftPosts = featuredPosts.slice(0, Math.ceil(featuredPosts.length / 2));
   const rightPosts = featuredPosts.slice(Math.ceil(featuredPosts.length / 2));
-
-  // Scroll-based animation for graph
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!graphContainerRef.current || !notesSectionRef.current) return;
-
-      const notesSection = notesSectionRef.current;
-      const graphContainer = graphContainerRef.current;
-      const windowHeight = window.innerHeight;
-      
-      // Get the position of the notes section relative to viewport
-      const notesTop = notesSection.getBoundingClientRect().top;
-      const notesHeight = notesSection.offsetHeight;
-      
-      // Calculate when we're in the notes section
-      // Start moving when notes section enters viewport
-      if (notesTop < windowHeight && notesTop > -notesHeight) {
-        // Calculate scroll progress through the notes section
-        // When notesTop is at top of viewport, progress = 1
-        // When notesTop is at bottom of viewport, progress = 0
-        const progress = Math.max(0, Math.min(1, (windowHeight - notesTop) / (windowHeight + notesHeight)));
-        
-        // Move the graph along with scroll (parallax effect)
-        // Adjust the multiplier to control the speed of movement
-        const translateY = progress * notesHeight * 0.5; // 0.5 = 50% of scroll distance
-        
-        graphContainer.style.transform = `translateY(${translateY}px)`;
-      } else if (notesTop >= windowHeight) {
-        // Before notes section - reset transform
-        graphContainer.style.transform = 'translateY(0px)';
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initial call
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   return (
     <div className="page-shell">
@@ -91,11 +85,11 @@ const Index = () => {
           <Hero />
           
           {/* Graph with Notes on Sides */}
-          <div ref={notesSectionRef} className="max-w-7xl mx-auto px-6 py-12">
+          <div className="max-w-7xl mx-auto px-6 py-12">
             <h2 className="text-2xl md:text-3xl font-bold text-center text-foreground mb-8">
               Knowledge Graph
             </h2>
-            
+
             {/* Three column layout: Notes | Graph | Notes */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               {/* Left Notes Column */}
@@ -103,7 +97,7 @@ const Index = () => {
                 {leftPosts.map((post) => (
                   <Card
                     key={post.id}
-                    className="group cursor-pointer border border-slate-900/10 bg-white/40 backdrop-blur-lg shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/10 dark:bg-slate-900/10"
+                    className="group cursor-pointer border border-slate-600 bg-white/40 backdrop-blur-sm shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/10 dark:bg-slate-900/10"
                     onClick={() => navigate(`/notes/${post.id}`)}
                   >
                     <CardHeader className="pb-2">
@@ -134,13 +128,19 @@ const Index = () => {
               </div>
 
               {/* Center Graph Column */}
-              <div ref={graphContainerRef} className="lg:col-span-6 transition-transform duration-75 ease-out">
-                <GlobalGraphView
-                  isVisible={true}
-                  onClose={() => {}}
-                  onNodeClick={handleGraphNodeClick}
-                  inline={true}
-                />
+              <div className="lg:col-span-6" ref={graphSlotRef}>
+                {graphInView ? (
+                  <Suspense fallback={<GraphPlaceholder />}>
+                    <GlobalGraphView
+                      isVisible={true}
+                      onClose={() => {}}
+                      onNodeClick={handleGraphNodeClick}
+                      inline={true}
+                    />
+                  </Suspense>
+                ) : (
+                  <GraphPlaceholder />
+                )}
               </div>
 
               {/* Right Notes Column */}
@@ -148,7 +148,7 @@ const Index = () => {
                 {rightPosts.map((post) => (
                   <Card
                     key={post.id}
-                    className="group cursor-pointer border border-slate-900/10 bg-white/40 backdrop-blur-lg shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/10 dark:bg-slate-900/10"
+                    className="group cursor-pointer border border-slate-600 bg-white/40 backdrop-blur-sm shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/10 dark:bg-slate-900/10"
                     onClick={() => navigate(`/notes/${post.id}`)}
                   >
                     <CardHeader className="pb-2">

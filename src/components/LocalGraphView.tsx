@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import type { ForceLink, ForceManyBody } from 'd3';
 import ForceGraph2D, { type NodeObject } from 'react-force-graph-2d';
@@ -6,8 +6,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { X, Maximize2, Minimize2, RefreshCw, Network, Settings } from 'lucide-react';
-import { buildGraphFromPosts, GraphData, GraphNode, GraphLink, findRelatedNotes } from '@/utils/wikiLinks';
-import { blogPosts, BlogPost } from '@/components/data/notes';
+import {
+  cloneGraphData,
+  filterGraphToNeighborhood,
+  GraphData,
+  GraphNode,
+  GraphLink,
+} from '@/utils/wikiLinks';
+import { prebuiltGraphData } from '@/components/data/prebuiltGraph';
 import { useTheme } from 'next-themes';
 import { useSmoothForceGraphZoom, type ForceGraphInstance } from '@/hooks/useSmoothForceGraphZoom';
 
@@ -28,14 +34,20 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
   const graphContainerRef = useRef<HTMLDivElement | null>(null);
   const settleAnimationRef = useRef<number | null>(null);
   const alphaResetTimeoutRef = useRef<number | null>(null);
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
+  const isLightGraph = resolvedTheme !== 'dark';
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [dimensions, setDimensions] = useState({ width: 350, height: 250 });
   const [showControls, setShowControls] = useState(false);
   const dragCooldownTimeout = useRef<number | null>(null);
-  
+  const nodeDragResumedRef = useRef(false);
+
+  const resumeGraphAnimation = useCallback(() => {
+    graphRef.current?.resumeAnimation?.();
+  }, []);
+
   // Graph customization options
   const [nodeSize, setNodeSize] = useState(8);
   const [linkThickness, setLinkThickness] = useState(1);
@@ -49,41 +61,23 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
 
   // Simpler drag behavior to avoid jumps/teleport
 
+  const buildLocalGraph = useCallback((centerTitle: string) => {
+    const data = filterGraphToNeighborhood(cloneGraphData(prebuiltGraphData), centerTitle);
+    data.nodes = data.nodes.map((node) => ({
+      ...node,
+      color: node.id === centerTitle ? '#EF4444' : node.color,
+      size: node.id === centerTitle ? (node.size || 10) + 4 : node.size,
+    }));
+    return data;
+  }, []);
+
   useEffect(() => {
     if (isVisible) {
       setIsLoading(true);
-      
-      // Build local graph data focusing on the current note
-      const relatedNotes = findRelatedNotes(currentNote, blogPosts.map(post => ({
-        id: post.id,
-        title: post.title,
-        content: post.content,
-        fileName: post.fileName
-      })));
-
-      // Include current note and its immediate connections
-      const localPosts = blogPosts.filter(post => 
-        post.title === currentNote || relatedNotes.includes(post.title)
-      );
-
-      const data = buildGraphFromPosts(localPosts.map(post => ({
-        id: post.id,
-        title: post.title,
-        content: post.content,
-        fileName: post.fileName
-      })));
-
-      // Highlight the current note
-      data.nodes = data.nodes.map(node => ({
-        ...node,
-        color: node.id === currentNote ? '#EF4444' : node.color, // Red for current note
-        size: node.id === currentNote ? (node.size || 10) + 4 : node.size
-      }));
-
-      setGraphData(data);
+      setGraphData(buildLocalGraph(currentNote));
       setIsLoading(false);
     }
-  }, [isVisible, currentNote]);
+  }, [isVisible, currentNote, buildLocalGraph]);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -159,36 +153,16 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
   const refreshGraph = () => {
     setIsLoading(true);
     setTimeout(() => {
-      const relatedNotes = findRelatedNotes(currentNote, blogPosts.map(post => ({
-        id: post.id,
-        title: post.title,
-        content: post.content,
-        fileName: post.fileName
-      })));
-
-      const localPosts = blogPosts.filter(post => 
-        post.title === currentNote || relatedNotes.includes(post.title)
-      );
-
-      const data = buildGraphFromPosts(localPosts.map(post => ({
-        id: post.id,
-        title: post.title,
-        content: post.content,
-        fileName: post.fileName
-      })));
-
-      data.nodes = data.nodes.map(node => ({
-        ...node,
-        color: node.id === currentNote ? '#EF4444' : node.color,
-        size: node.id === currentNote ? (node.size || 10) + 4 : node.size
-      }));
-
-      setGraphData(data);
+      setGraphData(buildLocalGraph(currentNote));
       setIsLoading(false);
     }, 500);
   };
 
   const handleNodeDrag = (node: NodeObject<GraphNode>) => {
+    if (!nodeDragResumedRef.current) {
+      nodeDragResumedRef.current = true;
+      graphRef.current?.resumeAnimation?.();
+    }
     // Keep the node under the cursor while re-heating the simulation for smoother motion
     node.fx = node.x;
     node.fy = node.y;
@@ -199,6 +173,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
   };
 
   const handleNodeDragEnd = (node: NodeObject<GraphNode>) => {
+    nodeDragResumedRef.current = false;
     node.fx = undefined;
     node.fy = undefined;
     if (graphRef.current) {
@@ -235,6 +210,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
     settleAnimationRef.current = requestAnimationFrame(() => {
       const fg = graphRef.current;
       if (!fg) return;
+
+      fg.resumeAnimation?.();
 
       const container = graphContainerRef.current;
       const containerHasSize =
@@ -277,19 +254,20 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
     sensitivity: 0.0012,
     smoothing: 0.04,
     momentum: 0.97,
+    onZoomInteraction: resumeGraphAnimation,
   });
 
   if (!isVisible) return null;
 
   return (
     <div className={containerClasses}>
-      <Card className={`group graph-card-light card-hover-glow border border-gray-400/60 dark:border-gray-700/30 shadow-sm rounded-lg ${isFullscreen ? 'w-full h-full max-w-none' : ''} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : '')}`}
+      <Card className={`group graph-card-light card-hover-glow rounded-lg border border-slate-300/80 shadow-sm dark:border-gray-700/30 ${isFullscreen ? 'w-full h-full max-w-none' : ''} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : '')}`}
         style={!isFullscreen ? { width: dimensions.width } : undefined}
       >
         
         {/* Detachable Controls Arrow - appears on hover */}
         <div className="absolute -top-2 -right-2 opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300 z-50">
-          <div className="flex items-center space-x-1 bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-1 border border-gray-400/60 dark:border-gray-700/50 shadow-sm">
+          <div className="flex items-center space-x-1 bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-1 border border-slate-300/80 dark:border-gray-700/50 shadow-sm">
             <Button
               variant="ghost"
               size="sm"
@@ -313,7 +291,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
 
         {/* Graph Controls - floating overlay when visible */}
         {showControls && (
-          <div className="absolute top-4 left-4 right-4 p-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg border border-gray-400/60 dark:border-gray-700/50 shadow-lg space-y-2 z-40">
+          <div className="absolute top-4 left-4 right-4 p-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg border border-slate-300/80 dark:border-gray-700/50 shadow-lg space-y-2 z-40">
             <div className="space-y-1">
               <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-600 dark:text-gray-400">Node Size</span>
@@ -450,16 +428,19 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                 backgroundColor="transparent"
                 nodeColor={(node: GraphNode) => {
                   if (node.id === currentNote) return '#ef4444';
-                  return theme === 'dark' ? '#6366f1' : '#8b5cf6';
+                  return isLightGraph ? '#059669' : '#6366f1';
                 }}
                 nodeVal={(node: GraphNode) => node.id === currentNote ? nodeSize * 1.5 : nodeSize}
                 nodeLabel={(node: GraphNode) => node.title}
-                linkColor={() => theme === 'dark' ? '#4b5563' : '#6b7280'}
+                linkColor={() => (isLightGraph ? '#94a3b8' : '#4b5563')}
                 linkWidth={() => linkThickness}
                 onNodeClick={handleNodeClick}
                 enableNodeDrag={true}
                 onNodeDrag={handleNodeDrag}
                 onNodeDragEnd={handleNodeDragEnd}
+                onEngineStop={() => {
+                  graphRef.current?.pauseAnimation?.();
+                }}
                 nodeCanvasObject={(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
                   const label = node.title;
                   const fontSize = 10 / globalScale;
@@ -471,7 +452,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                   if (node.id === currentNote) {
                     ctx.fillStyle = '#ef4444';
                   } else {
-                    ctx.fillStyle = theme === 'dark' ? '#6366f1' : '#8b5cf6';
+                    ctx.fillStyle = isLightGraph ? '#059669' : '#6366f1';
                   }
                   ctx.fill();
                   
@@ -481,7 +462,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                     ctx.font = `${fontSize}px Inter, system-ui, sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillStyle = theme === 'dark' ? '#e5e7eb' : '#374151';
+                    ctx.fillStyle = isLightGraph ? '#1e293b' : '#e5e7eb';
                     ctx.fillText(label, node.x!, node.y! + radius + fontSize / 2 + 4);
                   }
                 }}

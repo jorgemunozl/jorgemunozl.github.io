@@ -9,6 +9,8 @@ interface SmoothZoomOptions {
   smoothing?: number;
   damping?: number;
   momentum?: number;
+  /** e.g. resume canvas redraw after idle pause */
+  onZoomInteraction?: () => void;
 }
 
 export type ForceGraphInstance<
@@ -22,6 +24,8 @@ export type ForceGraphInstance<
   enableZoomInteraction?: (
     enable?: boolean | ((event: MouseEvent) => boolean)
   ) => boolean | ForceGraphMethods<NodeType, LinkType>;
+  pauseAnimation?: () => void;
+  resumeAnimation?: () => void;
 };
 
 export const useSmoothForceGraphZoom = <
@@ -38,6 +42,7 @@ export const useSmoothForceGraphZoom = <
     sensitivity = 0.0007,
     smoothing = 0.04,
     damping: dampingOverride,
+    onZoomInteraction,
   } = options;
 
   // Damping is the Lerp factor that controls how heavy the camera feels.
@@ -101,6 +106,8 @@ export const useSmoothForceGraphZoom = <
         e.stopImmediatePropagation();
       }
 
+      onZoomInteraction?.();
+
       // Sync to actual camera in case of external panning
       const liveZoom = fg.zoom();
       const liveCenter = fg.centerAt();
@@ -158,5 +165,5 @@ export const useSmoothForceGraphZoom = <
       if (reqAnimFrame.current) cancelAnimationFrame(reqAnimFrame.current);
       isAnimating.current = false;
     };
-  }, [graphRef, damping, zoomSpeed, minZoom, maxZoom]);
+  }, [graphRef, damping, zoomSpeed, minZoom, maxZoom, onZoomInteraction]);
 };

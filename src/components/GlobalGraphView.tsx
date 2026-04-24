@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import ForceGraph2D, { type NodeObject } from 'react-force-graph-2d';
 import * as d3 from 'd3';
 import type { ForceLink, ForceManyBody } from 'd3';
@@ -6,10 +6,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { X, Maximize2, Minimize2, RefreshCw, Network, Settings } from 'lucide-react';
-import { buildGraphFromPosts, GraphData, GraphNode, GraphLink } from '@/utils/wikiLinks';
-import { blogPosts } from '@/components/data/notes';
+import { cloneGraphData, GraphData, GraphNode, GraphLink } from '@/utils/wikiLinks';
+import { prebuiltGraphData } from '@/components/data/prebuiltGraph';
 import { useTheme } from 'next-themes';
 import { useSmoothForceGraphZoom, type ForceGraphInstance } from '@/hooks/useSmoothForceGraphZoom';
+import { cn } from '@/lib/utils';
 
 interface GlobalGraphViewProps {
   isVisible: boolean;
@@ -26,7 +27,16 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
 }) => {
   const graphRef = useRef<ForceGraphInstance<GraphNode, GraphLink> | null>(null);
   const graphContainerRef = useRef<HTMLDivElement | null>(null);
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
+  const isLightGraph = resolvedTheme !== 'dark';
+
+  const resolveNodeFill = (node: GraphNode) => {
+    if (isLightGraph) {
+      if (node.group === 2) return '#34d399';
+      return '#059669';
+    }
+    return node.color ?? '#6366f1';
+  };
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -48,20 +58,16 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
   const rearrangeTimeoutRef = useRef<number | null>(null);
   const middlePanStateRef = useRef<{ x: number; y: number } | null>(null);
   const isMiddlePanningRef = useRef(false);
+  const nodeDragResumedRef = useRef(false);
+
+  const resumeGraphAnimation = useCallback(() => {
+    graphRef.current?.resumeAnimation?.();
+  }, []);
 
   useEffect(() => {
     if (isVisible) {
       setIsLoading(true);
-      
-      // Build global graph data from all posts
-      const data = buildGraphFromPosts(blogPosts.map(post => ({
-        id: post.id,
-        title: post.title,
-        content: post.content,
-        fileName: post.fileName
-      })));
-
-      setGraphData(data);
+      setGraphData(cloneGraphData(prebuiltGraphData));
       setIsLoading(false);
     }
   }, [isVisible]);
@@ -147,20 +153,21 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
   const refreshGraph = () => {
     setIsLoading(true);
     setTimeout(() => {
-      const data = buildGraphFromPosts(blogPosts.map(post => ({
-        id: post.id,
-        title: post.title,
-        content: post.content,
-        fileName: post.fileName
-      })));
-
-      setGraphData(data);
+      setGraphData(cloneGraphData(prebuiltGraphData));
       setIsLoading(false);
     }, 500);
   };
 
+  const handleNodeDrag = useCallback(() => {
+    if (!nodeDragResumedRef.current) {
+      nodeDragResumedRef.current = true;
+      graphRef.current?.resumeAnimation?.();
+    }
+  }, []);
+
   // Smooth release after dragging (Obsidian-like)
   const handleNodeDragEnd = (node: NodeObject<GraphNode>) => {
+    nodeDragResumedRef.current = false;
     // Clear any existing rearrangement timeout
     if (rearrangeTimeoutRef.current) {
       window.clearTimeout(rearrangeTimeoutRef.current);
@@ -180,6 +187,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     sensitivity: 0.0012,
     smoothing: 0.04,
     momentum: 0.97,
+    onZoomInteraction: resumeGraphAnimation,
   });
 
   // Enable middle-mouse panning (prevents browser auto-scroll)
@@ -190,6 +198,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     const startMiddlePan = (event: MouseEvent) => {
       if (event.button !== 1) return;
       event.preventDefault();
+      graphRef.current?.resumeAnimation?.();
       isMiddlePanningRef.current = true;
       middlePanStateRef.current = { x: event.clientX, y: event.clientY };
     };
@@ -245,6 +254,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
       // Wait a bit for the graph to stabilize, then fit to view with less padding for more zoom
       const timer = setTimeout(() => {
         if (graphRef.current) {
+          graphRef.current.resumeAnimation?.();
           graphRef.current.zoomToFit(400, 20); // Reduced padding from 50 to 20 for closer zoom
         }
       }, 1000);
@@ -262,11 +272,22 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
 
   return (
     <div className={containerClasses}>
-      <Card className={`group graph-card-light card-hover-glow ${inline ? 'border-transparent bg-transparent shadow-none' : 'border border-gray-400/60 dark:border-gray-700/30 shadow-sm'} rounded-lg ${inline ? 'w-full' : ''} ${isFullscreen ? 'w-full h-full max-w-none' : ''} ${showControls ? (isFullscreen ? 'h-full' : 'h-auto') : (isFullscreen ? 'h-full' : '')}`} style={!isFullscreen && !inline ? { width: dimensions.width } : undefined}>
+      <Card
+        className={cn(
+          'group graph-card-light card-hover-glow overflow-hidden rounded-lg shadow-sm',
+          inline
+            ? '!border-2 !border-slate-400 dark:!border-white/25'
+            : 'border border-slate-300/80 dark:border-gray-700/30',
+          inline && 'w-full',
+          isFullscreen && 'h-full max-w-none w-full',
+          showControls ? (isFullscreen ? 'h-full' : 'h-auto') : isFullscreen ? 'h-full' : undefined
+        )}
+        style={!isFullscreen && !inline ? { width: dimensions.width } : undefined}
+      >
         
         {/* Detachable Controls Arrow - appears on hover (hide close button if inline) */}
         <div className="absolute -top-2 -right-2 opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300 z-50">
-          <div className="flex items-center space-x-1 bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-1 border border-gray-400/60 dark:border-gray-700/50 shadow-sm">
+          <div className="flex items-center space-x-1 bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-1 border border-slate-300/80 dark:border-gray-700/50 shadow-sm">
             <Button
               variant="ghost"
               size="sm"
@@ -292,7 +313,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
 
         {/* Graph Controls - floating overlay when visible */}
         {showControls && (
-          <div className="absolute top-4 left-4 right-4 p-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg border border-gray-400/60 dark:border-gray-700/50 shadow-lg space-y-2 z-40">
+          <div className="absolute top-4 left-4 right-4 p-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg border border-slate-300/80 dark:border-gray-700/50 shadow-lg space-y-2 z-40">
             <div className="space-y-1">
               <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-600 dark:text-gray-400">Node Size</span>
@@ -427,18 +448,22 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 width={dimensions.width}
                 height={dimensions.height}
                 backgroundColor="transparent"
-                nodeColor={(node: GraphNode) => node.color || '#6366f1'}
+                nodeColor={(node: GraphNode) => resolveNodeFill(node)}
                 // Scale intrinsic node size by the slider to ensure slider always has effect
                 nodeVal={(node: GraphNode) => {
                   const base = node.size || 10;
                   return base * (nodeSize / 6);
                 }}
                 nodeLabel={(node: GraphNode) => node.title}
-                linkColor={() => '#4b5563'}
+                linkColor={() => (isLightGraph ? '#94a3b8' : '#4b5563')}
                 linkWidth={() => linkThickness}
                 onNodeClick={handleNodeClick}
                 enableNodeDrag={true}
+                onNodeDrag={handleNodeDrag}
                 onNodeDragEnd={handleNodeDragEnd}
+                onEngineStop={() => {
+                  graphRef.current?.pauseAnimation?.();
+                }}
                 nodeCanvasObject={(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
                   const label = node.title;
                   const fontSize = 10 / globalScale;
@@ -447,19 +472,16 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                   // Draw node circle
                   ctx.beginPath();
                   ctx.arc(node.x!, node.y!, radius, 0, 2 * Math.PI);
-                  ctx.fillStyle = node.color || '#6366f1';
+                  ctx.fillStyle = resolveNodeFill(node);
                   ctx.fill();
                   
                   // Draw label when zoomed in enough
                   if (globalScale > textThreshold) {
-                    const textWidth = ctx.measureText(label).width;
-                    const padding = 4;
-                    
                     // Text (no background - fully transparent)
                     ctx.font = `${fontSize}px Inter, system-ui, sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillStyle = '#e5e7eb';
+                    ctx.fillStyle = isLightGraph ? '#1e293b' : '#e5e7eb';
                     ctx.fillText(label, node.x!, node.y! + radius + fontSize / 2 + 4);
                   }
                 }}
