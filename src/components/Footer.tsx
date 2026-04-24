@@ -12,7 +12,7 @@ const Footer = () => {
 
   return (
     <footer className="pointer-events-none fixed right-4 top-1/2 z-40 flex -translate-y-1/2 sm:right-6">
-      <div className="pointer-events-auto flex flex-col items-center gap-4 rounded-3xl border border-slate-900/10 bg-white/85 px-4 py-6 text-xs text-slate-500 shadow-lg shadow-emerald-500/10 backdrop-blur-xl transition-colors dark:border-white/10 dark:bg-white/10 dark:text-white/60 dark:shadow-purple-500/10">
+      <div className="pointer-events-auto flex flex-col items-center gap-4 rounded-3xl border border-slate-600 bg-white/85 px-4 py-6 text-xs text-slate-500 shadow-lg shadow-emerald-500/10 backdrop-blur-xl transition-colors dark:border-white/10 dark:bg-white/10 dark:text-white/60 dark:shadow-purple-500/10">
         <div className="flex flex-col items-center gap-5">
           <a 
             href="mailto:alvaro18ml@gmail.com"

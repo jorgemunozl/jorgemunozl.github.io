@@ -205,7 +205,7 @@ const TimelinePage = () => {
                             </div>
                             <p className="text-slate-600 leading-relaxed dark:text-slate-200/80">{event.description}</p>
                           </div>
-                          <figure className="overflow-hidden rounded-2xl border border-slate-900/10 bg-white/60 shadow-inner dark:border-white/15 dark:bg-white/10">
+                          <figure className="overflow-hidden rounded-2xl border border-slate-600 bg-white/60 shadow-inner dark:border-white/15 dark:bg-white/10">
                             <img
                               src={event.image}
                               alt={event.imageAlt}

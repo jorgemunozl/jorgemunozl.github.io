@@ -6,7 +6,8 @@ import RelativityFieldLines from '@/components/RelativityFieldLines';
 import TopControls from '@/components/TopControls';
 import Footer from '@/components/Footer';
 import { Calendar, Clock, Star, ArrowLeft, ArrowRight } from 'lucide-react';
-import { blogPosts, BlogPost } from '@/components/data/notes';
+import { blogPostsMeta } from '@/components/data/notesMeta';
+import type { BlogPostMeta } from '@/types/notes';
 
 const POSTS_PER_PAGE = 10;
 
@@ -19,8 +20,8 @@ const FeaturedNotes = () => {
 
   const featuredPosts = React.useMemo(
     () =>
-      [...blogPosts]
-        .filter((post: BlogPost) => post.featured)
+      [...blogPostsMeta]
+        .filter((post: BlogPostMeta) => post.featured)
         .sort(
           (a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime()
         ),
