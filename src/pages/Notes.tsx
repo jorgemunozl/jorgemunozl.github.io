@@ -76,11 +76,11 @@ type ExtendedBlogPost = BlogPost & {
 const Notes = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [posts, setPosts] = useState<ExtendedBlogPost[]>([]);
-  const [showGraphView, setShowGraphView] = useState(true); // Default to visible
+  const [showGraphView, setShowGraphView] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [selectedNodeInGraph, setSelectedNodeInGraph] = useState<string | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
-  const [tocExpanded, setTocExpanded] = useState(true);
+  const [tocExpanded, setTocExpanded] = useState(false);
   const postsPerPage = 7;
   const params = useParams();
   const navigate = useNavigate();
@@ -98,7 +98,6 @@ const Notes = () => {
     if (!noteId) {
       // Clear any selected state when going back to list view
       setSelectedNodeInGraph(undefined);
-      // Graph remains visible
     }
   }, [noteId]);
 
@@ -199,12 +198,6 @@ const Notes = () => {
     return extractHeadings(removeFrontmatter(selectedPost.content));
   }, [selectedPost, selectedContentReady]);
 
-  React.useEffect(() => {
-    if (noteId) {
-      setTocExpanded(true);
-    }
-  }, [noteId]);
-
   const handleScrollToHeading = React.useCallback((headingId: string) => {
     const element = document.getElementById(headingId);
     if (element) {
@@ -218,12 +211,12 @@ const Notes = () => {
       return (
         <div className="min-h-screen relative overflow-hidden bg-background gradient-bg flex flex-col">
           <RelativityFieldLines />
-          <div className="relative z-10 flex-1 pb-24">
+          <div className="relative z-10 flex-1 pb-12">
             <TopControls title="Notes" />
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-2 pt-20 pb-20">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-2 pt-14 pb-10">
               <div className="text-center">
-                <h1 className="text-2xl font-bold text-foreground mb-4">Note Not Found</h1>
-                <p className="text-muted-foreground mb-8">The note you are looking for does not exist.</p>
+                <h1 className="text-2xl font-bold text-foreground mb-2">Note Not Found</h1>
+                <p className="text-muted-foreground mb-4">The note you are looking for does not exist.</p>
                 {/* Removed Return to Notes button per request */}
               </div>
             </div>
@@ -239,11 +232,11 @@ const Notes = () => {
         {/* Removed light-mode decorative glows inside note view */}
         <div className="relative z-10 flex-1">
           <TopControls title="Notes" />
-          <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-8 pt-20 pb-24 relative z-20">
-            <div className="mb-8 relative z-30">
-              <div className="flex items-center justify-between mb-6">
+          <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-2 pt-8 pb-10 relative z-20">
+            <div className="mb-3 relative z-30">
+              <div className="flex items-center justify-between mb-2.5">
                 <div>
-                  <h1 className="text-2xl font-bold text-foreground mb-2">{selectedPost.title}</h1>
+                  <h1 className="text-2xl font-bold text-foreground mb-1">{selectedPost.title}</h1>
                   <div className="flex items-center text-sm text-muted-foreground space-x-4">
                     <span className="flex items-center">
                       <Calendar className="w-4 h-4 mr-1" />
@@ -305,61 +298,64 @@ const Notes = () => {
             </div>
 
             {tocHeadings.length > 0 && (
-              <Card className="mt-8 mb-8 border border-slate-600 bg-white/80 text-slate-700 shadow-lg shadow-purple-500/15 backdrop-blur-md dark:border-white/10 dark:bg-slate-900/70 dark:text-slate-100 dark:shadow-purple-500/25">
-                <CardContent className="p-6 md:p-7">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-500 dark:text-slate-300">
-                      <ChevronDown
-                        className={`h-4 w-4 text-purple-500 transition-transform duration-200 dark:text-purple-300 ${tocExpanded ? '' : '-rotate-90'}`}
-                      />
-                      Table of Contents
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setTocExpanded((prev) => !prev)}
-                      className="rounded-full border border-slate-600 bg-white/70 px-3 py-1 text-xs font-medium tracking-wide text-slate-600 transition-colors hover:bg-white hover:text-slate-900 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
-                    >
-                      {tocExpanded ? 'Collapse' : 'Expand'}
-                    </button>
-                  </div>
-                  {tocExpanded && (
-                    <nav className="mt-5 space-y-1.5">
-                      {tocHeadings.map((heading) => {
-                        const level = Math.min(heading.level, 4);
-                        const levelClass =
-                          level === 1
-                            ? 'pl-0 text-sm font-semibold text-slate-800 dark:text-white'
-                            : level === 2
-                              ? 'pl-4 text-sm text-slate-600 dark:text-slate-200'
-                              : level === 3
-                                ? 'pl-8 text-xs text-slate-500 dark:text-slate-300'
-                                : 'pl-12 text-xs text-slate-500 dark:text-slate-400';
-                        return (
-                          <a
-                            key={`${heading.id}-${heading.level}`}
-                            href={`#${heading.id}`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleScrollToHeading(heading.id);
-                            }}
-                            className={`group flex w-full items-center rounded-lg py-2 pr-3 text-left transition-colors hover:bg-purple-500/10 hover:text-purple-600 dark:hover:bg-purple-500/20 dark:hover:text-purple-100 ${levelClass}`}
-                          >
-                            <span className="mr-2 text-xs text-purple-400 transition-colors group-hover:text-purple-600 dark:text-purple-300 dark:group-hover:text-purple-100">
-                              •
-                            </span>
-                            <span className="flex-1">{heading.text}</span>
-                          </a>
-                        );
-                      })}
-                    </nav>
-                  )}
-                </CardContent>
-              </Card>
+              <div className="font-toc mt-2 mb-3 rounded-r-xl border-l-[3px] border-violet-500 bg-gradient-to-r from-violet-500/10 via-fuchsia-500/[0.06] to-transparent py-2.5 pl-3.5 pr-3 shadow-sm shadow-violet-500/10 dark:border-violet-400 dark:from-violet-500/20 dark:via-fuchsia-500/10 dark:to-transparent dark:shadow-violet-900/20">
+                <div className="flex items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setTocExpanded((prev) => !prev)}
+                    className="flex min-w-0 flex-1 items-center gap-2.5 text-left text-sm font-semibold tracking-wide text-violet-900 dark:text-violet-100"
+                  >
+                    <ChevronDown
+                      className={`h-4 w-4 shrink-0 text-violet-600 transition-transform duration-200 dark:text-violet-300 ${tocExpanded ? '' : '-rotate-90'}`}
+                      aria-hidden
+                    />
+                    <span>Table of Contents</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTocExpanded((prev) => !prev)}
+                    className="shrink-0 rounded-full bg-violet-500/15 px-3 py-1 text-sm font-medium text-violet-700 transition-colors hover:bg-violet-500/25 hover:text-violet-900 dark:bg-violet-400/15 dark:text-violet-200 dark:hover:bg-violet-400/25 dark:hover:text-white"
+                  >
+                    {tocExpanded ? 'Collapse' : 'Expand'}
+                  </button>
+                </div>
+                {tocExpanded && (
+                  <nav className="mt-3 space-y-0.5 border-t border-violet-500/15 pt-3 dark:border-violet-400/20" aria-label="In this page">
+                    {tocHeadings.map((heading) => {
+                      const level = Math.min(heading.level, 4);
+                      const levelClass =
+                        level === 1
+                          ? 'pl-0 text-lg font-semibold leading-snug text-slate-800 dark:text-slate-100'
+                          : level === 2
+                            ? 'pl-3 text-base leading-snug text-slate-600 dark:text-slate-300'
+                            : level === 3
+                              ? 'pl-6 text-[0.95rem] leading-snug text-slate-500 dark:text-slate-400'
+                              : 'pl-9 text-[0.95rem] leading-snug text-slate-500 dark:text-slate-500';
+                      return (
+                        <a
+                          key={`${heading.id}-${heading.level}`}
+                          href={`#${heading.id}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleScrollToHeading(heading.id);
+                          }}
+                          className={`group flex w-full items-center rounded-md py-1.5 pr-2 text-left transition-colors hover:bg-violet-500/15 hover:text-violet-900 dark:hover:bg-violet-500/20 dark:hover:text-violet-50 ${levelClass}`}
+                        >
+                          <span className="mr-2 text-violet-400 transition-colors group-hover:text-violet-600 dark:text-violet-500 dark:group-hover:text-violet-300">
+                            ·
+                          </span>
+                          <span className="flex-1">{heading.text}</span>
+                        </a>
+                      );
+                    })}
+                  </nav>
+                )}
+              </div>
             )}
 
             <Card className="bg-card/40 border-border/40 backdrop-blur-sm shadow-lg shadow-black/5 dark:shadow-purple-500/10">
-              <CardContent className="p-6 md:p-8">
-                <div className="prose dark:prose-invert max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-pre:bg-card prose-pre:border prose-pre:border-border">
+              <CardContent className="p-3.5 md:p-4">
+                <div className="prose md-scale-markdown dark:prose-invert max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-pre:bg-card prose-pre:border prose-pre:border-border">
                   {selectedContentReady ? (
                     <WikiMarkdown
                       content={removeFrontmatter(selectedPost.content)}
@@ -370,7 +366,7 @@ const Notes = () => {
                   ) : selectedBodyStatus === 'error' ? (
                     <p className="text-muted-foreground">Could not load this note. Please try again.</p>
                   ) : (
-                    <div className="space-y-3" aria-busy="true" aria-label="Loading note">
+                    <div className="space-y-2" aria-busy="true" aria-label="Loading note">
                       <div className="h-4 w-2/3 rounded bg-muted/60 animate-pulse" />
                       <div className="h-4 w-11/12 rounded bg-muted/60 animate-pulse" />
                       <div className="h-4 w-10/12 rounded bg-muted/60 animate-pulse" />
@@ -385,11 +381,11 @@ const Notes = () => {
             {(() => {
               const relatedNotes = relatedTitlesFromGraph(prebuiltGraphData, selectedPost.title);
               return relatedNotes.length > 0 ? (
-                <Card className="bg-card/30 border-border/50 backdrop-blur-sm mt-6">
-                  <CardHeader>
-                    <h3 className="text-lg font-semibold text-foreground">Related Notes</h3>
+                <Card className="bg-card/30 border-border/50 backdrop-blur-sm mt-3">
+                  <CardHeader className="px-4 py-2.5 sm:px-5">
+                    <h3 className="text-base font-semibold text-foreground">Related Notes</h3>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="px-4 pb-3 pt-0 sm:px-5">
                     <div className="flex flex-wrap gap-2">
                       {relatedNotes.map((noteTitle) => {
                         const relatedPost = posts.find(p => p.title === noteTitle);
@@ -437,11 +433,11 @@ const Notes = () => {
       </div>
       <div className="relative z-10 flex-1">
         <TopControls title="Notes" />
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 py-8 pt-20">
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 py-3 pt-14 pb-8">
           {/* Header Section */}
-            <div className="text-center mb-12">
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Atomic Notes</h1>
-              <div className="flex justify-center items-center gap-2 mb-4">
+            <div className="text-center mb-6">
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Atomic Notes</h1>
+              <div className="flex justify-center items-center gap-2 mb-2">
                 <Button 
                   onClick={toggleGraphView}
                   variant="default" 
@@ -468,7 +464,7 @@ const Notes = () => {
 
           {/* Search and Filter (animated) */}
           <div
-            className={`mb-8 space-y-4 overflow-hidden transition-all duration-300 ease-out ${
+            className={`mb-4 space-y-2 overflow-hidden transition-all duration-300 ease-out ${
               showSearch ? 'opacity-100 translate-y-0 max-h-28' : 'opacity-0 -translate-y-2 max-h-0 pointer-events-none'
             }`}
             aria-hidden={!showSearch}
@@ -479,18 +475,18 @@ const Notes = () => {
                 placeholder="Search notes..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="px-4 py-3 text-lg bg-card/30 border-black dark:border-black backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:border-black"
+                className="px-3 py-2 text-base bg-card/30 border-black dark:border-black backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:border-black"
                 autoFocus={showSearch}
               />
             </div>
           </div>
 
           {/* Blog Posts List */}
-          <div className="space-y-8">
+          <div className="space-y-4">
             {currentPosts.length === 0 ? (
-              <div className="text-center py-12">
-                <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-muted-foreground mb-2">No notes found</h3>
+              <div className="text-center py-6">
+                <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-2" />
+                <h3 className="text-xl font-semibold text-muted-foreground mb-1">No notes found</h3>
                 <p className="text-muted-foreground">Try adjusting your search or upload a new note.</p>
               </div>
             ) : (
@@ -499,7 +495,7 @@ const Notes = () => {
                   key={post.id} 
                   className="bg-card/30 border-black dark:border-black backdrop-blur-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:border-black"
                 >
-                  <CardHeader className="pb-3">
+                  <CardHeader className="p-4 pb-2 sm:p-5 sm:pb-2">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 flex items-center">
                         {post.featured && (
@@ -514,12 +510,12 @@ const Notes = () => {
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="p-5 md:p-6 flex flex-col h-full">
-                    <p className="text-muted-foreground text-sm mb-4 leading-relaxed flex-grow">
+                  <CardContent className="p-4 pt-2 sm:p-5 sm:pt-2 flex flex-col h-full">
+                    <p className="text-muted-foreground text-sm mb-2 leading-relaxed flex-grow">
                       {post.excerpt}
                     </p>
                     {/* Date and Read Time at Bottom */}
-                    <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground mt-auto border-t border-black dark:border-black pt-3">
+                    <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground mt-auto border-t border-black dark:border-black pt-2">
                       <div className="flex items-center">
                         <Calendar className="w-3 h-3 mr-1" />
                         {new Date(post.uploadDate).toLocaleString('en-US', { 
@@ -551,7 +547,7 @@ const Notes = () => {
                     </div>
                   </CardContent>
                   {post.tags && post.tags.length > 0 && (
-                    <CardContent className="pt-3 pb-5 px-5 md:px-6">
+                    <CardContent className="pt-1.5 pb-3 px-4 sm:px-5">
                       <div className="flex flex-wrap gap-2">
                         {post.tags.map((tag) => (
                           <span
@@ -570,7 +566,7 @@ const Notes = () => {
           </div>
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="flex justify-center items-center space-x-4 mt-12">
+            <div className="flex justify-center items-center space-x-4 mt-6">
               <Button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
@@ -609,7 +605,7 @@ const Notes = () => {
           )}
           {/* Page Info */}
           {sortedPosts.length > 0 && (
-            <div className="text-center mt-6 text-sm text-muted-foreground">
+            <div className="text-center mt-3 text-sm text-muted-foreground">
               Showing {startIndex + 1}-{Math.min(endIndex, sortedPosts.length)} of {sortedPosts.length} notes
             </div>
           )}
