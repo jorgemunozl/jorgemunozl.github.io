@@ -5,7 +5,7 @@ import type { ForceLink, ForceManyBody } from 'd3';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { X, Maximize2, Minimize2, RefreshCw, Network, Settings } from 'lucide-react';
+import { X, Maximize2, Minimize2, RefreshCw, Network, Settings, Home } from 'lucide-react';
 import { cloneGraphData, GraphData, GraphNode, GraphLink } from '@/utils/wikiLinks';
 import { prebuiltGraphData } from '@/components/data/prebuiltGraph';
 import { useTheme } from 'next-themes';
@@ -42,27 +42,33 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [dimensions, setDimensions] = useState({ width: 450, height: 400 });
   const [showControls, setShowControls] = useState(false);
+  const [resetNonce, setResetNonce] = useState(0);
   
   // Graph customization options
-  const [nodeSize, setNodeSize] = useState(6);
+  const [nodeSize, setNodeSize] = useState(5);
   const [linkThickness, setLinkThickness] = useState(1);
   const [textThreshold, setTextThreshold] = useState(2.0);
-  
-  // Physics forces
+
+  // Physics forces — calibrated to feel close to Obsidian's living layout.
   const [centerForce, setCenterForce] = useState(0);
-  const [repelForce, setRepelForce] = useState(-120);
+  const [repelForce, setRepelForce] = useState(-90);
   const [linkForce, setLinkForce] = useState(1);
-  const [linkDistance, setLinkDistance] = useState(30);
+  const [linkDistance, setLinkDistance] = useState(40);
   
   // Drag rearrangement timer
   const rearrangeTimeoutRef = useRef<number | null>(null);
   const middlePanStateRef = useRef<{ x: number; y: number } | null>(null);
   const isMiddlePanningRef = useRef(false);
   const nodeDragResumedRef = useRef(false);
+  const idleAlphaTimeoutRef = useRef<number | null>(null);
 
   const resumeGraphAnimation = useCallback(() => {
     graphRef.current?.resumeAnimation?.();
   }, []);
+
+  // Keep a tiny non-zero alphaTarget so the layout always breathes,
+  // matching Obsidian's continuously alive feel.
+  const IDLE_ALPHA_TARGET = 0.015;
 
   useEffect(() => {
     if (isVisible) {
@@ -135,10 +141,37 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
         link.strength(linkForce).distance(linkDistance);
       }
 
-      // Restart simulation
+      fg.d3AlphaTarget(IDLE_ALPHA_TARGET);
       fg.d3ReheatSimulation();
     }
   }, [centerForce, repelForce, linkForce, linkDistance]);
+
+  // Establish the idle baseline once the graph has stabilised, instead of
+  // pausing the animation outright. This prevents the canvas from going stale
+  // between interactions.
+  useEffect(() => {
+    if (isLoading || graphData.nodes.length === 0) return;
+    const fg = graphRef.current;
+    if (!fg) return;
+
+    if (idleAlphaTimeoutRef.current !== null) {
+      window.clearTimeout(idleAlphaTimeoutRef.current);
+    }
+
+    idleAlphaTimeoutRef.current = window.setTimeout(() => {
+      if (graphRef.current === fg) {
+        fg.d3AlphaTarget(IDLE_ALPHA_TARGET);
+      }
+      idleAlphaTimeoutRef.current = null;
+    }, 600);
+
+    return () => {
+      if (idleAlphaTimeoutRef.current !== null) {
+        window.clearTimeout(idleAlphaTimeoutRef.current);
+        idleAlphaTimeoutRef.current = null;
+      }
+    };
+  }, [isLoading, graphData.nodes.length]);
 
   const handleNodeClick = (node: GraphNode) => {
     if (onNodeClick) {
@@ -158,35 +191,54 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     }, 500);
   };
 
+  const resetGraph = useCallback(() => {
+    // "F5" behavior: reload graph data + reset camera.
+    setIsLoading(true);
+    setGraphData(cloneGraphData(prebuiltGraphData));
+    setIsLoading(false);
+    setResetNonce((n) => n + 1);
+  }, []);
+
+  useEffect(() => {
+    if (isLoading || graphData.nodes.length === 0) return;
+    const fg = graphRef.current;
+    if (!fg) return;
+    fg.resumeAnimation?.();
+    fg.d3AlphaTarget(0.08);
+    fg.zoomToFit(650, inline ? 20 : isFullscreen ? 120 : 36);
+    const t = window.setTimeout(() => {
+      if (graphRef.current === fg) fg.d3AlphaTarget(IDLE_ALPHA_TARGET);
+    }, 900);
+    return () => window.clearTimeout(t);
+  }, [resetNonce, isLoading, graphData.nodes.length, inline, isFullscreen]);
+
   const handleNodeDrag = useCallback(() => {
     if (!nodeDragResumedRef.current) {
       nodeDragResumedRef.current = true;
       graphRef.current?.resumeAnimation?.();
     }
+    graphRef.current?.d3AlphaTarget(0.25);
   }, []);
 
   // Smooth release after dragging (Obsidian-like)
   const handleNodeDragEnd = (node: NodeObject<GraphNode>) => {
     nodeDragResumedRef.current = false;
-    // Clear any existing rearrangement timeout
     if (rearrangeTimeoutRef.current) {
       window.clearTimeout(rearrangeTimeoutRef.current);
     }
 
-    // After 2 seconds, start smooth rearrangement like Obsidian
+    // Let neighbours nudge for a moment, then release the fixed position and
+    // relax back to the idle alpha baseline so the layout keeps drifting.
     rearrangeTimeoutRef.current = window.setTimeout(() => {
-      // Release the fixed position
       node.fx = undefined;
       node.fy = undefined;
+      graphRef.current?.d3AlphaTarget(IDLE_ALPHA_TARGET);
     }, 2000);
   };
 
   useSmoothForceGraphZoom(graphRef, graphContainerRef, {
     minZoom: 0.25,
     maxZoom: 6,
-    sensitivity: 0.0012,
-    smoothing: 0.04,
-    momentum: 0.97,
     onZoomInteraction: resumeGraphAnimation,
   });
 
@@ -288,6 +340,15 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
         {/* Detachable Controls Arrow - appears on hover (hide close button if inline) */}
         <div className="absolute -top-2 -right-2 opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300 z-50">
           <div className="flex items-center space-x-1 bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-1 border border-slate-300/80 dark:border-gray-700/50 shadow-sm">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={resetGraph}
+              className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white p-1 h-6 w-6 rounded-full"
+              title="Reset graph"
+            >
+              <Home className="w-3 h-3" />
+            </Button>
             <Button
               variant="ghost"
               size="sm"
@@ -449,10 +510,10 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 height={dimensions.height}
                 backgroundColor="transparent"
                 nodeColor={(node: GraphNode) => resolveNodeFill(node)}
-                // Scale intrinsic node size by the slider to ensure slider always has effect
                 nodeVal={(node: GraphNode) => {
-                  const base = node.size || 10;
-                  return base * (nodeSize / 6);
+                  const base = node.size ?? 6;
+                  const scaled = base * (nodeSize / 5);
+                  return scaled * scaled; // nodeVal represents area in react-force-graph
                 }}
                 nodeLabel={(node: GraphNode) => node.title}
                 linkColor={() => (isLightGraph ? '#94a3b8' : '#4b5563')}
@@ -462,22 +523,22 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 onNodeDrag={handleNodeDrag}
                 onNodeDragEnd={handleNodeDragEnd}
                 onEngineStop={() => {
-                  graphRef.current?.pauseAnimation?.();
+                  // Stay alive at a low idle alpha so pan/zoom redraws stay
+                  // crisp; the simulation effectively idles instead of freezing.
+                  graphRef.current?.d3AlphaTarget(IDLE_ALPHA_TARGET);
                 }}
                 nodeCanvasObject={(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
                   const label = node.title;
                   const fontSize = 10 / globalScale;
-                  const radius = ((node.size || 10) * (nodeSize / 6)) / 2;
-                  
-                  // Draw node circle
+                  const base = node.size ?? 6;
+                  const radius = (base * (nodeSize / 5)) / 2;
+
                   ctx.beginPath();
                   ctx.arc(node.x!, node.y!, radius, 0, 2 * Math.PI);
                   ctx.fillStyle = resolveNodeFill(node);
                   ctx.fill();
-                  
-                  // Draw label when zoomed in enough
+
                   if (globalScale > textThreshold) {
-                    // Text (no background - fully transparent)
                     ctx.font = `${fontSize}px Inter, system-ui, sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
@@ -485,9 +546,10 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                     ctx.fillText(label, node.x!, node.y! + radius + fontSize / 2 + 4);
                   }
                 }}
-                cooldownTicks={50}
-                d3AlphaDecay={0.05}
-                d3VelocityDecay={0.3}
+                cooldownTicks={Infinity}
+                cooldownTime={Infinity}
+                d3AlphaDecay={0.0228}
+                d3VelocityDecay={0.4}
                 d3AlphaMin={0.001}
                 enablePanInteraction={true}
                 enableZoomInteraction={true}

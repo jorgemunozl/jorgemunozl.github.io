@@ -118,9 +118,11 @@ function buildGraphFromPosts(posts) {
     });
   });
 
+  // sqrt(degree) so visual area (not radius) scales with degree — matches
+  // Obsidian's graph emphasis on hubs without dwarfing leaves.
   nodes.forEach((node) => {
     const connectionCount = linkCounts.get(node.id) || 0;
-    node.size = Math.max(6, 10 + connectionCount * 2);
+    node.size = 4 + Math.sqrt(connectionCount) * 2.2;
   });
 
   return {

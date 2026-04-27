@@ -5,7 +5,7 @@ import ForceGraph2D, { type NodeObject } from 'react-force-graph-2d';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { X, Maximize2, Minimize2, RefreshCw, Network, Settings } from 'lucide-react';
+import { X, Maximize2, Minimize2, RefreshCw, Network, Settings, Home } from 'lucide-react';
 import {
   cloneGraphData,
   filterGraphToNeighborhood,
@@ -41,6 +41,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [dimensions, setDimensions] = useState({ width: 350, height: 250 });
   const [showControls, setShowControls] = useState(false);
+  const [resetNonce, setResetNonce] = useState(0);
   const dragCooldownTimeout = useRef<number | null>(null);
   const nodeDragResumedRef = useRef(false);
 
@@ -48,16 +49,19 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
     graphRef.current?.resumeAnimation?.();
   }, []);
 
-  // Graph customization options
-  const [nodeSize, setNodeSize] = useState(8);
+  // Graph customization options — defaults are tuned to match Obsidian.
+  const [nodeSize, setNodeSize] = useState(5);
   const [linkThickness, setLinkThickness] = useState(1);
   const [textThreshold, setTextThreshold] = useState(2.0);
-  
-  // Physics forces
+
+  // Physics forces — calibrated to feel close to Obsidian's living layout.
   const [centerForce, setCenterForce] = useState(0); // start with no radial pull
-  const [repelForce, setRepelForce] = useState(-120);
+  const [repelForce, setRepelForce] = useState(-90);
   const [linkForce, setLinkForce] = useState(1);
-  const [linkDistance, setLinkDistance] = useState(60);
+  const [linkDistance, setLinkDistance] = useState(50);
+
+  // Tiny non-zero alpha keeps the layout breathing, like Obsidian's graph.
+  const IDLE_ALPHA_TARGET = 0.015;
 
   // Simpler drag behavior to avoid jumps/teleport
 
@@ -134,8 +138,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
       if (link) {
         link.strength(linkForce).distance(linkDistance);
       }
-      
-      // Restart simulation
+
+      fg.d3AlphaTarget(IDLE_ALPHA_TARGET);
       fg.d3ReheatSimulation();
     }
   }, [centerForce, repelForce, linkForce, linkDistance]);
@@ -158,12 +162,32 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
     }, 500);
   };
 
+  const resetGraph = useCallback(() => {
+    // "F5" behavior: rebuild the local graph from source data + reset camera.
+    setIsLoading(true);
+    setGraphData(buildLocalGraph(currentNote));
+    setIsLoading(false);
+    setResetNonce((n) => n + 1);
+  }, [buildLocalGraph, currentNote]);
+
+  useEffect(() => {
+    if (isLoading || graphData.nodes.length === 0) return;
+    const fg = graphRef.current;
+    if (!fg) return;
+    fg.resumeAnimation?.();
+    fg.d3AlphaTarget(0.08);
+    fg.zoomToFit(isFullscreen ? 900 : 600, isFullscreen ? 120 : 36);
+    const t = window.setTimeout(() => {
+      if (graphRef.current === fg) fg.d3AlphaTarget(IDLE_ALPHA_TARGET);
+    }, 900);
+    return () => window.clearTimeout(t);
+  }, [resetNonce, isLoading, graphData.nodes.length, isFullscreen]);
+
   const handleNodeDrag = (node: NodeObject<GraphNode>) => {
     if (!nodeDragResumedRef.current) {
       nodeDragResumedRef.current = true;
       graphRef.current?.resumeAnimation?.();
     }
-    // Keep the node under the cursor while re-heating the simulation for smoother motion
     node.fx = node.x;
     node.fy = node.y;
     if (graphRef.current) {
@@ -178,6 +202,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
     node.fy = undefined;
     if (graphRef.current) {
       const fg = graphRef.current;
+      // Brief settle phase, then relax to the idle baseline (instead of 0)
+      // so the simulation continues to breathe.
       fg.d3AlphaTarget(0.08);
       fg.d3ReheatSimulation();
       if (dragCooldownTimeout.current) {
@@ -185,7 +211,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
       }
       dragCooldownTimeout.current = window.setTimeout(() => {
         if (graphRef.current === fg) {
-          fg.d3AlphaTarget(0);
+          fg.d3AlphaTarget(IDLE_ALPHA_TARGET);
         }
         dragCooldownTimeout.current = null;
       }, 2000);
@@ -226,7 +252,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
       fg.d3AlphaTarget(0.15);
       alphaResetTimeoutRef.current = window.setTimeout(() => {
         if (graphRef.current === fg) {
-          fg.d3AlphaTarget(0);
+          // Settle back to the idle baseline so subtle drift continues.
+          fg.d3AlphaTarget(IDLE_ALPHA_TARGET);
         }
         alphaResetTimeoutRef.current = null;
       }, duration + 160);
@@ -251,9 +278,6 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
   useSmoothForceGraphZoom(graphRef, graphContainerRef, {
     minZoom: 0.25,
     maxZoom: 6,
-    sensitivity: 0.0012,
-    smoothing: 0.04,
-    momentum: 0.97,
     onZoomInteraction: resumeGraphAnimation,
   });
 
@@ -268,6 +292,15 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
         {/* Detachable Controls Arrow - appears on hover */}
         <div className="absolute -top-2 -right-2 opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300 z-50">
           <div className="flex items-center space-x-1 bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-1 border border-slate-300/80 dark:border-gray-700/50 shadow-sm">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={resetGraph}
+              className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white p-1 h-6 w-6 rounded-full"
+              title="Reset graph"
+            >
+              <Home className="w-3 h-3" />
+            </Button>
             <Button
               variant="ghost"
               size="sm"
@@ -430,7 +463,11 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                   if (node.id === currentNote) return '#ef4444';
                   return isLightGraph ? '#059669' : '#6366f1';
                 }}
-                nodeVal={(node: GraphNode) => node.id === currentNote ? nodeSize * 1.5 : nodeSize}
+                nodeVal={(node: GraphNode) => {
+                  const base = node.size ?? 6;
+                  const scaled = base * (nodeSize / 5) * (node.id === currentNote ? 1.5 : 1);
+                  return scaled * scaled;
+                }}
                 nodeLabel={(node: GraphNode) => node.title}
                 linkColor={() => (isLightGraph ? '#94a3b8' : '#4b5563')}
                 linkWidth={() => linkThickness}
@@ -439,14 +476,16 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                 onNodeDrag={handleNodeDrag}
                 onNodeDragEnd={handleNodeDragEnd}
                 onEngineStop={() => {
-                  graphRef.current?.pauseAnimation?.();
+                  // Keep the simulation idling so pan/zoom redraws stay
+                  // crisp; freezing causes stale frames during interactions.
+                  graphRef.current?.d3AlphaTarget(IDLE_ALPHA_TARGET);
                 }}
                 nodeCanvasObject={(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
                   const label = node.title;
                   const fontSize = 10 / globalScale;
-                  const radius = (node.id === currentNote ? nodeSize * 1.5 : nodeSize) / 2;
-                  
-                  // Draw node circle
+                  const base = node.size ?? 6;
+                  const radius = (base * (nodeSize / 5) * (node.id === currentNote ? 1.5 : 1)) / 2;
+
                   ctx.beginPath();
                   ctx.arc(node.x!, node.y!, radius, 0, 2 * Math.PI);
                   if (node.id === currentNote) {
@@ -455,10 +494,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                     ctx.fillStyle = isLightGraph ? '#059669' : '#6366f1';
                   }
                   ctx.fill();
-                  
-                  // Draw label when zoomed in enough
+
                   if (globalScale > textThreshold) {
-                    const padding = 4;
                     ctx.font = `${fontSize}px Inter, system-ui, sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
@@ -466,10 +503,10 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
                     ctx.fillText(label, node.x!, node.y! + radius + fontSize / 2 + 4);
                   }
                 }}
-                // Continuous simulation with higher damping for a calmer layout
-                cooldownTicks={0}
-                d3AlphaDecay={0.03}
-                d3VelocityDecay={0.3}
+                cooldownTicks={Infinity}
+                cooldownTime={Infinity}
+                d3AlphaDecay={0.0228}
+                d3VelocityDecay={0.4}
                 d3AlphaMin={0.001}
                 enablePanInteraction={true}
                 enableZoomInteraction={true}

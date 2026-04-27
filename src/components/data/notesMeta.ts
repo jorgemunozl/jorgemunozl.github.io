@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated on: 2026-04-24T21:45:31.372Z
+// Generated on: 2026-04-27T01:26:20.571Z
 
 import type { BlogPostMeta } from '@/types/notes';
 
@@ -8,7 +8,7 @@ export const blogPostsMeta: BlogPostMeta[] = [
     "id": "1",
     "title": "Physical AI And The Pi Models",
     "excerpt": "Physical AI is a new field of study that explores the relationship between physics and artificial intelligence. It is a interdisciplinary field that c...",
-    "uploadDate": "2026-04-24",
+    "uploadDate": "2026-04-27",
     "readTime": "1 min read",
     "fileName": "Physical AI and the pi models.md",
     "featured": true
