@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated on: 2026-04-24T21:45:31.372Z
+// Generated on: 2026-04-27T01:26:20.571Z
 
 import type { GraphData } from '@/utils/wikiLinks';
 
@@ -9,154 +9,154 @@ export const prebuiltGraphData: GraphData = {
       "id": "Physical AI And The Pi Models",
       "title": "Physical AI And The Pi Models",
       "group": 1,
-      "size": 10,
+      "size": 4,
       "color": "#A855F7"
     },
     {
       "id": "Neural Wave Functions And What To Do With Them",
       "title": "Neural Wave Functions And What To Do With Them",
       "group": 1,
-      "size": 54,
+      "size": 14.318914671611546,
       "color": "#A855F7"
     },
     {
       "id": "Quantum Chemistry units",
       "title": "Quantum Chemistry units",
       "group": 2,
-      "size": 14,
+      "size": 7.11126983722081,
       "color": "#9CA3AF"
     },
     {
       "id": "atomic number",
       "title": "atomic number",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     },
     {
       "id": "Fermi Dirac Statistics",
       "title": "Fermi Dirac Statistics",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     },
     {
       "id": "Kato Cusp Conditions",
       "title": "Kato Cusp Conditions",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     },
     {
       "id": "Variational Quantum Monte Carlo",
       "title": "Variational Quantum Monte Carlo",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     },
     {
       "id": "Metropolis algorithm",
       "title": "Metropolis algorithm",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     },
     {
       "id": "Fermi Net",
       "title": "Fermi Net",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     },
     {
       "id": "Recurrent Neural Network",
       "title": "Recurrent Neural Network",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     },
     {
       "id": "Long Short Memory",
       "title": "Long Short Memory",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     },
     {
       "id": "Transformer",
       "title": "Transformer",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     },
     {
       "id": "Transform Architecture",
       "title": "Transform Architecture",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     },
     {
       "id": "Attention mechanism",
       "title": "Attention mechanism",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     },
     {
       "id": "Self attention mechanism on one head",
       "title": "Self attention mechanism on one head",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     },
     {
       "id": "Multi-head attention",
       "title": "Multi-head attention",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     },
     {
       "id": "Psi Former Ansatz",
       "title": "Psi Former Ansatz",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     },
     {
       "id": "Jastrow Factor for si Former",
       "title": "Jastrow Factor for si Former",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     },
     {
       "id": "orbital for neural network fermi net",
       "title": "orbital for neural network fermi net",
       "group": 2,
-      "size": 14,
+      "size": 7.11126983722081,
       "color": "#9CA3AF"
     },
     {
       "id": "Jastrow Factor",
       "title": "Jastrow Factor",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     },
     {
       "id": "Rayleigh Quotient like Expectation Value",
       "title": "Rayleigh Quotient like Expectation Value",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     },
     {
       "id": "Kroenecker factored Approximate Curvature",
       "title": "Kroenecker factored Approximate Curvature",
       "group": 2,
-      "size": 12,
+      "size": 6.2,
       "color": "#9CA3AF"
     }
   ],

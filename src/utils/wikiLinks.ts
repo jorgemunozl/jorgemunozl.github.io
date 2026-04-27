@@ -203,10 +203,12 @@ export function buildGraphFromPosts(
     });
   });
 
-  // Update node sizes based on connection count
+  // Update node sizes using a sqrt(degree) curve so the visual area —
+  // not the radius — scales with degree, mirroring how Obsidian's graph
+  // emphasises hubs without dwarfing leaves.
   nodes.forEach(node => {
     const connectionCount = linkCounts.get(node.id) || 0;
-    node.size = Math.max(6, 10 + connectionCount * 2);
+    node.size = 4 + Math.sqrt(connectionCount) * 2.2;
   });
 
   return {
