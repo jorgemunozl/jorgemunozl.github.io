@@ -64,6 +64,7 @@ export const useSmoothForceGraphZoom = <
     momentum = 0.92,
     maxVelocity = 0.25,
     onZoomInteraction,
+    resetKey,
   } = options;
 
   const damping = Math.min(0.6, Math.max(0.01, dampingOverride ?? smoothing));
