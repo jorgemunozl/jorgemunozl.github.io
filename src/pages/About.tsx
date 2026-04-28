@@ -4,7 +4,6 @@ import RelativityFieldLines from '@/components/RelativityFieldLines';
 import TopControls from '@/components/TopControls';
 import Footer from '@/components/Footer';
 import { Sparkles, Calendar, FileText, Award, BadgeCheck, ChevronRight, Lightbulb } from 'lucide-react';
-import { aboutFacts } from '@/content/aboutFacts';
 
 const AboutPage = () => {
   const destinations = [
@@ -13,6 +12,12 @@ const AboutPage = () => {
       title: 'Timeline',
       description: 'Milestones, academic path, and projects — the full learning timeline.',
       icon: Calendar,
+    },
+    {
+      to: '/about/facts',
+      title: 'Some facts',
+      description: 'Short snapshots about me — with photos — that don’t belong in a CV line.',
+      icon: Lightbulb,
     },
     {
       to: '/about/awards',
@@ -78,65 +83,10 @@ const AboutPage = () => {
                   </div>
                 </a>
                 <p className="text-xs text-slate-500 dark:text-slate-400 sm:max-w-xs sm:text-left">
-                  CV opens in a new tab. Timeline, awards, and certifications each have their own page below.
+                  CV opens in a new tab. Timeline, facts, awards, and certifications each have their own page below.
                 </p>
               </div>
             </header>
-
-            <section aria-labelledby="about-facts-heading" className="space-y-8">
-              <header className="space-y-3 text-center">
-                <span className="section-eyebrow mx-auto inline-flex items-center gap-2">
-                  <Lightbulb className="h-4 w-4" />
-                  At a glance
-                </span>
-                <h2
-                  id="about-facts-heading"
-                  className="text-2xl font-semibold text-slate-900 dark:text-white sm:text-3xl"
-                >
-                  Some facts
-                </h2>
-                <p className="mx-auto max-w-xl text-sm text-slate-600 dark:text-slate-200/80">
-                  Tiny snapshots — the kind of things that don&apos;t fit neatly into a CV line.
-                </p>
-              </header>
-
-              <div className="grid gap-5 sm:grid-cols-2 lg:gap-6">
-                {aboutFacts.map((fact, index) => (
-                  <article
-                    key={fact.id}
-                    className={`group relative overflow-hidden rounded-3xl border border-slate-600/70 bg-white/70 shadow-md shadow-emerald-500/5 backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-emerald-500/35 hover:shadow-xl hover:shadow-emerald-500/10 dark:border-white/10 dark:bg-white/[0.06] dark:shadow-purple-500/5 dark:hover:border-purple-400/30 dark:hover:shadow-purple-500/15 ${
-                      index === 0 ? 'sm:col-span-2 lg:grid lg:grid-cols-2 lg:gap-0' : ''
-                    }`}
-                  >
-                    <div
-                      className={`relative overflow-hidden ${
-                        index === 0 ? 'lg:min-h-[220px]' : 'aspect-[16/10] sm:aspect-[5/3]'
-                      }`}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent opacity-60 transition duration-500 group-hover:opacity-80 dark:from-black/60" />
-                      <img
-                        src={fact.image}
-                        alt={fact.imageAlt}
-                        loading="lazy"
-                        className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
-                      />
-                    </div>
-                    <div
-                      className={`flex flex-col justify-center space-y-2 p-6 sm:p-7 ${
-                        index === 0 ? 'lg:py-8 lg:pr-8' : ''
-                      }`}
-                    >
-                      <h3 className="text-lg font-semibold text-slate-900 dark:text-white sm:text-xl">
-                        {fact.title}
-                      </h3>
-                      <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-200/85">
-                        {fact.body}
-                      </p>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
 
             <section aria-labelledby="about-sections-heading" className="space-y-6">
               <h2 id="about-sections-heading" className="text-center text-2xl font-semibold text-slate-900 dark:text-white">
