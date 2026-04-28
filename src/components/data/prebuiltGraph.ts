@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated on: 2026-04-27T01:26:20.571Z
+// Generated on: 2026-04-28T11:06:16.117Z
 
 import type { GraphData } from '@/utils/wikiLinks';
 
