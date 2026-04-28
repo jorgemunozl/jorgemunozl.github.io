@@ -195,17 +195,24 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     // "F5" behavior: reload graph data + reset camera.
     setIsLoading(true);
     setGraphData(cloneGraphData(prebuiltGraphData));
-    setIsLoading(false);
-    setResetNonce((n) => n + 1);
+    // Delay so the loading state change is processed and effects fire
+    setTimeout(() => {
+      setIsLoading(false);
+      setResetNonce((n) => n + 1);
+    }, 50);
   }, []);
 
   useEffect(() => {
     if (isLoading || graphData.nodes.length === 0) return;
     const fg = graphRef.current;
     if (!fg) return;
-    fg.resumeAnimation?.();
-    fg.d3AlphaTarget(0.08);
-    fg.zoomToFit(650, inline ? 20 : isFullscreen ? 120 : 36);
+    try {
+      fg.resumeAnimation?.();
+      fg.d3AlphaTarget(0.08);
+      fg.zoomToFit(650, inline ? 20 : isFullscreen ? 120 : 36);
+    } catch {
+      /* ignore zoom errors before the graph is fully laid out */
+    }
     const t = window.setTimeout(() => {
       if (graphRef.current === fg) fg.d3AlphaTarget(IDLE_ALPHA_TARGET);
     }, 900);
@@ -240,6 +247,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     minZoom: 0.25,
     maxZoom: 6,
     onZoomInteraction: resumeGraphAnimation,
+    resetKey: resetNonce,
   });
 
   // Enable middle-mouse panning (prevents browser auto-scroll)
@@ -305,9 +313,13 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     if (inline && !isLoading && graphData.nodes.length > 0 && graphRef.current) {
       // Wait a bit for the graph to stabilize, then fit to view with less padding for more zoom
       const timer = setTimeout(() => {
-        if (graphRef.current) {
-          graphRef.current.resumeAnimation?.();
-          graphRef.current.zoomToFit(400, 20); // Reduced padding from 50 to 20 for closer zoom
+        const g = graphRef.current;
+        if (!g) return;
+        try {
+          g.resumeAnimation?.();
+          g.zoomToFit(400, 20); // Reduced padding from 50 to 20 for closer zoom
+        } catch {
+          /* ignore */
         }
       }, 1000);
       return () => clearTimeout(timer);
@@ -529,12 +541,26 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 }}
                 nodeCanvasObject={(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
                   const label = node.title;
+                  const nx = node.x;
+                  const ny = node.y;
+
+                  if (
+                    typeof nx !== 'number' ||
+                    typeof ny !== 'number' ||
+                    !Number.isFinite(nx) ||
+                    !Number.isFinite(ny) ||
+                    !Number.isFinite(globalScale) ||
+                    globalScale <= 0
+                  ) {
+                    return;
+                  }
+
                   const fontSize = 10 / globalScale;
                   const base = node.size ?? 6;
                   const radius = (base * (nodeSize / 5)) / 2;
 
                   ctx.beginPath();
-                  ctx.arc(node.x!, node.y!, radius, 0, 2 * Math.PI);
+                  ctx.arc(nx, ny, radius, 0, 2 * Math.PI);
                   ctx.fillStyle = resolveNodeFill(node);
                   ctx.fill();
 
@@ -543,7 +569,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillStyle = isLightGraph ? '#1e293b' : '#e5e7eb';
-                    ctx.fillText(label, node.x!, node.y! + radius + fontSize / 2 + 4);
+                    ctx.fillText(label, nx, ny + radius + fontSize / 2 + 4);
                   }
                 }}
                 cooldownTicks={Infinity}
