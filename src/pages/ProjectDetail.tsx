@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { projects } from '@/components/data/projects';
 import { Card, CardContent } from '@/components/ui/card';
 import Footer from '@/components/Footer';
+import ProjectHeroMedia from '@/components/ProjectHeroMedia';
 
 const ProjectDetail = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -55,7 +56,15 @@ const ProjectDetail = () => {
                   </div>
                 </header>
 
-                {project.heroImage && (
+                {project.heroVideo ? (
+                  <ProjectHeroMedia
+                    variant="detail"
+                    src={project.heroVideo}
+                    poster={project.heroImage}
+                    label={project.imageAlt || project.title}
+                  />
+                ) : (
+                  project.heroImage && (
                   <figure className="overflow-hidden rounded-3xl border border-slate-600 bg-white/60 shadow-2xl shadow-emerald-500/10 backdrop-blur-sm dark:border-white/15 dark:bg-white/10 dark:shadow-purple-500/10">
                     <img
                       src={project.heroImage}
@@ -63,6 +72,7 @@ const ProjectDetail = () => {
                       className="h-72 w-full object-cover transition-transform duration-700 ease-out hover:scale-[1.02] md:h-96"
                     />
                   </figure>
+                  )
                 )}
 
                 {project.highlights && project.highlights.length > 0 && (
