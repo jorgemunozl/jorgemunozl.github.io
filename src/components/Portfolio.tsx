@@ -5,6 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { ExternalLink, Github } from 'lucide-react';
 import { projects } from '@/components/data/projects';
 import { useNavigate } from 'react-router-dom';
+import ProjectHeroMedia from '@/components/ProjectHeroMedia';
+import ArxivLogo from '@/components/icons/ArxivLogo';
 
 type PortfolioProps = {
   id?: string;
@@ -50,7 +52,15 @@ const Portfolio = ({ id = 'portfolio', showHeading = true }: PortfolioProps) => 
               onClick={() => handleCardActivate(project.id)}
               onKeyDown={(event) => handleCardKeyDown(event, project.id)}
             >
-              {project.heroImage && (
+              {project.heroVideo ? (
+                <ProjectHeroMedia
+                  variant="card"
+                  src={project.heroVideo}
+                  poster={project.heroImage}
+                  label={project.imageAlt || project.title}
+                />
+              ) : (
+                project.heroImage && (
                 <div className="relative h-44 overflow-hidden">
                   <img
                     src={project.heroImage}
@@ -59,6 +69,7 @@ const Portfolio = ({ id = 'portfolio', showHeading = true }: PortfolioProps) => 
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/30 via-transparent to-transparent" />
                 </div>
+                )
               )}
               <CardHeader className="pb-4">
                 <CardTitle className="text-xl text-foreground">{project.title}</CardTitle>
@@ -105,6 +116,22 @@ const Portfolio = ({ id = 'portfolio', showHeading = true }: PortfolioProps) => 
                       >
                         <Github className="w-4 h-4 mr-2" />
                         Repo
+                      </a>
+                    </Button>
+                  )}
+
+                  {project.paperPdf && (
+                    <Button variant="outline" size="sm" asChild>
+                      <a
+                        href={project.paperPdf}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(event) => event.stopPropagation()}
+                        onKeyDown={(event) => event.stopPropagation()}
+                        className="inline-flex items-center gap-1.5"
+                      >
+                        {project.showArxivLogo !== false && <ArxivLogo className="h-4 w-4 shrink-0" />}
+                        Paper
                       </a>
                     </Button>
                   )}
