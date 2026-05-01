@@ -13,6 +13,22 @@ const GraphPlaceholder = () => (
   />
 );
 
+class GraphErrorBoundary extends React.Component<
+  React.PropsWithChildren<{ fallback: React.ReactNode }>,
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+
+  static getDerivedStateFromError(): { hasError: boolean } {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) return this.props.fallback;
+    return this.props.children;
+  }
+}
+
 // Defer loading the ~500 KB graph chunk until the container scrolls near the viewport.
 function useInViewOnce<T extends Element>(rootMargin = '300px'): [React.RefObject<T>, boolean] {
   const ref = useRef<T>(null);
@@ -131,12 +147,23 @@ const Index = () => {
               <div className="lg:col-span-6" ref={graphSlotRef}>
                 {graphInView ? (
                   <Suspense fallback={<GraphPlaceholder />}>
-                    <GlobalGraphView
-                      isVisible={true}
-                      onClose={() => {}}
-                      onNodeClick={handleGraphNodeClick}
-                      inline={true}
-                    />
+                    <GraphErrorBoundary
+                      fallback={
+                        <div
+                          role="alert"
+                          className="flex min-h-[400px] w-full items-center justify-center rounded-lg border border-dashed border-slate-400/60 px-4 text-center text-sm text-slate-600 dark:border-white/20 dark:text-slate-300"
+                        >
+                          The knowledge graph could not be displayed. Try refreshing the page.
+                        </div>
+                      }
+                    >
+                      <GlobalGraphView
+                        isVisible={true}
+                        onClose={() => {}}
+                        onNodeClick={handleGraphNodeClick}
+                        inline={true}
+                      />
+                    </GraphErrorBoundary>
                   </Suspense>
                 ) : (
                   <GraphPlaceholder />

@@ -48,11 +48,25 @@ export const useSmoothScroll = () => {
     let isAnimating = false;
 
     const clampScroll = (value: number) => {
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (!Number.isFinite(value)) return window.scrollY;
+      const maxScroll = Math.max(
+        0,
+        document.documentElement.scrollHeight - window.innerHeight
+      );
+      if (!Number.isFinite(maxScroll)) return 0;
       return Math.max(0, Math.min(value, maxScroll));
     };
 
     const step = () => {
+      if (!Number.isFinite(currentScroll) || !Number.isFinite(targetScroll)) {
+        window.cancelAnimationFrame(animationFrame);
+        const y = window.scrollY;
+        currentScroll = Number.isFinite(y) ? y : 0;
+        targetScroll = currentScroll;
+        isAnimating = false;
+        return;
+      }
+
       const distance = targetScroll - currentScroll;
 
       if (Math.abs(distance) < FRAME_THRESHOLD) {
@@ -64,6 +78,12 @@ export const useSmoothScroll = () => {
       }
 
       currentScroll += distance * SMOOTHING_FACTOR;
+      if (!Number.isFinite(currentScroll)) {
+        window.cancelAnimationFrame(animationFrame);
+        currentScroll = targetScroll = window.scrollY;
+        isAnimating = false;
+        return;
+      }
       window.scrollTo(0, currentScroll);
       animationFrame = window.requestAnimationFrame(step);
     };
@@ -90,13 +110,17 @@ export const useSmoothScroll = () => {
       event.preventDefault();
 
       const delta = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? event.deltaY * 16 : event.deltaY;
-      targetScroll = clampScroll(targetScroll + delta);
+      const next = targetScroll + delta;
+      targetScroll = clampScroll(Number.isFinite(next) ? next : window.scrollY);
       startAnimation();
     };
 
     const syncScrollPositions = () => {
       if (!isAnimating) {
-        currentScroll = targetScroll = window.scrollY;
+        const y = window.scrollY;
+        if (Number.isFinite(y)) {
+          currentScroll = targetScroll = y;
+        }
       }
     };
 
