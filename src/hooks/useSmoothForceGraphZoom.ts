@@ -16,6 +16,8 @@ interface SmoothZoomOptions {
   maxVelocity?: number;
   /** e.g. resume canvas redraw after idle pause */
   onZoomInteraction?: () => void;
+  /** Key to trigger a reset of internal camera state from live graph values */
+  resetKey?: number;
 }
 
 export type ForceGraphInstance<
@@ -62,6 +64,7 @@ export const useSmoothForceGraphZoom = <
     momentum = 0.92,
     maxVelocity = 0.25,
     onZoomInteraction,
+    resetKey,
   } = options;
 
   const damping = Math.min(0.6, Math.max(0.01, dampingOverride ?? smoothing));
@@ -79,6 +82,18 @@ export const useSmoothForceGraphZoom = <
 
     const initialZoom = fg.zoom();
     const initialCenter = fg.centerAt();
+
+    if (
+      typeof initialZoom !== 'number' ||
+      !Number.isFinite(initialZoom) ||
+      !initialCenter ||
+      typeof initialCenter.x !== 'number' ||
+      typeof initialCenter.y !== 'number' ||
+      !Number.isFinite(initialCenter.x) ||
+      !Number.isFinite(initialCenter.y)
+    ) {
+      return;
+    }
 
     current.current = { k: initialZoom, x: initialCenter.x, y: initialCenter.y };
     target.current = { k: initialZoom, x: initialCenter.x, y: initialCenter.y };
@@ -125,6 +140,18 @@ export const useSmoothForceGraphZoom = <
         return;
       }
 
+      if (
+        !Number.isFinite(c.k) ||
+        !Number.isFinite(c.x) ||
+        !Number.isFinite(c.y) ||
+        !Number.isFinite(t.k) ||
+        !Number.isFinite(t.x) ||
+        !Number.isFinite(t.y)
+      ) {
+        isAnimating.current = false;
+        return;
+      }
+
       c.k += diffK * damping;
       c.x += diffX * damping;
       c.y += diffY * damping;
@@ -158,9 +185,19 @@ export const useSmoothForceGraphZoom = <
       if (now - lastWheelTimeRef.current > 250) {
         const liveZoom = fg.zoom();
         const liveCenter = fg.centerAt();
-        current.current = { k: liveZoom, x: liveCenter.x, y: liveCenter.y };
-        target.current = { k: liveZoom, x: liveCenter.x, y: liveCenter.y };
-        velocity.current = { k: 0, x: 0, y: 0 };
+        if (
+          typeof liveZoom === 'number' &&
+          Number.isFinite(liveZoom) &&
+          liveCenter &&
+          typeof liveCenter.x === 'number' &&
+          typeof liveCenter.y === 'number' &&
+          Number.isFinite(liveCenter.x) &&
+          Number.isFinite(liveCenter.y)
+        ) {
+          current.current = { k: liveZoom, x: liveCenter.x, y: liveCenter.y };
+          target.current = { k: liveZoom, x: liveCenter.x, y: liveCenter.y };
+          velocity.current = { k: 0, x: 0, y: 0 };
+        }
       }
       lastWheelTimeRef.current = now;
 
@@ -183,18 +220,31 @@ export const useSmoothForceGraphZoom = <
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
         const graphMouse = fg.screen2GraphCoords(mouseX, mouseY);
+        if (
+          !graphMouse ||
+          typeof graphMouse.x !== 'number' ||
+          typeof graphMouse.y !== 'number' ||
+          !Number.isFinite(graphMouse.x) ||
+          !Number.isFinite(graphMouse.y)
+        ) {
+          startAnimation();
+          return;
+        }
 
         const projectedTargetK = Math.max(
           minZoom,
           Math.min(maxZoom, target.current.k * (1 + velocity.current.k))
         );
-        const factorFromCurrent = projectedTargetK / current.current.k;
-        if (factorFromCurrent !== 0) {
-          const base = current.current;
-          target.current.x =
-            base.x + (graphMouse.x - base.x) * (1 - 1 / factorFromCurrent);
-          target.current.y =
-            base.y + (graphMouse.y - base.y) * (1 - 1 / factorFromCurrent);
+        const ck = current.current.k;
+        if (ck > 1e-6 && Number.isFinite(projectedTargetK)) {
+          const factorFromCurrent = projectedTargetK / ck;
+          if (Number.isFinite(factorFromCurrent) && factorFromCurrent !== 0) {
+            const base = current.current;
+            target.current.x =
+              base.x + (graphMouse.x - base.x) * (1 - 1 / factorFromCurrent);
+            target.current.y =
+              base.y + (graphMouse.y - base.y) * (1 - 1 / factorFromCurrent);
+          }
         }
       }
 
@@ -227,4 +277,40 @@ export const useSmoothForceGraphZoom = <
       isAnimating.current = false;
     };
   }, [graphRef, containerRef, damping, sensitivity, momentum, maxVelocity, minZoom, maxZoom, onZoomInteraction]);
+
+  // Handle external reset: re-sync internal camera state from live graph values
+  // so that smooth zoom doesn't override the reset on the next animation frame.
+  const lastResetKey = useRef<number | undefined>(undefined);
+  useEffect(() => {
+    if (typeof resetKey === 'undefined') return;
+    if (lastResetKey.current === resetKey) return;
+    lastResetKey.current = resetKey;
+
+    const fg = graphRef.current;
+    if (!fg) return;
+
+    // Stop any ongoing animation to prevent fighting with the reset
+    if (reqAnimFrame.current) {
+      cancelAnimationFrame(reqAnimFrame.current);
+      reqAnimFrame.current = undefined;
+    }
+    isAnimating.current = false;
+
+    // Re-sync internal state from the live graph camera (after zoomToFit has been called)
+    const liveZoom = fg.zoom();
+    const liveCenter = fg.centerAt();
+    if (
+      typeof liveZoom === 'number' &&
+      Number.isFinite(liveZoom) &&
+      liveCenter &&
+      typeof liveCenter.x === 'number' &&
+      typeof liveCenter.y === 'number' &&
+      Number.isFinite(liveCenter.x) &&
+      Number.isFinite(liveCenter.y)
+    ) {
+      current.current = { k: liveZoom, x: liveCenter.x, y: liveCenter.y };
+      target.current = { k: liveZoom, x: liveCenter.x, y: liveCenter.y };
+      velocity.current = { k: 0, x: 0, y: 0 };
+    }
+  }, [resetKey, graphRef]);
 };

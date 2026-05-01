@@ -10,6 +10,11 @@ export type Project = {
   technologies: string[];
   link?: string;
   repo?: string;
+  /** Root-relative PDF under public/pdfs/, e.g. `/pdfs/my-paper.pdf` */
+  paperPdf?: string;
+  /** When false, hide the inline arXiv logo next to the Paper button label. Defaults to true. */
+  showArxivLogo?: boolean;
+  heroVideo?: string;
   heroImage?: string;
   imageAlt?: string;
   highlights?: string[];
@@ -25,6 +30,9 @@ export const projects: Project[] = [
     technologies: ['Quantum Mechanics', 'Pytorch'],
     link: 'https://github.com/jorgemunozl',
     repo: 'https://github.com/jorgemunozl',
+    paperPdf: '/pdfs/paper-transformers.pdf',
+    showArxivLogo: true,
+    heroVideo: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
     heroImage: '/images/project-university.svg',
     imageAlt: 'Illustration of a physics-inspired transformer wavefunction landscape',
     highlights: [
@@ -58,6 +66,8 @@ export const projects: Project[] = [
     technologies: ['Lora', 'FastAPI', 'AWS EC2'],
     link: 'https://github.com/jorgemunozl',
     repo: 'git@github.com:jorgemunozl/vllm.git',
+    paperPdf: '/pdfs/paper-flowcharts.pdf',
+    showArxivLogo: true,
     heroImage: '/images/project-external.svg',
     imageAlt: 'Diagram showing LoRA tuning nodes connected to API specifications',
     highlights: [

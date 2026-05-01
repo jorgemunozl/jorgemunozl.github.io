@@ -195,17 +195,24 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     // "F5" behavior: reload graph data + reset camera.
     setIsLoading(true);
     setGraphData(cloneGraphData(prebuiltGraphData));
-    setIsLoading(false);
-    setResetNonce((n) => n + 1);
+    // Delay so the loading state change is processed and effects fire
+    setTimeout(() => {
+      setIsLoading(false);
+      setResetNonce((n) => n + 1);
+    }, 50);
   }, []);
 
   useEffect(() => {
     if (isLoading || graphData.nodes.length === 0) return;
     const fg = graphRef.current;
     if (!fg) return;
-    fg.resumeAnimation?.();
-    fg.d3AlphaTarget(0.08);
-    fg.zoomToFit(650, inline ? 20 : isFullscreen ? 120 : 36);
+    try {
+      fg.resumeAnimation?.();
+      fg.d3AlphaTarget(0.08);
+      fg.zoomToFit(650, inline ? 20 : isFullscreen ? 120 : 36);
+    } catch {
+      /* ignore zoom errors before the graph is fully laid out */
+    }
     const t = window.setTimeout(() => {
       if (graphRef.current === fg) fg.d3AlphaTarget(IDLE_ALPHA_TARGET);
     }, 900);
@@ -240,6 +247,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     minZoom: 0.25,
     maxZoom: 6,
     onZoomInteraction: resumeGraphAnimation,
+    resetKey: resetNonce,
   });
 
   // Enable middle-mouse panning (prevents browser auto-scroll)
@@ -305,9 +313,13 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     if (inline && !isLoading && graphData.nodes.length > 0 && graphRef.current) {
       // Wait a bit for the graph to stabilize, then fit to view with less padding for more zoom
       const timer = setTimeout(() => {
-        if (graphRef.current) {
-          graphRef.current.resumeAnimation?.();
-          graphRef.current.zoomToFit(400, 20); // Reduced padding from 50 to 20 for closer zoom
+        const g = graphRef.current;
+        if (!g) return;
+        try {
+          g.resumeAnimation?.();
+          g.zoomToFit(400, 20); // Reduced padding from 50 to 20 for closer zoom
+        } catch {
+          /* ignore */
         }
       }, 1000);
       return () => clearTimeout(timer);
@@ -326,12 +338,12 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     <div className={containerClasses}>
       <Card
         className={cn(
-          'group graph-card-light card-hover-glow overflow-hidden rounded-lg shadow-sm',
+          'group graph-card-light card-hover-glow overflow-hidden rounded-xl shadow-lg backdrop-blur-md',
           inline
-            ? '!border-2 !border-slate-400 dark:!border-white/25'
-            : 'border border-slate-300/80 dark:border-gray-700/30',
+            ? '!border-2 !border-slate-300/50 dark:!border-white/20 bg-white/70 dark:bg-gray-900/70'
+            : 'border border-slate-200/60 dark:border-gray-700/40 bg-white/80 dark:bg-gray-900/80',
           inline && 'w-full',
-          isFullscreen && 'h-full max-w-none w-full',
+          isFullscreen && 'h-full max-w-none w-full bg-black/85 dark:bg-black/85',
           showControls ? (isFullscreen ? 'h-full' : 'h-auto') : isFullscreen ? 'h-full' : undefined
         )}
         style={!isFullscreen && !inline ? { width: dimensions.width } : undefined}
@@ -339,7 +351,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
         
         {/* Detachable Controls Arrow - appears on hover (hide close button if inline) */}
         <div className="absolute -top-2 -right-2 opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300 z-50">
-          <div className="flex items-center space-x-1 bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-1 border border-slate-300/80 dark:border-gray-700/50 shadow-sm">
+          <div className="flex items-center space-x-1 bg-white/90 dark:bg-gray-800/80 backdrop-blur-md rounded-full px-2 py-1 border border-slate-200/60 dark:border-gray-600/40 shadow-md">
             <Button
               variant="ghost"
               size="sm"
@@ -374,7 +386,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
 
         {/* Graph Controls - floating overlay when visible */}
         {showControls && (
-          <div className="absolute top-4 left-4 right-4 p-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg border border-slate-300/80 dark:border-gray-700/50 shadow-lg space-y-2 z-40">
+          <div className="absolute top-4 left-4 right-4 p-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-xl border border-slate-200/60 dark:border-gray-600/40 shadow-xl space-y-2 z-40">
             <div className="space-y-1">
               <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-600 dark:text-gray-400">Node Size</span>
@@ -494,6 +506,30 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
             className={`relative overflow-hidden touch-none overscroll-contain bg-transparent ${isFullscreen || inline ? 'h-full' : ''}`}
             style={!isFullscreen && !inline ? { height: dimensions.height } : inline ? { height: dimensions.height } : undefined}
           >
+            {/* Decorative backdrop behind the canvas (stays under nodes/links) */}
+            <div
+              className={cn(
+                'pointer-events-none absolute inset-0 z-0',
+                isLightGraph
+                  ? 'bg-[radial-gradient(ellipse_85%_55%_at_50%_-12%,rgba(16,185,129,0.16),transparent_58%),radial-gradient(ellipse_50%_48%_at_98%_92%,rgba(59,130,246,0.11),transparent_52%),radial-gradient(ellipse_42%_40%_at_4%_88%,rgba(20,184,166,0.10),transparent_48%),linear-gradient(168deg,rgba(248,250,252,0.97)_0%,rgba(236,253,245,0.65)_42%,rgba(240,253,250,0.5)_100%)]'
+                  : 'bg-[radial-gradient(ellipse_78%_48%_at_50%_-8%,rgba(139,92,246,0.28),transparent_56%),radial-gradient(ellipse_52%_42%_at_96%_96%,rgba(59,130,246,0.18),transparent_50%),radial-gradient(ellipse_48%_38%_at_6%_45%,rgba(236,72,153,0.12),transparent_46%),radial-gradient(ellipse_65%_45%_at_50%_110%,rgba(14,165,233,0.10),transparent_55%),linear-gradient(185deg,rgba(15,23,42,0.98)_0%,rgba(49,46,129,0.45)_55%,rgba(15,23,42,0.92)_100%)]'
+              )}
+              aria-hidden
+            />
+            <div
+              className={cn(
+                'pointer-events-none absolute inset-0 z-0',
+                isLightGraph ? 'opacity-[0.5]' : 'opacity-[0.28]'
+              )}
+              style={{
+                backgroundImage: isLightGraph
+                  ? 'radial-gradient(rgba(15, 118, 110, 0.09) 1.5px, transparent 1.5px)'
+                  : 'radial-gradient(rgba(196, 181, 253, 0.16) 1.5px, transparent 1.5px)',
+                backgroundSize: '22px 22px',
+              }}
+              aria-hidden
+            />
+            <div className="relative z-[1] h-full w-full min-h-0">
             {isLoading ? (
               <div className="flex items-center justify-center h-full bg-transparent">
                 <div className="text-gray-500 text-xs">Loading...</div>
@@ -529,12 +565,26 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 }}
                 nodeCanvasObject={(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => {
                   const label = node.title;
+                  const nx = node.x;
+                  const ny = node.y;
+
+                  if (
+                    typeof nx !== 'number' ||
+                    typeof ny !== 'number' ||
+                    !Number.isFinite(nx) ||
+                    !Number.isFinite(ny) ||
+                    !Number.isFinite(globalScale) ||
+                    globalScale <= 0
+                  ) {
+                    return;
+                  }
+
                   const fontSize = 10 / globalScale;
                   const base = node.size ?? 6;
                   const radius = (base * (nodeSize / 5)) / 2;
 
                   ctx.beginPath();
-                  ctx.arc(node.x!, node.y!, radius, 0, 2 * Math.PI);
+                  ctx.arc(nx, ny, radius, 0, 2 * Math.PI);
                   ctx.fillStyle = resolveNodeFill(node);
                   ctx.fill();
 
@@ -543,7 +593,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillStyle = isLightGraph ? '#1e293b' : '#e5e7eb';
-                    ctx.fillText(label, node.x!, node.y! + radius + fontSize / 2 + 4);
+                    ctx.fillText(label, nx, ny + radius + fontSize / 2 + 4);
                   }
                 }}
                 cooldownTicks={Infinity}
@@ -557,6 +607,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
                 maxZoom={6}
               />
             )}
+            </div>
           </div>
         </CardContent>
       </Card>
