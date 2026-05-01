@@ -279,6 +279,8 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
     minZoom: 0.25,
     maxZoom: 6,
     onZoomInteraction: resumeGraphAnimation,
+    resetKey: resetNonce,
+    attachKey: isVisible ? 1 : 0,
   });
 
   if (!isVisible) return null;

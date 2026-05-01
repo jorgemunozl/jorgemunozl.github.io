@@ -248,6 +248,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     maxZoom: 6,
     onZoomInteraction: resumeGraphAnimation,
     resetKey: resetNonce,
+    attachKey: isVisible ? 1 : 0,
   });
 
   // Enable middle-mouse panning (prevents browser auto-scroll)
