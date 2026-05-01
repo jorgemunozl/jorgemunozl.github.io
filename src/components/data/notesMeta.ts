@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated on: 2026-05-01T03:24:00.981Z
+// Generated on: 2026-05-01T03:24:55.340Z
 
 import type { BlogPostMeta } from '@/types/notes';
 
