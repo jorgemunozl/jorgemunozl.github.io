@@ -9,16 +9,17 @@ const PortfolioPage = () => {
     <div className="page-shell">
       <RelativityFieldLines />
 
-      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-0 hidden dark:block">
+      {/* Simplified background glow - no blur for better performance */}
+      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-0 hidden opacity-40 dark:block">
         <div
-          className="w-96 h-96 rounded-full blur-3xl"
-          style={{ background: 'radial-gradient(circle, #030d630c, #47020209, transparent)' }}
+          className="w-96 h-96 rounded-full"
+          style={{ background: 'radial-gradient(circle, #030d6315, #47020210, transparent)' }}
         ></div>
       </div>
-      <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-0 hidden dark:block">
+      <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-0 hidden opacity-40 dark:block">
         <div
-          className="w-48 h-48 rounded-full blur-2xl"
-          style={{ background: 'radial-gradient(circle, #9900000c, #01039b0c, #b902a005)' }}
+          className="w-48 h-48 rounded-full"
+          style={{ background: 'radial-gradient(circle, #99000012, #01039b12, #b902a010)' }}
         ></div>
       </div>
 

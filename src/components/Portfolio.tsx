@@ -45,7 +45,7 @@ const Portfolio = ({ id = 'portfolio', showHeading = true }: PortfolioProps) => 
           {projects.map((project) => (
             <Card
               key={project.id}
-              className="group bg-card/30 border-black/70 dark:border-purple-800/60 backdrop-blur-sm hover:shadow-lg hover:shadow-black/15 dark:hover:shadow-purple-500/20 transition-shadow duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:ring-foreground/70 overflow-hidden"
+              className="group bg-card/50 border-black/70 dark:border-purple-800/60 hover:shadow-lg hover:shadow-black/15 dark:hover:shadow-purple-500/20 transition-shadow duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:ring-foreground/70 overflow-hidden"
               tabIndex={0}
               role="link"
               aria-label={`View project ${project.title}`}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
@@ -12,6 +12,28 @@ function usePrefersReducedMotion() {
   }, []);
 
   return reduced;
+}
+
+function useIsVisible(threshold = 0.1) {
+  const [isVisible, setIsVisible] = useState(true);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold, rootMargin: '50px' }
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [threshold]);
+
+  return { ref, isVisible };
 }
 
 /** Slightly slower SMIL cycles when animation is on = fewer updates per second. */
@@ -33,10 +55,11 @@ const DUR = {
 
 const RelativityFieldLines = () => {
   const prefersReducedMotion = usePrefersReducedMotion();
-  const motionOn = !prefersReducedMotion;
+  const { ref, isVisible } = useIsVisible(0);
+  const motionOn = !prefersReducedMotion && isVisible;
 
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none opacity-50">
+    <div ref={ref} className="fixed inset-0 z-0 pointer-events-none opacity-50">
       <svg
         className="w-full h-full"
         xmlns="http://www.w3.org/2000/svg"
@@ -160,24 +183,7 @@ const RelativityFieldLines = () => {
             )}
           </path>
 
-          <path
-            d="M150,0 Q180,200 160,400 Q140,600 170,800"
-            stroke="url(#fieldGradient)"
-            strokeWidth="1"
-            fill="none"
-          >
-            {motionOn && (
-              <animate
-                attributeName="d"
-                values="M150,0 Q180,200 160,400 Q140,600 170,800;
-                      M160,0 Q190,200 170,400 Q150,600 180,800;
-                      M150,0 Q180,200 160,400 Q140,600 170,800"
-                dur={DUR.v1}
-                repeatCount="indefinite"
-              />
-            )}
-          </path>
-
+          {/* Reduced from 7 to 4 vertical paths for performance */}
           <path
             d="M300,0 Q340,200 320,400 Q300,600 330,800"
             stroke="url(#fieldGradient)"
@@ -197,24 +203,6 @@ const RelativityFieldLines = () => {
           </path>
 
           <path
-            d="M500,0 Q560,200 520,400 Q480,600 540,800"
-            stroke="url(#fieldGradient)"
-            strokeWidth="1.5"
-            fill="none"
-          >
-            {motionOn && (
-              <animate
-                attributeName="d"
-                values="M500,0 Q560,200 520,400 Q480,600 540,800;
-                      M490,0 Q550,200 510,400 Q470,600 530,800;
-                      M500,0 Q560,200 520,400 Q480,600 540,800"
-                dur={DUR.v3}
-                repeatCount="indefinite"
-              />
-            )}
-          </path>
-
-          <path
             d="M700,0 Q780,200 720,400 Q660,600 760,800"
             stroke="url(#fieldGradient)"
             strokeWidth="2"
@@ -227,24 +215,6 @@ const RelativityFieldLines = () => {
                       M710,0 Q790,200 730,400 Q670,600 770,800;
                       M700,0 Q780,200 720,400 Q660,600 760,800"
                 dur={DUR.v4}
-                repeatCount="indefinite"
-              />
-            )}
-          </path>
-
-          <path
-            d="M900,0 Q1000,200 920,400 Q840,600 980,800"
-            stroke="url(#fieldGradient)"
-            strokeWidth="1.5"
-            fill="none"
-          >
-            {motionOn && (
-              <animate
-                attributeName="d"
-                values="M900,0 Q1000,200 920,400 Q840,600 980,800;
-                      M890,0 Q990,200 910,400 Q830,600 970,800;
-                      M900,0 Q1000,200 920,400 Q840,600 980,800"
-                dur={DUR.v5}
                 repeatCount="indefinite"
               />
             )}

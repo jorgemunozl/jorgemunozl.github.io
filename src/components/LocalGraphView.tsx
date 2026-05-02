@@ -293,7 +293,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
         
         {/* Detachable Controls Arrow - appears on hover */}
         <div className="absolute -top-2 -right-2 opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300 z-50">
-          <div className="flex items-center space-x-1 bg-white/95 dark:bg-gray-800/90 backdrop-blur-sm rounded-full px-2 py-1 border border-slate-300/80 dark:border-gray-700/50 shadow-sm">
+          <div className="flex items-center space-x-1 bg-white/95 dark:bg-gray-800/90 rounded-full px-2 py-1 border border-slate-300/80 dark:border-gray-700/50 shadow-sm">
             <Button
               variant="ghost"
               size="sm"
@@ -326,7 +326,7 @@ const LocalGraphView: React.FC<LocalGraphViewProps> = ({
 
         {/* Graph Controls - floating overlay when visible */}
         {showControls && (
-          <div className="absolute top-4 left-4 right-4 p-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg border border-slate-300/80 dark:border-gray-700/50 shadow-lg space-y-2 z-40">
+          <div className="absolute top-4 left-4 right-4 p-3 bg-white/95 dark:bg-gray-800/95 rounded-lg border border-slate-300/80 dark:border-gray-700/50 shadow-lg space-y-2 z-40">
             <div className="space-y-1">
               <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-600 dark:text-gray-400">Node Size</span>

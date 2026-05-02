@@ -22,7 +22,7 @@ const BlogPreview = () => {
           {recentPosts.map((post) => (
             <Card
               key={post.id}
-              className="group relative overflow-hidden border border-slate-600 bg-white/40 backdrop-blur-lg shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_60px_-30px_rgba(15,23,42,0.45)] dark:border-white/10 dark:bg-slate-9010/10 dark:hover:shadow-[0_28px_60px_-28px_rgba(139,92,246,0.45)]"
+              className="group relative overflow-hidden border border-slate-600 bg-white/80 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_60px_-30px_rgba(15,23,42,0.45)] dark:border-white/10 dark:bg-slate-900/70 dark:hover:shadow-[0_28px_60px_-28px_rgba(139,92,246,0.45)]"
             >
               <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100">
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/10 via-transparent to-blue-500/10 dark:from-purple-500/15 dark:via-transparent dark:to-indigo-500/20" />
