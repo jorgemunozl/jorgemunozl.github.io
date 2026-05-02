@@ -87,12 +87,12 @@ const Index = () => {
       {/* Relativity field lines background */}
       <RelativityFieldLines />
       
-      {/* Lightbulb glow effect - fixed to viewport bottom (dark mode only) */}
-      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-0 hidden dark:block">
-        <div className="w-96 h-96 rounded-full blur-3xl" style={{background: 'radial-gradient(circle, #030d630c, #47020209, transparent)'}}></div>
+      {/* Simplified background glow - no blur for better performance */}
+      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-0 hidden opacity-40 dark:block">
+        <div className="w-96 h-96 rounded-full" style={{background: 'radial-gradient(circle, #030d6315, #47020210, transparent)'}}></div>
       </div>
-      <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-0 hidden dark:block">
-        <div className="w-48 h-48 rounded-full blur-2xl" style={{background: 'radial-gradient(circle, #9900000c, #01039b0c, #b902a005)'}}></div>
+      <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-0 hidden opacity-40 dark:block">
+        <div className="w-48 h-48 rounded-full" style={{background: 'radial-gradient(circle, #99000012, #01039b12, #b902a010)'}}></div>
       </div>
       
       <div className="page-surface">
@@ -113,7 +113,7 @@ const Index = () => {
                 {leftPosts.map((post) => (
                   <Card
                     key={post.id}
-                    className="group cursor-pointer border border-slate-600 bg-white/40 backdrop-blur-sm shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/10 dark:bg-slate-900/10"
+                    className="group cursor-pointer border border-slate-600 bg-white/80 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/10 dark:bg-slate-900/70"
                     onClick={() => navigate(`/notes/${post.id}`)}
                   >
                     <CardHeader className="pb-2">
@@ -175,7 +175,7 @@ const Index = () => {
                 {rightPosts.map((post) => (
                   <Card
                     key={post.id}
-                    className="group cursor-pointer border border-slate-600 bg-white/40 backdrop-blur-sm shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/10 dark:bg-slate-900/10"
+                    className="group cursor-pointer border border-slate-600 bg-white/80 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md dark:border-white/10 dark:bg-slate-900/70"
                     onClick={() => navigate(`/notes/${post.id}`)}
                   >
                     <CardHeader className="pb-2">

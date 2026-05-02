@@ -52,19 +52,20 @@ const AdditionalContents = () => {
   return (
     <div className="page-shell">
       <RelativityFieldLines />
+      {/* Simplified background glows - no blur for better performance */}
       {/* Dark mode glows */}
-      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-0 hidden dark:block pointer-events-none">
-        <div className="w-96 h-96 rounded-full blur-3xl" style={{background: 'radial-gradient(circle, #030d630c, #47020209, transparent)'}}></div>
+      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-0 hidden opacity-40 dark:block pointer-events-none">
+        <div className="w-96 h-96 rounded-full" style={{background: 'radial-gradient(circle, #030d6315, #47020210, transparent)'}}></div>
       </div>
-      <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-0 hidden dark:block pointer-events-none">
-        <div className="w-48 h-48 rounded-full blur-2xl" style={{background: 'radial-gradient(circle, #9900000c, #01039b0c, #b902a005)'}}></div>
+      <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-0 hidden opacity-40 dark:block pointer-events-none">
+        <div className="w-48 h-48 rounded-full" style={{background: 'radial-gradient(circle, #99000012, #01039b12, #b902a010)'}}></div>
       </div>
       {/* Light mode glows */}
-      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/3 z-0 block dark:hidden pointer-events-none">
-        <div className="w-[34rem] h-[34rem] rounded-full blur-3xl opacity-60" style={{background: 'radial-gradient(circle, rgba(139,92,246,0.12), rgba(59,130,246,0.08), transparent)'}}></div>
+      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/3 z-0 block opacity-40 dark:hidden pointer-events-none">
+        <div className="w-[34rem] h-[34rem] rounded-full" style={{background: 'radial-gradient(circle, rgba(139,92,246,0.15), rgba(59,130,246,0.10), transparent)'}}></div>
       </div>
-      <div className="fixed top-16 right-10 z-0 block dark:hidden pointer-events-none">
-        <div className="w-64 h-64 rounded-full blur-2xl opacity-70" style={{background: 'radial-gradient(circle, rgba(253,186,116,0.12), rgba(236,72,153,0.08), transparent)'}}></div>
+      <div className="fixed top-16 right-10 z-0 block opacity-40 dark:hidden pointer-events-none">
+        <div className="w-64 h-64 rounded-full" style={{background: 'radial-gradient(circle, rgba(253,186,116,0.15), rgba(236,72,153,0.10), transparent)'}}></div>
       </div>
       
       <div className="page-surface">
@@ -88,7 +89,7 @@ const AdditionalContents = () => {
                 {pdfDocuments.map((document) => (
                   <Card 
                     key={document.id} 
-                    className="group relative bg-card/20 border-0 backdrop-blur-sm hover:bg-card/40 transition-all duration-500 overflow-hidden flex flex-col card-hover-glow"
+                    className="group relative bg-card/40 border-0 hover:bg-card/60 transition-all duration-500 overflow-hidden flex flex-col card-hover-glow"
                   >
                     {/* Neon glow effect on hover */}
                     <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none">

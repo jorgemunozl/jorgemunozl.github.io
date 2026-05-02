@@ -66,9 +66,9 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     graphRef.current?.resumeAnimation?.();
   }, []);
 
-  // Keep a tiny non-zero alphaTarget so the layout always breathes,
-  // matching Obsidian's continuously alive feel.
-  const IDLE_ALPHA_TARGET = 0.015;
+  // Set alpha target to 0 so simulation pauses when settled.
+  // This saves CPU when the graph is not being interacted with.
+  const IDLE_ALPHA_TARGET = 0;
 
   useEffect(() => {
     if (isVisible) {
@@ -339,7 +339,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
     <div className={containerClasses}>
       <Card
         className={cn(
-          'group graph-card-light card-hover-glow overflow-hidden rounded-xl shadow-lg backdrop-blur-md',
+          'group graph-card-light card-hover-glow overflow-hidden rounded-xl shadow-lg',
           inline
             ? '!border-2 !border-slate-300/50 dark:!border-white/20 bg-white/70 dark:bg-gray-900/70'
             : 'border border-slate-200/60 dark:border-gray-700/40 bg-white/80 dark:bg-gray-900/80',
@@ -352,7 +352,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
         
         {/* Detachable Controls Arrow - appears on hover (hide close button if inline) */}
         <div className="absolute -top-2 -right-2 opacity-0 hover:opacity-100 group-hover:opacity-100 transition-opacity duration-300 z-50">
-          <div className="flex items-center space-x-1 bg-white/90 dark:bg-gray-800/80 backdrop-blur-md rounded-full px-2 py-1 border border-slate-200/60 dark:border-gray-600/40 shadow-md">
+          <div className="flex items-center space-x-1 bg-white/95 dark:bg-gray-800/90 rounded-full px-2 py-1 border border-slate-200/60 dark:border-gray-600/40 shadow-md">
             <Button
               variant="ghost"
               size="sm"
@@ -387,7 +387,7 @@ const GlobalGraphView: React.FC<GlobalGraphViewProps> = ({
 
         {/* Graph Controls - floating overlay when visible */}
         {showControls && (
-          <div className="absolute top-4 left-4 right-4 p-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-xl border border-slate-200/60 dark:border-gray-600/40 shadow-xl space-y-2 z-40">
+          <div className="absolute top-4 left-4 right-4 p-3 bg-white/95 dark:bg-gray-800/95 rounded-xl border border-slate-200/60 dark:border-gray-600/40 shadow-xl space-y-2 z-40">
             <div className="space-y-1">
               <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-600 dark:text-gray-400">Node Size</span>

@@ -13,7 +13,7 @@ const ProjectHeroMedia = ({ variant, src, poster, label }: ProjectHeroMediaProps
   const containerClassName =
     variant === 'card'
       ? 'relative h-44 overflow-hidden'
-      : 'overflow-hidden rounded-3xl border border-slate-600 bg-white/60 shadow-2xl shadow-emerald-500/10 backdrop-blur-sm dark:border-white/15 dark:bg-white/10 dark:shadow-purple-500/10';
+      : 'overflow-hidden rounded-3xl border border-slate-600 bg-white/80 shadow-2xl shadow-emerald-500/10 dark:border-white/15 dark:bg-slate-900/70 dark:shadow-purple-500/10';
 
   const videoClassName =
     variant === 'card'

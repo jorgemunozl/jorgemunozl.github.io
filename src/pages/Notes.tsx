@@ -353,7 +353,7 @@ const Notes = () => {
               </div>
             )}
 
-            <Card className="bg-card/40 border-border/40 backdrop-blur-sm shadow-lg shadow-black/5 dark:shadow-purple-500/10">
+            <Card className="bg-card/60 border-border/40 shadow-lg shadow-black/5 dark:shadow-purple-500/10">
               <CardContent className="p-3.5 md:p-4">
                 <div className="prose md-scale-markdown dark:prose-invert max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-pre:bg-card prose-pre:border prose-pre:border-border">
                   {selectedContentReady ? (
@@ -381,7 +381,7 @@ const Notes = () => {
             {(() => {
               const relatedNotes = relatedTitlesFromGraph(prebuiltGraphData, selectedPost.title);
               return relatedNotes.length > 0 ? (
-                <Card className="bg-card/30 border-border/50 backdrop-blur-sm mt-3">
+                <Card className="bg-card/50 border-border/50 mt-3">
                   <CardHeader className="px-4 py-2.5 sm:px-5">
                     <h3 className="text-base font-semibold text-foreground">Related Notes</h3>
                   </CardHeader>
@@ -424,12 +424,12 @@ const Notes = () => {
   return (
     <div className="min-h-screen relative overflow-hidden bg-background gradient-bg flex flex-col">
       <RelativityFieldLines />
-      {/* Light-mode decorative glows for list view */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 translate-y-1/3 z-0 pointer-events-none block dark:hidden">
-        <div className="w-[36rem] h-[36rem] rounded-full blur-3xl opacity-60" style={{background:'radial-gradient(circle, rgba(139,92,246,0.10), rgba(59,130,246,0.06), transparent)'}}></div>
+      {/* Simplified light-mode decorative glows - no blur for better performance */}
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 translate-y-1/3 z-0 pointer-events-none block opacity-40 dark:hidden">
+        <div className="w-[36rem] h-[36rem] rounded-full" style={{background:'radial-gradient(circle, rgba(139,92,246,0.15), rgba(59,130,246,0.10), transparent)'}}></div>
       </div>
-      <div className="fixed top-28 left-8 z-0 pointer-events-none block dark:hidden">
-        <div className="w-56 h-56 rounded-full blur-2xl opacity-70" style={{background:'radial-gradient(circle, rgba(56,189,248,0.10), rgba(147,51,234,0.08), transparent)'}}></div>
+      <div className="fixed top-28 left-8 z-0 pointer-events-none block opacity-40 dark:hidden">
+        <div className="w-56 h-56 rounded-full" style={{background:'radial-gradient(circle, rgba(56,189,248,0.15), rgba(147,51,234,0.12), transparent)'}}></div>
       </div>
       <div className="relative z-10 flex-1">
         <TopControls title="Notes" />
@@ -475,7 +475,7 @@ const Notes = () => {
                 placeholder="Search notes..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="px-3 py-2 text-base bg-card/30 border-black dark:border-black backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:border-black"
+                className="px-3 py-2 text-base bg-card/50 border-black dark:border-black text-foreground placeholder:text-muted-foreground focus:border-black"
                 autoFocus={showSearch}
               />
             </div>
@@ -491,9 +491,9 @@ const Notes = () => {
               </div>
             ) : (
               currentPosts.map((post) => (
-                <Card 
-                  key={post.id} 
-                  className="bg-card/30 border-black dark:border-black backdrop-blur-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:border-black"
+                <Card
+                  key={post.id}
+                  className="bg-card/50 border-black dark:border-black transition-all duration-300 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:border-black"
                 >
                   <CardHeader className="p-4 pb-2 sm:p-5 sm:pb-2">
                     <div className="flex items-start justify-between">
