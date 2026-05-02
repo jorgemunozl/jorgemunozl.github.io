@@ -48,5 +48,31 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: path.resolve(projectRoot, "docs"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return;
+          // Heavy graph stack — loaded with lazy GlobalGraphView; keep off critical path
+          if (
+            id.includes("react-force-graph") ||
+            id.includes("/d3/") ||
+            id.includes("node_modules/d3-") ||
+            id.includes("node_modules/d3.") ||
+            id.includes("bezier-js")
+          ) {
+            return "vendor-graph";
+          }
+          // React core + router — shared across routes
+          if (
+            id.includes("/react/") ||
+            id.includes("/react-dom/") ||
+            id.includes("node_modules/scheduler") ||
+            id.includes("react-router")
+          ) {
+            return "vendor-react";
+          }
+        },
+      },
+    },
   },
 }));

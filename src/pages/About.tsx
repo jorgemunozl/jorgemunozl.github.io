@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import RelativityFieldLines from '@/components/RelativityFieldLines';
 import TopControls from '@/components/TopControls';
 import Footer from '@/components/Footer';
-import { Sparkles, Calendar, FileText, Award, BadgeCheck, ChevronRight, Lightbulb } from 'lucide-react';
+import { Sparkles, Calendar, FileText, Award, BadgeCheck, ChevronRight, Lightbulb, Mic } from 'lucide-react';
 
 const AboutPage = () => {
   const destinations = [
@@ -31,22 +31,29 @@ const AboutPage = () => {
       description: 'Courses and platform certificates — stored as PDFs for easy sharing.',
       icon: BadgeCheck,
     },
+    {
+      to: '/about/talks',
+      title: 'Talks & lectures',
+      description: 'Speaking engagements — upcoming talks, venues, and event links as you add them.',
+      icon: Mic,
+    },
   ] as const;
 
   return (
     <div className="page-shell">
       <RelativityFieldLines />
 
-      <div className="fixed bottom-0 left-1/2 z-0 hidden -translate-x-1/2 translate-y-1/2 transform dark:block">
+      {/* Simplified background glow - no blur for better performance */}
+      <div className="fixed bottom-0 left-1/2 z-0 hidden -translate-x-1/2 translate-y-1/2 transform opacity-40 dark:block">
         <div
-          className="h-96 w-96 rounded-full blur-3xl"
-          style={{ background: 'radial-gradient(circle, #030d630c, #47020209, transparent)' }}
+          className="h-96 w-96 rounded-full"
+          style={{ background: 'radial-gradient(circle, #030d6315, #47020210, transparent)' }}
         />
       </div>
-      <div className="fixed bottom-10 left-1/2 z-0 hidden -translate-x-1/2 transform dark:block">
+      <div className="fixed bottom-10 left-1/2 z-0 hidden -translate-x-1/2 transform opacity-40 dark:block">
         <div
-          className="h-48 w-48 rounded-full blur-2xl"
-          style={{ background: 'radial-gradient(circle, #9900000c, #01039b0c, #b902a005)' }}
+          className="h-48 w-48 rounded-full"
+          style={{ background: 'radial-gradient(circle, #99000012, #01039b12, #b902a010)' }}
         />
       </div>
 
@@ -83,7 +90,8 @@ const AboutPage = () => {
                   </div>
                 </a>
                 <p className="text-xs text-slate-500 dark:text-slate-400 sm:max-w-xs sm:text-left">
-                  CV opens in a new tab. Timeline, facts, awards, and certifications each have their own page below.
+                  CV opens in a new tab. Timeline, facts, awards, certifications, and talks each have their own page
+                  below.
                 </p>
               </div>
             </header>
@@ -97,7 +105,7 @@ const AboutPage = () => {
                   <li key={to}>
                     <Link
                       to={to}
-                      className="group relative block overflow-hidden rounded-2xl border border-slate-600/80 bg-white/60 p-6 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-xl hover:shadow-emerald-500/15 dark:border-white/10 dark:bg-white/5 dark:hover:border-purple-400/40 dark:hover:shadow-purple-500/20 sm:p-8"
+                      className="group relative block overflow-hidden rounded-2xl border border-slate-600/80 bg-white/85 p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-xl hover:shadow-emerald-500/15 dark:border-white/10 dark:bg-slate-900/70 dark:hover:border-purple-400/40 dark:hover:shadow-purple-500/20 sm:p-8"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/[0.03] to-emerald-500/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 dark:from-purple-500/0 dark:via-purple-500/[0.05] dark:to-purple-500/0" />
                       <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

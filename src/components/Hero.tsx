@@ -68,7 +68,7 @@ const Hero = () => {
             <Button
               variant="ghost"
               asChild
-              className="relative h-12 rounded-full border-2 border-transparent bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-blue-500/10 px-6 text-base font-medium text-slate-600 backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/30 hover:bg-gradient-to-r hover:from-emerald-500/20 hover:via-teal-500/20 hover:to-blue-500/20 hover:text-slate-900 hover:shadow-lg hover:shadow-emerald-500/20 dark:from-purple-500/10 dark:via-pink-500/10 dark:to-sky-500/10 dark:text-purple-200 dark:hover:border-purple-400/30 dark:hover:from-purple-500/20 dark:hover:via-pink-500/20 dark:hover:to-sky-500/20 dark:hover:text-white dark:hover:shadow-purple-500/20"
+              className="relative h-12 rounded-full border-2 border-transparent bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-blue-500/10 px-6 text-base font-medium text-slate-600 transition-all duration-300 hover:border-emerald-500/30 hover:bg-gradient-to-r hover:from-emerald-500/20 hover:via-teal-500/20 hover:to-blue-500/20 hover:text-slate-900 hover:shadow-lg hover:shadow-emerald-500/20 dark:from-purple-500/10 dark:via-pink-500/10 dark:to-sky-500/10 dark:text-purple-200 dark:hover:border-purple-400/30 dark:hover:from-purple-500/20 dark:hover:via-pink-500/20 dark:hover:to-sky-500/20 dark:hover:text-white dark:hover:shadow-purple-500/20"
             >
               <Link to="/about" className="flex items-center">
                 <User className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
@@ -79,7 +79,7 @@ const Hero = () => {
         </div>
 
         <div className="mt-12 flex items-center justify-center">
-          <div className="inline-flex items-center gap-4 rounded-full border border-slate-600 bg-white/80 px-6 py-3 text-slate-600 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-white/5 dark:text-white/70">
+          <div className="inline-flex items-center gap-4 rounded-full border border-slate-600 bg-white/90 px-6 py-3 text-slate-600 shadow-sm dark:border-white/10 dark:bg-slate-900/80 dark:text-white/70">
             {contactLinks.map(({ href, title, icon: Icon, svg }) => (
               <a
                 key={title}
