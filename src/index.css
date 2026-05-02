@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -116,6 +114,18 @@
     @apply border-border;
   }
 
+  /* Native smooth scrolling for anchor links - JS smooth scroll handles wheel events */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Disable smooth scroll for users who prefer reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
   body {
     @apply bg-background text-foreground font-modern antialiased;
   }
@@ -214,15 +224,20 @@
   }
 
   .section-eyebrow {
-    @apply inline-flex items-center gap-2 rounded-full border border-slate-600 bg-white/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-slate-500 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5 dark:text-white/70;
+    @apply inline-flex items-center gap-2 rounded-full border border-slate-600 bg-white/90 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-slate-500 shadow-sm dark:border-white/10 dark:bg-slate-900/80 dark:text-white/70;
   }
 
   .glass-panel {
-    @apply rounded-3xl border border-slate-600 bg-white/80 p-8 shadow-lg shadow-emerald-500/10 backdrop-blur-md transition hover:-translate-y-[2px] hover:shadow-emerald-500/20 dark:border-white/10 dark:bg-white/5 dark:shadow-purple-500/10 dark:hover:shadow-purple-500/20;
+    @apply rounded-3xl border border-slate-600 bg-white/90 p-8 shadow-lg shadow-emerald-500/10 transition hover:-translate-y-[2px] hover:shadow-emerald-500/20 dark:border-white/10 dark:bg-slate-900/80 dark:shadow-purple-500/10 dark:hover:shadow-purple-500/20;
   }
 
   .glass-card {
-    @apply rounded-3xl border border-slate-600 bg-white/80 shadow-lg shadow-emerald-500/10 backdrop-blur-md transition duration-300 dark:border-white/10 dark:bg-white/5 dark:shadow-purple-500/10;
+    @apply rounded-3xl border border-slate-600 bg-white/90 shadow-lg shadow-emerald-500/10 transition duration-300 dark:border-white/10 dark:bg-slate-900/80 dark:shadow-purple-500/10;
+  }
+
+  /* Performance optimization: CSS containment for cards and sections */
+  .contain-paint {
+    contain: paint layout;
   }
 
   .glow-divider {

@@ -13,16 +13,17 @@ const AboutAwardsPage = () => {
     <div className="page-shell">
       <RelativityFieldLines />
 
-      <div className="fixed bottom-0 left-1/2 z-0 hidden -translate-x-1/2 translate-y-1/2 transform dark:block">
+      {/* Simplified background glow - no blur for better performance */}
+      <div className="fixed bottom-0 left-1/2 z-0 hidden -translate-x-1/2 translate-y-1/2 transform opacity-40 dark:block">
         <div
-          className="h-96 w-96 rounded-full blur-3xl"
-          style={{ background: 'radial-gradient(circle, #030d630c, #47020209, transparent)' }}
+          className="h-96 w-96 rounded-full"
+          style={{ background: 'radial-gradient(circle, #030d6315, #47020210, transparent)' }}
         />
       </div>
-      <div className="fixed bottom-10 left-1/2 z-0 hidden -translate-x-1/2 transform dark:block">
+      <div className="fixed bottom-10 left-1/2 z-0 hidden -translate-x-1/2 transform opacity-40 dark:block">
         <div
-          className="h-48 w-48 rounded-full blur-2xl"
-          style={{ background: 'radial-gradient(circle, #9900000c, #01039b0c, #b902a005)' }}
+          className="h-48 w-48 rounded-full"
+          style={{ background: 'radial-gradient(circle, #99000012, #01039b12, #b902a010)' }}
         />
       </div>
 

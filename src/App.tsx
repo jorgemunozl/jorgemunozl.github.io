@@ -18,6 +18,7 @@ const AboutTimelinePage = lazy(() => import("./pages/AboutTimeline"));
 const AboutAwardsPage = lazy(() => import("./pages/AboutAwards"));
 const AboutCertificationsPage = lazy(() => import("./pages/AboutCertifications"));
 const AboutFactsPage = lazy(() => import("./pages/AboutFacts"));
+const AboutTalksPage = lazy(() => import("./pages/AboutTalks"));
 const TimelinePage = lazy(() => import("./pages/Timeline"));
 const UpdatesPage = lazy(() => import("./pages/Updates"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -54,6 +55,7 @@ const App = () => {
               <Route path="/about/facts" element={<AboutFactsPage />} />
               <Route path="/about/awards" element={<AboutAwardsPage />} />
               <Route path="/about/certifications" element={<AboutCertificationsPage />} />
+              <Route path="/about/talks" element={<AboutTalksPage />} />
               <Route path="/timeline" element={<TimelinePage />} />
               <Route path="/updates" element={<UpdatesPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

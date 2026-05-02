@@ -65,7 +65,7 @@ const ProjectDetail = () => {
                   />
                 ) : (
                   project.heroImage && (
-                  <figure className="overflow-hidden rounded-3xl border border-slate-600 bg-white/60 shadow-2xl shadow-emerald-500/10 backdrop-blur-sm dark:border-white/15 dark:bg-white/10 dark:shadow-purple-500/10">
+                  <figure className="overflow-hidden rounded-3xl border border-slate-600 bg-white/80 shadow-2xl shadow-emerald-500/10 dark:border-white/15 dark:bg-slate-900/70 dark:shadow-purple-500/10">
                     <img
                       src={project.heroImage}
                       alt={project.imageAlt || project.title}
@@ -78,7 +78,7 @@ const ProjectDetail = () => {
                 {project.highlights && project.highlights.length > 0 && (
                   <section className="space-y-4">
                     <h2 className="text-xl font-semibold text-slate-900 dark:text-white">Highlights</h2>
-                    <div className="rounded-2xl border border-slate-600 bg-white/70 p-4 backdrop-blur dark:border-white/15 dark:bg-white/10">
+                    <div className="rounded-2xl border border-slate-600 bg-white/85 p-4 dark:border-white/15 dark:bg-slate-900/70">
                       <ul className="list-disc space-y-2 pl-4 text-slate-600 dark:text-slate-200/80">
                         {project.highlights.map((highlight) => (
                           <li key={highlight}>{highlight}</li>

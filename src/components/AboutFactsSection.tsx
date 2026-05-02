@@ -18,13 +18,13 @@ const AboutFactsSection = () => {
         aria-hidden
       />
 
-      <div className="relative overflow-hidden rounded-[2rem] border border-slate-600/35 bg-gradient-to-br from-white/75 via-white/55 to-emerald-50/40 px-5 py-10 shadow-lg shadow-emerald-500/[0.07] ring-1 ring-white/60 backdrop-blur-md dark:border-white/12 dark:from-slate-950/80 dark:via-slate-900/70 dark:to-purple-950/50 dark:shadow-purple-500/10 dark:ring-white/[0.06] md:px-9 md:py-12">
+      <div className="relative overflow-hidden rounded-[2rem] border border-slate-600/35 bg-gradient-to-br from-white/90 via-white/75 to-emerald-50/70 px-5 py-10 shadow-lg shadow-emerald-500/[0.07] ring-1 ring-white/80 dark:border-white/12 dark:from-slate-950/90 dark:via-slate-900/80 dark:to-purple-950/70 dark:shadow-purple-500/10 dark:ring-white/[0.08] md:px-9 md:py-12">
         <div
-          className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-emerald-400/20 blur-3xl dark:bg-purple-500/25"
+          className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-emerald-400/25 opacity-60 dark:bg-purple-500/30"
           aria-hidden
         />
         <div
-          className="pointer-events-none absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-teal-400/15 blur-3xl dark:bg-sky-500/20"
+          className="pointer-events-none absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-teal-400/20 opacity-60 dark:bg-sky-500/25"
           aria-hidden
         />
 
@@ -48,7 +48,7 @@ const AboutFactsSection = () => {
           {aboutFacts.map((fact, index) => (
             <article
               key={fact.id}
-              className={`group relative overflow-hidden rounded-2xl border border-slate-600/50 bg-white/65 shadow-md shadow-slate-900/5 backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-xl hover:shadow-emerald-500/10 dark:border-white/10 dark:bg-white/[0.07] dark:shadow-black/20 dark:hover:border-purple-400/35 dark:hover:shadow-purple-500/15 ${
+              className={`group relative overflow-hidden rounded-2xl border border-slate-600/50 bg-white/85 shadow-md shadow-slate-900/5 transition duration-300 hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-xl hover:shadow-emerald-500/10 dark:border-white/10 dark:bg-slate-900/60 dark:shadow-black/20 dark:hover:border-purple-400/35 dark:hover:shadow-purple-500/15 ${
                 index === 0 ? 'sm:col-span-2 lg:grid lg:grid-cols-2 lg:gap-0' : ''
               }`}
             >
@@ -61,7 +61,12 @@ const AboutFactsSection = () => {
                 <img
                   src={fact.image}
                   alt={fact.imageAlt}
-                  loading="lazy"
+                  width={fact.imageWidth}
+                  height={fact.imageHeight}
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  fetchPriority={index === 0 ? 'high' : 'low'}
+                  sizes="(min-width: 1024px) 50vw, 100vw"
                   className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
                 />
               </div>
