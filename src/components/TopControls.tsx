@@ -41,7 +41,7 @@ const TopControls: React.FC<TopControlsProps> = ({ title }) => {
           aria-label={title ? `Go to ${title}` : 'Navigate home'}
         >
           <img
-            src="/path412.svg"
+            src="/logo.png"
             alt="Home"
             className="h-8 w-8 dark:invert"
           />

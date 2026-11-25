@@ -44,7 +44,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, showHomeButton = true })
             title="Go to homepage"
           >
             <img 
-              src="/path412.svg" 
+              src="/logo.png" 
               alt="" 
               className="w-10 h-10 dark:invert cursor-pointer transition-transform duration-500 ease-in-out"
               style={{ transform: `rotate(${rotation}deg)` }}

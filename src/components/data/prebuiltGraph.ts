@@ -1,17 +1,10 @@
 // Auto-generated file - do not edit manually
-// Generated on: 2026-05-01T22:48:37.851Z
+// Generated on: 2026-11-25T14:00:04.132Z
 
 import type { GraphData } from '@/utils/wikiLinks';
 
 export const prebuiltGraphData: GraphData = {
   "nodes": [
-    {
-      "id": "Physical AI And The Pi Models",
-      "title": "Physical AI And The Pi Models",
-      "group": 1,
-      "size": 4,
-      "color": "#A855F7"
-    },
     {
       "id": "Neural Wave Functions And What To Do With Them",
       "title": "Neural Wave Functions And What To Do With Them",
